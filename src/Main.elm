@@ -251,7 +251,7 @@ viewMatch match =
     row
         [ Background.color blue
         , padding 16
-        , spacing 150
+        , spacing 120
         , width fill
         , centerX
         , Font.color (rgba 1 1 1 1)

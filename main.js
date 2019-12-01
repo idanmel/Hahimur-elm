@@ -12559,7 +12559,7 @@ var $author$project$Main$viewMatch = function (match) {
 			[
 				$mdgriffith$elm_ui$Element$Background$color($author$project$Main$blue),
 				$mdgriffith$elm_ui$Element$padding(16),
-				$mdgriffith$elm_ui$Element$spacing(150),
+				$mdgriffith$elm_ui$Element$spacing(120),
 				$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
 				$mdgriffith$elm_ui$Element$centerX,
 				$mdgriffith$elm_ui$Element$Font$color(
