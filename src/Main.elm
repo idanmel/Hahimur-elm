@@ -69,17 +69,17 @@ getScore pts gd gf w =
     (pts * 1000) + (gd * 100) + (gf * 10) + w
 
 
-updateTeam2 : Team -> Int -> Int -> Team
-updateTeam2 team gf ga =
+updateGroupRow2 : GroupRow -> Int -> Int -> GroupRow
+updateGroupRow2 groupRow gf ga =
     let
         newPld =
-            team.pld + 1
+            groupRow.pld + 1
 
         newGf =
-            team.gf + gf
+            groupRow.gf + gf
 
         newGa =
-            team.ga + ga
+            groupRow.ga + ga
 
         newGd =
             newGf - newGa
@@ -87,60 +87,60 @@ updateTeam2 team gf ga =
     if gf > ga then
         let
             newW =
-                team.w + 1
+                groupRow.w + 1
 
             newPts =
-                3 * newW + team.d
+                3 * newW + groupRow.d
 
             newScore =
                 getScore newPts newGd newGf newW
         in
-        { team | pld = newPld, w = newW, gf = newGf, ga = newGa, gd = newGd, pts = newPts, score = newScore }
+        { groupRow | pld = newPld, w = newW, gf = newGf, ga = newGa, gd = newGd, pts = newPts, score = newScore }
 
     else if gf == ga then
         let
             newD =
-                team.d + 1
+                groupRow.d + 1
 
             newPts =
-                3 * team.w + newD
+                3 * groupRow.w + newD
 
             newScore =
-                getScore newPts newGd newGf team.w
+                getScore newPts newGd newGf groupRow.w
         in
-        { team | pld = newPld, d = newD, gf = newGf, ga = newGa, gd = newGd, pts = newPts, score = newScore }
+        { groupRow | pld = newPld, d = newD, gf = newGf, ga = newGa, gd = newGd, pts = newPts, score = newScore }
 
     else
         let
             newL =
-                team.l + 1
+                groupRow.l + 1
 
             newscore =
-                getScore team.pts newGd newGf team.w
+                getScore groupRow.pts newGd newGf groupRow.w
         in
-        { team | pld = newPld, l = newL, gf = newGf, ga = newGa, gd = newGd, score = newscore }
+        { groupRow | pld = newPld, l = newL, gf = newGf, ga = newGa, gd = newGd, score = newscore }
 
 
-updateTeam : Match -> Team -> Team
-updateTeam match team =
+updateGroupRow : Match -> GroupRow -> GroupRow
+updateGroupRow match groupRow =
     case ( match.homeScore, match.awayScore ) of
         ( Just homeScore, Just awayScore ) ->
-            if team.name == match.homeTeam then
-                updateTeam2 team homeScore awayScore
+            if groupRow.team.name == match.homeTeam.name then
+                updateGroupRow2 groupRow homeScore awayScore
 
-            else if team.name == match.awayTeam then
-                updateTeam2 team awayScore homeScore
+            else if groupRow.team.name == match.awayTeam.name then
+                updateGroupRow2 groupRow awayScore homeScore
 
             else
-                team
+                groupRow
 
         _ ->
-            team
+            groupRow
 
 
-updateGroup : Match -> List Team -> List Team
+updateGroup : Match -> List GroupRow -> List GroupRow
 updateGroup match group =
-    List.map (updateTeam match) group
+    List.map (updateGroupRow match) group
 
 
 
@@ -149,15 +149,16 @@ updateGroup match group =
 
 type alias Match =
     { id : Int
-    , homeTeam : String
+    , homeTeam : Team
     , homeScore : Maybe Int
-    , awayTeam : String
+    , awayTeam : Team
     , awayScore : Maybe Int
+    , group : String
     }
 
 
-type alias Team =
-    { name : String
+type alias GroupRow =
+    { team : Team
     , pld : Int
     , w : Int
     , d : Int
@@ -168,12 +169,17 @@ type alias Team =
     , pts : Int
     , score : Int
     , pos : Int
+    , group : String
     }
+
+
+type alias Team =
+    { name : String }
 
 
 type alias Model =
     { matches : List Match
-    , group : List Team
+    , group : List GroupRow
     }
 
 
@@ -182,37 +188,124 @@ type HomeOrAway
     | Away
 
 
-bel =
-    Team "Belgium" 0 0 0 0 0 0 0 0 1 1
+
+-- GROUP A
 
 
-rus =
-    Team "Russia" 0 0 0 0 0 0 0 0 2 2
+turkey =
+    Team "Turkey"
 
 
-fin =
-    Team "Finland" 0 0 0 0 0 0 0 0 3 3
+italy =
+    Team "Italy"
 
 
-den =
-    Team "Denmark" 0 0 0 0 0 0 0 0 4 4
+wales =
+    Team "Wales"
+
+
+switzerland =
+    Team "Switzerland"
+
+
+turkeyRow =
+    GroupRow turkey 0 0 0 0 0 0 0 0 4 1 "groupA"
+
+
+italyRow =
+    GroupRow italy 0 0 0 0 0 0 0 0 3 1 "groupA"
+
+
+walesRow =
+    GroupRow wales 0 0 0 0 0 0 0 0 2 1 "groupA"
+
+
+switzerlandRow =
+    GroupRow switzerland 0 0 0 0 0 0 0 0 1 1 "groupA"
+
+
+groupA =
+    [ turkeyRow, italyRow, walesRow, switzerlandRow ]
+
+
+matchesGroupA =
+    [ Match 1 turkey Nothing italy Nothing "groupA"
+    , Match 2 wales Nothing switzerland Nothing "groupA"
+    , Match 3 turkey Nothing wales Nothing "groupA"
+    , Match 4 italy Nothing switzerland Nothing "groupA"
+    , Match 5 switzerland Nothing italy Nothing "groupA"
+    , Match 6 turkey Nothing wales Nothing "groupA"
+    ]
+
+
+
+-- GROUP B
+
+
+belgium =
+    Team "Belgium"
+
+
+russia =
+    Team "Russia"
+
+
+finland =
+    Team "Finland"
+
+
+denmark =
+    Team "Denmark"
+
+
+belgiumRow =
+    GroupRow belgium 0 0 0 0 0 0 0 0 1 1 "groupB"
+
+
+russiaRow =
+    GroupRow russia 0 0 0 0 0 0 0 0 2 2 "groupB"
+
+
+finlandRow =
+    GroupRow finland 0 0 0 0 0 0 0 0 3 3 "groupB"
+
+
+denmarkRow =
+    GroupRow denmark 0 0 0 0 0 0 0 0 4 4 "groupB"
+
+
+groupB =
+    [ belgiumRow, russiaRow, finlandRow, denmarkRow ]
+
+
+matchesGroupB =
+    [ Match 7 denmark Nothing finland Nothing "groupB"
+    , Match 8 belgium Nothing russia Nothing "groupB"
+    , Match 9 finland Nothing russia Nothing "groupB"
+    , Match 10 denmark Nothing belgium Nothing "groupB"
+    , Match 11 russia Nothing denmark Nothing "groupB"
+    , Match 12 finland Nothing belgium Nothing "groupB"
+    ]
+
+
+groups =
+    groupA ++ groupB
+
+
+filterByGroup : String -> List GroupRow -> List GroupRow
+filterByGroup groupName groupRows =
+    List.filter (\gr -> gr.group == groupName) groupRows
 
 
 initGroup =
-    [ bel, rus, fin, den ]
+    groups
+        |> filterByGroup "groupA"
         |> List.sortBy .score
         |> List.reverse
 
 
 init =
-    { matches =
-        [ Match 1 "Denmark" Nothing "Finland" Nothing
-        , Match 2 "Belgium" Nothing "Russia" Nothing
-        , Match 3 "Finland" Nothing "Russia" Nothing
-        , Match 4 "Denmark" Nothing "Belgium" Nothing
-        , Match 5 "Russia" Nothing "Denmark" Nothing
-        , Match 6 "Finland" Nothing "Belgium" Nothing
-        ]
+    { matches = matchesGroupA ++ matchesGroupB
     , group = initGroup
     }
 
@@ -232,7 +325,7 @@ view model =
         column [ width fill ]
             [ header
             , viewGroup model.group
-            , viewMatches model.matches
+            , viewMatches model.matches "groupA"
             ]
 
 
@@ -253,24 +346,25 @@ viewMatch match =
         , padding 16
         , spacing 120
         , width fill
-        , centerX
         , Font.color (rgba 1 1 1 1)
         ]
-        [ el [] (text match.homeTeam)
-        , el [] (viewTeamGoalsInput match.id Home match.homeScore)
+        [ el [] (text match.homeTeam.name)
+        , el [] (viewMatchInput match.id Home match.homeScore)
         , el [] (text "-")
-        , el [] (viewTeamGoalsInput match.id Away match.awayScore)
-        , el [] (text match.awayTeam)
+        , el [] (viewMatchInput match.id Away match.awayScore)
+        , el [] (text match.awayTeam.name)
         ]
 
 
-viewMatches : List Match -> Element Msg
-viewMatches matches =
-    List.map viewMatch matches
+viewMatches : List Match -> String -> Element Msg
+viewMatches matches group =
+    matches
+        |> List.filter (\m -> m.group == group)
+        |> List.map viewMatch
         |> column [ width fill ]
 
 
-viewGroup : List Team -> Element Msg
+viewGroup : List GroupRow -> Element Msg
 viewGroup group =
     Element.table [ padding 16, spacing 8 ]
         { data = group
@@ -278,63 +372,63 @@ viewGroup group =
             [ { header = Element.text "Team"
               , width = fillPortion 2
               , view =
-                    \team ->
-                        Element.text team.name
+                    \groupRow ->
+                        Element.text groupRow.team.name
               }
             , { header = Element.text "Pld"
               , width = fillPortion 1
               , view =
-                    \team ->
-                        Element.text (String.fromInt team.pld)
+                    \groupRow ->
+                        Element.text (String.fromInt groupRow.pld)
               }
             , { header = Element.text "W"
               , width = fillPortion 1
               , view =
-                    \team ->
-                        Element.text (String.fromInt team.w)
+                    \groupRow ->
+                        Element.text (String.fromInt groupRow.w)
               }
             , { header = Element.text "D"
               , width = fillPortion 1
               , view =
-                    \team ->
-                        Element.text (String.fromInt team.d)
+                    \groupRow ->
+                        Element.text (String.fromInt groupRow.d)
               }
             , { header = Element.text "L"
               , width = fillPortion 1
               , view =
-                    \team ->
-                        Element.text (String.fromInt team.l)
+                    \groupRow ->
+                        Element.text (String.fromInt groupRow.l)
               }
             , { header = Element.text "GF"
               , width = fillPortion 1
               , view =
-                    \team ->
-                        Element.text (String.fromInt team.gf)
+                    \groupRow ->
+                        Element.text (String.fromInt groupRow.gf)
               }
             , { header = Element.text "GA"
               , width = fillPortion 1
               , view =
-                    \team ->
-                        Element.text (String.fromInt team.ga)
+                    \groupRow ->
+                        Element.text (String.fromInt groupRow.ga)
               }
             , { header = Element.text "GD"
               , width = fillPortion 1
               , view =
-                    \team ->
-                        Element.text (String.fromInt team.gd)
+                    \groupRow ->
+                        Element.text (String.fromInt groupRow.gd)
               }
             , { header = Element.text "Pts"
               , width = fillPortion 1
               , view =
-                    \team ->
-                        Element.text (String.fromInt team.pts)
+                    \groupRow ->
+                        Element.text (String.fromInt groupRow.pts)
               }
             ]
         }
 
 
-viewTeamGoalsInput : Int -> HomeOrAway -> Maybe Int -> Element Msg
-viewTeamGoalsInput matchId homeOrAway score =
+viewMatchInput : Int -> HomeOrAway -> Maybe Int -> Element Msg
+viewMatchInput matchId homeOrAway score =
     Element.Input.text [ width (px 100), Font.color (rgba 0 0 0 1) ]
         { onChange = UpdateScore matchId homeOrAway
         , text =
