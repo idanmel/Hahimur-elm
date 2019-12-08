@@ -7,6 +7,7 @@ import Element exposing (..)
 import Element.Background as Background
 import Element.Font as Font
 import Element.Input exposing (button)
+import Euro2020 exposing (GroupRow, Match, Team, groups, matches)
 import Html exposing (Html)
 
 
@@ -32,6 +33,7 @@ main =
 
 type Msg
     = UpdateScore Int HomeOrAway String
+    | ClickedGroupButton
 
 
 update : Msg -> Model -> Model
@@ -56,12 +58,15 @@ update msg model =
             in
             { model
                 | matches = newMatches
-                , group =
+                , groups =
                     newMatches
-                        |> List.foldl updateGroup initGroup
+                        |> List.foldl updateGroup groups
                         |> List.sortBy .score
                         |> List.reverse
             }
+
+        ClickedGroupButton ->
+            { model | selectedGroup = "groupB" }
 
 
 getScore : Int -> Int -> Int -> Int -> Int
@@ -147,39 +152,10 @@ updateGroup match group =
 -- MODEL
 
 
-type alias Match =
-    { id : Int
-    , homeTeam : Team
-    , homeScore : Maybe Int
-    , awayTeam : Team
-    , awayScore : Maybe Int
-    , group : String
-    }
-
-
-type alias GroupRow =
-    { team : Team
-    , pld : Int
-    , w : Int
-    , d : Int
-    , l : Int
-    , gf : Int
-    , ga : Int
-    , gd : Int
-    , pts : Int
-    , score : Int
-    , pos : Int
-    , group : String
-    }
-
-
-type alias Team =
-    { name : String }
-
-
 type alias Model =
     { matches : List Match
-    , group : List GroupRow
+    , groups : List GroupRow
+    , selectedGroup : String
     }
 
 
@@ -188,125 +164,23 @@ type HomeOrAway
     | Away
 
 
-
--- GROUP A
-
-
-turkey =
-    Team "Turkey"
-
-
-italy =
-    Team "Italy"
-
-
-wales =
-    Team "Wales"
-
-
-switzerland =
-    Team "Switzerland"
-
-
-turkeyRow =
-    GroupRow turkey 0 0 0 0 0 0 0 0 4 1 "groupA"
-
-
-italyRow =
-    GroupRow italy 0 0 0 0 0 0 0 0 3 1 "groupA"
-
-
-walesRow =
-    GroupRow wales 0 0 0 0 0 0 0 0 2 1 "groupA"
-
-
-switzerlandRow =
-    GroupRow switzerland 0 0 0 0 0 0 0 0 1 1 "groupA"
-
-
-groupA =
-    [ turkeyRow, italyRow, walesRow, switzerlandRow ]
-
-
-matchesGroupA =
-    [ Match 1 turkey Nothing italy Nothing "groupA"
-    , Match 2 wales Nothing switzerland Nothing "groupA"
-    , Match 3 turkey Nothing wales Nothing "groupA"
-    , Match 4 italy Nothing switzerland Nothing "groupA"
-    , Match 5 switzerland Nothing italy Nothing "groupA"
-    , Match 6 turkey Nothing wales Nothing "groupA"
-    ]
-
-
-
--- GROUP B
-
-
-belgium =
-    Team "Belgium"
-
-
-russia =
-    Team "Russia"
-
-
-finland =
-    Team "Finland"
-
-
-denmark =
-    Team "Denmark"
-
-
-belgiumRow =
-    GroupRow belgium 0 0 0 0 0 0 0 0 1 1 "groupB"
-
-
-russiaRow =
-    GroupRow russia 0 0 0 0 0 0 0 0 2 2 "groupB"
-
-
-finlandRow =
-    GroupRow finland 0 0 0 0 0 0 0 0 3 3 "groupB"
-
-
-denmarkRow =
-    GroupRow denmark 0 0 0 0 0 0 0 0 4 4 "groupB"
-
-
-groupB =
-    [ belgiumRow, russiaRow, finlandRow, denmarkRow ]
-
-
-matchesGroupB =
-    [ Match 7 denmark Nothing finland Nothing "groupB"
-    , Match 8 belgium Nothing russia Nothing "groupB"
-    , Match 9 finland Nothing russia Nothing "groupB"
-    , Match 10 denmark Nothing belgium Nothing "groupB"
-    , Match 11 russia Nothing denmark Nothing "groupB"
-    , Match 12 finland Nothing belgium Nothing "groupB"
-    ]
-
-
-groups =
-    groupA ++ groupB
-
-
 filterByGroup : String -> List GroupRow -> List GroupRow
 filterByGroup groupName groupRows =
     List.filter (\gr -> gr.group == groupName) groupRows
 
 
-initGroup =
+getGroup : List GroupRow -> String -> List GroupRow
+getGroup groups groupName =
     groups
-        |> filterByGroup "groupA"
+        |> filterByGroup groupName
         |> List.sortBy .score
         |> List.reverse
 
 
 init =
-    { matches = matchesGroupA ++ matchesGroupB
-    , group = initGroup
+    { matches = matches
+    , groups = getGroup groups "groupA"
+    , selectedGroup = "groupA"
     }
 
 
@@ -324,8 +198,9 @@ view model =
     <|
         column [ width fill ]
             [ header
-            , viewGroup model.group
-            , viewMatches model.matches "groupA"
+            , viewGroup model.groups model.selectedGroup
+            , viewMatches model.matches model.selectedGroup
+            , myButton
             ]
 
 
@@ -364,8 +239,12 @@ viewMatches matches group =
         |> column [ width fill ]
 
 
-viewGroup : List GroupRow -> Element Msg
-viewGroup group =
+viewGroup : List GroupRow -> String -> Element Msg
+viewGroup groups groupName =
+    let
+        group =
+            getGroup groups groupName
+    in
     Element.table [ padding 16, spacing 8 ]
         { data = group
         , columns =
@@ -440,4 +319,15 @@ viewMatchInput matchId homeOrAway score =
                     String.fromInt value
         , placeholder = Nothing
         , label = Element.Input.labelHidden ""
+        }
+
+
+myButton =
+    button
+        [ Background.color red
+        , Element.focused
+            [ Background.color blue ]
+        ]
+        { onPress = Just ClickedGroupButton
+        , label = text "My Button"
         }
