@@ -140,15 +140,15 @@ turkeyRow =
 
 
 italyRow =
-    GroupRow italy 0 0 0 0 0 0 0 0 3 1 "groupA"
+    GroupRow italy 0 0 0 0 0 0 0 0 3 2 "groupA"
 
 
 walesRow =
-    GroupRow wales 0 0 0 0 0 0 0 0 2 1 "groupA"
+    GroupRow wales 0 0 0 0 0 0 0 0 2 3 "groupA"
 
 
 switzerlandRow =
-    GroupRow switzerland 0 0 0 0 0 0 0 0 1 1 "groupA"
+    GroupRow switzerland 0 0 0 0 0 0 0 0 1 4 "groupA"
 
 
 belgiumRow =
@@ -264,8 +264,8 @@ matchesGroupA =
     , Match 2 wales Nothing switzerland Nothing "groupA"
     , Match 3 turkey Nothing wales Nothing "groupA"
     , Match 4 italy Nothing switzerland Nothing "groupA"
-    , Match 5 switzerland Nothing italy Nothing "groupA"
-    , Match 6 turkey Nothing wales Nothing "groupA"
+    , Match 5 switzerland Nothing turkey Nothing "groupA"
+    , Match 6 italy Nothing wales Nothing "groupA"
     ]
 
 
@@ -310,12 +310,12 @@ matchesGroupE =
 
 
 matchesGroupF =
-    [ Match 25 serbia Nothing portugal Nothing "groupF"
-    , Match 26 france Nothing germany Nothing "groupF"
-    , Match 27 serbia Nothing france Nothing "groupF"
-    , Match 28 portugal Nothing germany Nothing "groupF"
-    , Match 29 portugal Nothing france Nothing "groupF"
-    , Match 30 germany Nothing serbia Nothing "groupF"
+    [ Match 31 serbia Nothing portugal Nothing "groupF"
+    , Match 32 france Nothing germany Nothing "groupF"
+    , Match 33 serbia Nothing france Nothing "groupF"
+    , Match 34 portugal Nothing germany Nothing "groupF"
+    , Match 35 portugal Nothing france Nothing "groupF"
+    , Match 36 germany Nothing serbia Nothing "groupF"
     ]
 
 
