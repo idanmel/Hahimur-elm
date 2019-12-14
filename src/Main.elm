@@ -9,8 +9,9 @@ import Element.Border as Border
 import Element.Font as Font
 import Element.Input exposing (button)
 import Element.Region as Region
-import Euro2020 exposing (GroupRow, Match, Team, groups, matches)
+import Euro2020 exposing (Group(..), GroupRow, Match, Team, getGroup, groups, matches)
 import Html exposing (Html)
+import Html.Attributes
 
 
 blue =
@@ -178,19 +179,6 @@ type HomeOrAway
     | Away
 
 
-filterByGroup : String -> List GroupRow -> List GroupRow
-filterByGroup groupName groupRows =
-    List.filter (\gr -> gr.group == groupName) groupRows
-
-
-getGroup : List GroupRow -> String -> List GroupRow
-getGroup groups groupName =
-    groups
-        |> filterByGroup groupName
-        |> List.sortBy .score
-        |> List.reverse
-
-
 init =
     { matches = matches
     , groups = groups
@@ -215,23 +203,25 @@ view model =
             [ header
             , column [ width fill, centerX ]
                 [ viewGroupTitle "Group A"
-                , viewGroup model.groups "groupA"
-                , viewMatches model.matches "groupA"
+                , viewGroup model.groups GroupA
+                , viewMatches model.matches GroupA
                 , viewGroupTitle "Group B"
-                , viewGroup model.groups "groupB"
-                , viewMatches model.matches "groupB"
+                , viewGroup model.groups GroupB
+                , viewMatches model.matches GroupB
                 , viewGroupTitle "Group C"
-                , viewGroup model.groups "groupC"
-                , viewMatches model.matches "groupC"
+                , viewGroup model.groups GroupC
+                , viewMatches model.matches GroupC
                 , viewGroupTitle "Group D"
-                , viewGroup model.groups "groupD"
-                , viewMatches model.matches "groupD"
+                , viewGroup model.groups GroupD
+                , viewMatches model.matches GroupD
                 , viewGroupTitle "Group E"
-                , viewGroup model.groups "groupE"
-                , viewMatches model.matches "groupE"
+                , viewGroup model.groups GroupE
+                , viewMatches model.matches GroupE
                 , viewGroupTitle "Group F"
-                , viewGroup model.groups "groupF"
-                , viewMatches model.matches "groupF"
+                , viewGroup model.groups GroupF
+                , viewMatches model.matches GroupF
+
+                --, viewMatches model.matches "roundOf16"
                 ]
             ]
 
@@ -277,7 +267,7 @@ viewMatch match =
         ]
 
 
-viewMatches : List Match -> String -> Element Msg
+viewMatches : List Match -> Group -> Element Msg
 viewMatches matches group =
     matches
         |> List.filter (\m -> m.group == group)
@@ -295,11 +285,11 @@ viewGroupTitle groupName =
         [ text groupName ]
 
 
-viewGroup : List GroupRow -> String -> Element Msg
+viewGroup : List GroupRow -> Group -> Element Msg
 viewGroup groups groupName =
     let
         group =
-            getGroup groups groupName
+            getGroup groupName groups
     in
     Element.indexedTable
         [ paddingEach { edges | bottom = 16 }
@@ -309,61 +299,61 @@ viewGroup groups groupName =
         { data = group
         , columns =
             [ { header = Element.text "Pos"
-              , width = fillPortion 1
+              , width = fill
               , view =
                     \n groupRow ->
                         Element.text (String.fromInt (n + 1))
               }
             , { header = Element.text "Team"
-              , width = fillPortion 2
+              , width = fill
               , view =
                     \n groupRow ->
                         Element.text groupRow.team.name
               }
             , { header = Element.text "Pld"
-              , width = fillPortion 1
+              , width = fill
               , view =
                     \n groupRow ->
                         Element.text (String.fromInt groupRow.pld)
               }
             , { header = Element.text "W"
-              , width = fillPortion 1
+              , width = fill
               , view =
                     \n groupRow ->
                         Element.text (String.fromInt groupRow.w)
               }
             , { header = Element.text "D"
-              , width = fillPortion 1
+              , width = fill
               , view =
                     \n groupRow ->
                         Element.text (String.fromInt groupRow.d)
               }
             , { header = Element.text "L"
-              , width = fillPortion 1
+              , width = fill
               , view =
                     \n groupRow ->
                         Element.text (String.fromInt groupRow.l)
               }
             , { header = Element.text "GF"
-              , width = fillPortion 1
+              , width = fill
               , view =
                     \n groupRow ->
                         Element.text (String.fromInt groupRow.gf)
               }
             , { header = Element.text "GA"
-              , width = fillPortion 1
+              , width = fill
               , view =
                     \n groupRow ->
                         Element.text (String.fromInt groupRow.ga)
               }
             , { header = Element.text "GD"
-              , width = fillPortion 1
+              , width = fill
               , view =
                     \n groupRow ->
                         Element.text (String.fromInt groupRow.gd)
               }
             , { header = Element.text "Pts"
-              , width = fillPortion 1
+              , width = fill
               , view =
                     \n groupRow ->
                         Element.text (String.fromInt groupRow.pts)
@@ -374,7 +364,12 @@ viewGroup groups groupName =
 
 viewMatchInput : Int -> HomeOrAway -> Maybe Int -> Element Msg
 viewMatchInput matchId homeOrAway score =
-    Element.Input.text [ width (px 50), Font.color (rgba 0 0 0 1) ]
+    Element.Input.text
+        [ width (px 80)
+        , Font.color (rgba 0 0 0 1)
+        , Element.htmlAttribute (Html.Attributes.type_ "number")
+        , paddingEach { edges | top = 12, bottom = 12, left = 12 }
+        ]
         { onChange = UpdateScore matchId homeOrAway
         , text =
             case score of
