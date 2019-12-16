@@ -4668,7 +4668,7 @@ var $author$project$Euro2020$playOffMatches = _List_fromArray(
 		43,
 		A2($author$project$Euro2020$Team, 'Winner Group E', $author$project$Euro2020$defaultFlag),
 		$elm$core$Maybe$Nothing,
-		A2($author$project$Euro2020$Team, '3rd Group A/B/C/D', ''),
+		A2($author$project$Euro2020$Team, '3rd Group A/B/C/D', $author$project$Euro2020$defaultFlag),
 		$elm$core$Maybe$Nothing,
 		6,
 		'16 June 2020',

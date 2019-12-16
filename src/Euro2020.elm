@@ -349,7 +349,7 @@ playOffMatches =
     , Match 42 (Team "Runner-up Group D" defaultFlag) Nothing (Team "Runner-up Group E" defaultFlag) Nothing RoundOf16 "16 June 2020" "18:00"
     , Match 41 (Team "Winner Group F" defaultFlag) Nothing (Team "3rd Group A/B/C" defaultFlag) Nothing RoundOf16 "16 June 2020" "18:00"
     , Match 44 (Team "Winner Group D" defaultFlag) Nothing (Team "Runner-up Group F" defaultFlag) Nothing RoundOf16 "16 June 2020" "18:00"
-    , Match 43 (Team "Winner Group E" defaultFlag) Nothing (Team "3rd Group A/B/C/D" "") Nothing RoundOf16 "16 June 2020" "18:00"
+    , Match 43 (Team "Winner Group E" defaultFlag) Nothing (Team "3rd Group A/B/C/D" defaultFlag) Nothing RoundOf16 "16 June 2020" "18:00"
     ]
 
 
