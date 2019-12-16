@@ -1,4 +1,4 @@
-module Euro2020 exposing (Group(..), GroupRow, Match, Team, getGroup, groups, matches)
+module Euro2020 exposing (Group(..), GroupRow, Match, Team, filterByGroup, getGroupRows, getTeamPlaying, groups, matches, playOffMatches)
 
 import Array
 
@@ -11,6 +11,9 @@ type Group
     | GroupE
     | GroupF
     | RoundOf16
+    | QuarterFinals
+    | SemiFinals
+    | Final
 
 
 type alias Match =
@@ -39,7 +42,6 @@ type alias GroupRow =
     , gd : Int
     , pts : Int
     , score : Int
-    , pos : Int
     , group : Group
     }
 
@@ -149,99 +151,99 @@ germany =
 
 
 turkeyRow =
-    GroupRow turkey 0 0 0 0 0 0 0 0 4 1 GroupA
+    GroupRow turkey 0 0 0 0 0 0 0 0 4 GroupA
 
 
 italyRow =
-    GroupRow italy 0 0 0 0 0 0 0 0 3 2 GroupA
+    GroupRow italy 0 0 0 0 0 0 0 0 3 GroupA
 
 
 walesRow =
-    GroupRow wales 0 0 0 0 0 0 0 0 2 3 GroupA
+    GroupRow wales 0 0 0 0 0 0 0 0 2 GroupA
 
 
 switzerlandRow =
-    GroupRow switzerland 0 0 0 0 0 0 0 0 1 4 GroupA
+    GroupRow switzerland 0 0 0 0 0 0 0 0 1 GroupA
 
 
 belgiumRow =
-    GroupRow belgium 0 0 0 0 0 0 0 0 2 1 GroupB
+    GroupRow belgium 0 0 0 0 0 0 0 0 2 GroupB
 
 
 russiaRow =
-    GroupRow russia 0 0 0 0 0 0 0 0 1 2 GroupB
+    GroupRow russia 0 0 0 0 0 0 0 0 1 GroupB
 
 
 finlandRow =
-    GroupRow finland 0 0 0 0 0 0 0 0 3 3 GroupB
+    GroupRow finland 0 0 0 0 0 0 0 0 3 GroupB
 
 
 denmarkRow =
-    GroupRow denmark 0 0 0 0 0 0 0 0 4 4 GroupB
+    GroupRow denmark 0 0 0 0 0 0 0 0 4 GroupB
 
 
 netherlandsRow =
-    GroupRow netherlands 0 0 0 0 0 0 0 0 4 4 GroupC
+    GroupRow netherlands 0 0 0 0 0 0 0 0 4 GroupC
 
 
 ukraineRow =
-    GroupRow ukraine 0 0 0 0 0 0 0 0 3 4 GroupC
+    GroupRow ukraine 0 0 0 0 0 0 0 0 3 GroupC
 
 
 austriaRow =
-    GroupRow austria 0 0 0 0 0 0 0 0 2 4 GroupC
+    GroupRow austria 0 0 0 0 0 0 0 0 2 GroupC
 
 
 romaniaRow =
-    GroupRow romania 0 0 0 0 0 0 0 0 1 4 GroupC
+    GroupRow romania 0 0 0 0 0 0 0 0 1 GroupC
 
 
 englandRow =
-    GroupRow england 0 0 0 0 0 0 0 0 4 4 GroupD
+    GroupRow england 0 0 0 0 0 0 0 0 4 GroupD
 
 
 croatiaRow =
-    GroupRow crotia 0 0 0 0 0 0 0 0 3 4 GroupD
+    GroupRow crotia 0 0 0 0 0 0 0 0 3 GroupD
 
 
 irelandRow =
-    GroupRow ireland 0 0 0 0 0 0 0 0 2 4 GroupD
+    GroupRow ireland 0 0 0 0 0 0 0 0 2 GroupD
 
 
 czechRow =
-    GroupRow czech 0 0 0 0 0 0 0 0 1 4 GroupD
+    GroupRow czech 0 0 0 0 0 0 0 0 1 GroupD
 
 
 spainRow =
-    GroupRow spain 0 0 0 0 0 0 0 0 4 4 GroupE
+    GroupRow spain 0 0 0 0 0 0 0 0 4 GroupE
 
 
 swedenRow =
-    GroupRow sweden 0 0 0 0 0 0 0 0 3 4 GroupE
+    GroupRow sweden 0 0 0 0 0 0 0 0 3 GroupE
 
 
 polandRow =
-    GroupRow poland 0 0 0 0 0 0 0 0 2 4 GroupE
+    GroupRow poland 0 0 0 0 0 0 0 0 2 GroupE
 
 
 icelandRow =
-    GroupRow iceland 0 0 0 0 0 0 0 0 1 4 GroupE
+    GroupRow iceland 0 0 0 0 0 0 0 0 1 GroupE
 
 
 serbiaRow =
-    GroupRow serbia 0 0 0 0 0 0 0 0 4 4 GroupF
+    GroupRow serbia 0 0 0 0 0 0 0 0 4 GroupF
 
 
 portugalRow =
-    GroupRow portugal 0 0 0 0 0 0 0 0 3 4 GroupF
+    GroupRow portugal 0 0 0 0 0 0 0 0 3 GroupF
 
 
 franceRow =
-    GroupRow france 0 0 0 0 0 0 0 0 2 4 GroupF
+    GroupRow france 0 0 0 0 0 0 0 0 2 GroupF
 
 
 germanyRow =
-    GroupRow germany 0 0 0 0 0 0 0 0 1 4 GroupF
+    GroupRow germany 0 0 0 0 0 0 0 0 1 GroupF
 
 
 groupA =
@@ -333,16 +335,15 @@ matchesGroupF =
 
 
 playOffMatches =
-    [ Match 38 (getTeamPlaying runnerUpGroupA GroupA 2 groups) Nothing (getTeamPlaying runnerUpGroupB GroupB 2 groups) Nothing RoundOf16
+    [ Match 38 (Team "Runner-up Group A") Nothing (Team "Runner-up Group B") Nothing RoundOf16
+    , Match 37 (Team "Winner Group A") Nothing (Team "Runner-up Group C") Nothing RoundOf16
+    , Match 40 (Team "Winner Group C") Nothing (Team "3rd Group D/E/F") Nothing RoundOf16
+    , Match 39 (Team "Winner Group B") Nothing (Team "3rd Group A/D/E/F") Nothing RoundOf16
+    , Match 42 (Team "Runner-up Group D") Nothing (Team "Runner-up Group E") Nothing RoundOf16
+    , Match 41 (Team "Winner Group F") Nothing (Team "3rd Group A/B/C") Nothing RoundOf16
+    , Match 44 (Team "Winner Group D") Nothing (Team "Runner-up Group F") Nothing RoundOf16
+    , Match 43 (Team "Winner Group E") Nothing (Team "3rd Group A/B/C/D") Nothing RoundOf16
     ]
-
-
-runnerUpGroupA =
-    Team "Runner-up Group A"
-
-
-runnerUpGroupB =
-    Team "Runner-up Group B"
 
 
 groups : List GroupRow
@@ -364,8 +365,8 @@ filterByGroup groupName groupRows =
     List.filter (\gr -> gr.group == groupName) groupRows
 
 
-getGroup : Group -> List GroupRow -> List GroupRow
-getGroup groupName groupRows =
+getGroupRows : Group -> List GroupRow -> List GroupRow
+getGroupRows groupName groupRows =
     groupRows
         |> filterByGroup groupName
         |> List.sortBy .score
@@ -374,18 +375,17 @@ getGroup groupName groupRows =
 
 playedAllGames : GroupRow -> Bool
 playedAllGames gr =
-    gr.pld == 4
+    gr.pld == 3
 
 
 getTeamPlaying : Team -> Group -> Int -> List GroupRow -> Team
-getTeamPlaying placeHolderTeam groupName pos groupRows =
+getTeamPlaying placeHolderTeam group pos allGroupRows =
     let
-        group =
-            groupRows
-                |> getGroup groupName
+        groupRows =
+            getGroupRows group allGroupRows
     in
-    if List.all playedAllGames group then
-        maybeOrDefaultTeam placeHolderTeam (Array.get 2 (Array.fromList group))
+    if List.all playedAllGames groupRows then
+        maybeOrDefaultTeam placeHolderTeam (Array.get (pos - 1) (Array.fromList groupRows))
 
     else
         placeHolderTeam

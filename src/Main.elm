@@ -2,6 +2,7 @@ module Main exposing (..)
 
 {-| -}
 
+import Array
 import Browser
 import Element exposing (..)
 import Element.Background as Background
@@ -9,9 +10,10 @@ import Element.Border as Border
 import Element.Font as Font
 import Element.Input exposing (button)
 import Element.Region as Region
-import Euro2020 exposing (Group(..), GroupRow, Match, Team, getGroup, groups, matches)
+import Euro2020 exposing (Group(..), GroupRow, Match, Team, filterByGroup, getGroupRows, getTeamPlaying, groups, matches, playOffMatches)
 import Html exposing (Html)
 import Html.Attributes
+import Set
 
 
 blue =
@@ -48,7 +50,6 @@ main =
 
 type Msg
     = UpdateScore Int HomeOrAway String
-    | ClickedGroupButton
 
 
 update : Msg -> Model -> Model
@@ -56,8 +57,8 @@ update msg model =
     case msg of
         UpdateScore matchId homeOrAway score ->
             let
-                updateMatch : Match -> Match
-                updateMatch m =
+                updateScore : Match -> Match
+                updateScore m =
                     if m.id == matchId then
                         if homeOrAway == Home then
                             { m | homeScore = String.toInt score }
@@ -68,20 +69,79 @@ update msg model =
                     else
                         m
 
-                newMatches =
-                    List.map updateMatch model.matches
-            in
-            { model
-                | matches = newMatches
-                , groups =
-                    newMatches
+                newMatchesScores =
+                    List.map updateScore model.matches
+
+                newGroupRows =
+                    newMatchesScores
                         |> List.foldl updateGroup groups
                         |> List.sortBy .score
                         |> List.reverse
-            }
 
-        ClickedGroupButton ->
-            { model | selectedGroup = "groupB" }
+                thirdPlaces =
+                    get3rdTeamTable newGroupRows
+
+                updateTeams : List GroupRow -> Match -> Match
+                updateTeams groupRows m =
+                    case m.id of
+                        37 ->
+                            { m
+                                | homeTeam = getTeamPlaying (Team "Winner Group A") GroupA 1 groupRows
+                                , awayTeam = getTeamPlaying (Team "Runner-up Group C") GroupC 2 groupRows
+                            }
+
+                        38 ->
+                            { m
+                                | homeTeam = getTeamPlaying (Team "Runner-up Group A") GroupA 2 groupRows
+                                , awayTeam = getTeamPlaying (Team "Runner-up Group B") GroupB 2 groupRows
+                            }
+
+                        39 ->
+                            { m
+                                | homeTeam = getTeamPlaying (Team "Winner Group B") GroupB 1 groupRows
+                                , awayTeam = get3rdTeam (Team "3rd Group A/D/E/F") B1 thirdPlaces
+                            }
+
+                        40 ->
+                            { m
+                                | homeTeam = getTeamPlaying (Team "Winner Group C") GroupC 1 groupRows
+                                , awayTeam = get3rdTeam (Team "3rd Group D/E/F") C1 thirdPlaces
+                            }
+
+                        41 ->
+                            { m
+                                | homeTeam = getTeamPlaying (Team "Winner Group F") GroupF 1 groupRows
+                                , awayTeam = get3rdTeam (Team "3rd Group A/B/C") F1 thirdPlaces
+                            }
+
+                        42 ->
+                            { m
+                                | homeTeam = getTeamPlaying (Team "Runner-up Group D") GroupD 2 groupRows
+                                , awayTeam = getTeamPlaying (Team "Runner-up Group E") GroupE 2 groupRows
+                            }
+
+                        43 ->
+                            { m
+                                | homeTeam = getTeamPlaying (Team "Winner Group E") GroupE 1 groupRows
+                                , awayTeam = get3rdTeam (Team "3rd Group A/B/C/D") E1 thirdPlaces
+                            }
+
+                        44 ->
+                            { m
+                                | homeTeam = getTeamPlaying (Team "Winner Group D") GroupD 1 groupRows
+                                , awayTeam = getTeamPlaying (Team "Runner-up Group F") GroupF 2 groupRows
+                            }
+
+                        _ ->
+                            m
+
+                newPlayOffMatches =
+                    List.map (updateTeams newGroupRows) newMatchesScores
+            in
+            { model
+                | matches = newPlayOffMatches
+                , groups = newGroupRows
+            }
 
 
 getScore : Int -> Int -> Int -> Int -> Int
@@ -163,6 +223,340 @@ updateGroup match group =
     List.map (updateGroupRow match) group
 
 
+get3rdPlaceTeam : List GroupRow -> GroupRow
+get3rdPlaceTeam groupRows =
+    let
+        groupRowsArray =
+            Array.fromList groupRows
+
+        thirdPlace =
+            Array.get 2 groupRowsArray
+    in
+    case thirdPlace of
+        Just gr ->
+            gr
+
+        Nothing ->
+            GroupRow (Team "Turkey") 0 0 0 0 0 0 0 0 4 GroupA
+
+
+get3rdTeamTable : List GroupRow -> List GroupRow
+get3rdTeamTable groupRows =
+    let
+        thirdPlaceA =
+            groupRows
+                |> getGroupRows GroupA
+                |> get3rdPlaceTeam
+
+        thirdPlaceB =
+            groupRows
+                |> getGroupRows GroupB
+                |> get3rdPlaceTeam
+
+        thirdPlaceC =
+            groupRows
+                |> getGroupRows GroupC
+                |> get3rdPlaceTeam
+
+        thirdPlaceD =
+            groupRows
+                |> getGroupRows GroupD
+                |> get3rdPlaceTeam
+
+        thirdPlaceE =
+            groupRows
+                |> getGroupRows GroupE
+                |> get3rdPlaceTeam
+
+        thirdPlaceF =
+            groupRows
+                |> getGroupRows GroupF
+                |> get3rdPlaceTeam
+    in
+    [ thirdPlaceA, thirdPlaceB, thirdPlaceC, thirdPlaceD, thirdPlaceE, thirdPlaceF ]
+        |> List.sortBy .score
+        |> List.reverse
+
+
+get3rdTeam : Team -> TeamPosition -> List GroupRow -> Team
+get3rdTeam defaultTeam tp groupRows =
+    let
+        topFour =
+            List.take 4 groupRows
+    in
+    if List.all (\gr -> gr.pld == 3) groupRows then
+        case tp of
+            B1 ->
+                applyCrazyUefaLogic topFour B1
+
+            C1 ->
+                applyCrazyUefaLogic topFour C1
+
+            E1 ->
+                applyCrazyUefaLogic topFour E1
+
+            F1 ->
+                applyCrazyUefaLogic topFour F1
+
+    else
+        defaultTeam
+
+
+
+--subset : List comparable -> List comparable -> Bool
+--subset group1 group2 =
+--    let
+--        set1 =
+--            Set.fromList group1
+--        set2 =
+--            Set.fromList group2
+--    in
+--    if Set.size set1 <= Set.size set2 then
+--        Set.intersect set1 set2 == set2
+--    else
+--        Set.intersect set1 set2 == set1
+
+
+groupToString : Group -> String
+groupToString g =
+    case g of
+        GroupA ->
+            "A"
+
+        GroupB ->
+            "B"
+
+        GroupC ->
+            "C"
+
+        GroupD ->
+            "D"
+
+        GroupE ->
+            "E"
+
+        GroupF ->
+            "F"
+
+        _ ->
+            ""
+
+
+teamFromMaybeGroupRow : Maybe GroupRow -> Team
+teamFromMaybeGroupRow gr =
+    case gr of
+        Just row ->
+            row.team
+
+        Nothing ->
+            Team "Wow14"
+
+
+getRoundOf16Team : Group -> List GroupRow -> Team
+getRoundOf16Team g top4Table =
+    top4Table
+        |> filterByGroup g
+        |> Array.fromList
+        |> Array.get 0
+        |> teamFromMaybeGroupRow
+
+
+applyCrazyUefaLogic : List GroupRow -> TeamPosition -> Team
+applyCrazyUefaLogic top4groupRows tp =
+    let
+        sortedStringGroups =
+            top4groupRows
+                |> List.map .group
+                |> List.map groupToString
+                |> List.sort
+                |> String.concat
+    in
+    case tp of
+        B1 ->
+            if sortedStringGroups == "ABCD" then
+                getRoundOf16Team GroupA top4groupRows
+
+            else if sortedStringGroups == "ABCE" then
+                getRoundOf16Team GroupA top4groupRows
+
+            else if sortedStringGroups == "ABCF" then
+                getRoundOf16Team GroupA top4groupRows
+
+            else if sortedStringGroups == "ABDE" then
+                getRoundOf16Team GroupD top4groupRows
+
+            else if sortedStringGroups == "ABDF" then
+                getRoundOf16Team GroupD top4groupRows
+
+            else if sortedStringGroups == "ABEF" then
+                getRoundOf16Team GroupE top4groupRows
+
+            else if sortedStringGroups == "ACDE" then
+                getRoundOf16Team GroupE top4groupRows
+
+            else if sortedStringGroups == "ACDF" then
+                getRoundOf16Team GroupF top4groupRows
+
+            else if sortedStringGroups == "ACEF" then
+                getRoundOf16Team GroupE top4groupRows
+
+            else if sortedStringGroups == "ADEF" then
+                getRoundOf16Team GroupE top4groupRows
+
+            else if sortedStringGroups == "BCDE" then
+                getRoundOf16Team GroupE top4groupRows
+
+            else if sortedStringGroups == "BCDF" then
+                getRoundOf16Team GroupF top4groupRows
+
+            else if sortedStringGroups == "BCEF" then
+                getRoundOf16Team GroupF top4groupRows
+
+            else if sortedStringGroups == "BDEF" then
+                getRoundOf16Team GroupF top4groupRows
+
+            else
+                getRoundOf16Team GroupF top4groupRows
+
+        C1 ->
+            if sortedStringGroups == "ABCD" then
+                getRoundOf16Team GroupD top4groupRows
+
+            else if sortedStringGroups == "ABCE" then
+                getRoundOf16Team GroupE top4groupRows
+
+            else if sortedStringGroups == "ABCF" then
+                getRoundOf16Team GroupF top4groupRows
+
+            else if sortedStringGroups == "ABDE" then
+                getRoundOf16Team GroupE top4groupRows
+
+            else if sortedStringGroups == "ABDF" then
+                getRoundOf16Team GroupF top4groupRows
+
+            else if sortedStringGroups == "ABEF" then
+                getRoundOf16Team GroupF top4groupRows
+
+            else if sortedStringGroups == "ACDE" then
+                getRoundOf16Team GroupD top4groupRows
+
+            else if sortedStringGroups == "ACDF" then
+                getRoundOf16Team GroupD top4groupRows
+
+            else if sortedStringGroups == "ACEF" then
+                getRoundOf16Team GroupF top4groupRows
+
+            else if sortedStringGroups == "ADEF" then
+                getRoundOf16Team GroupF top4groupRows
+
+            else if sortedStringGroups == "BCDE" then
+                getRoundOf16Team GroupD top4groupRows
+
+            else if sortedStringGroups == "BCDF" then
+                getRoundOf16Team GroupD top4groupRows
+
+            else if sortedStringGroups == "BCEF" then
+                getRoundOf16Team GroupE top4groupRows
+
+            else if sortedStringGroups == "BDEF" then
+                getRoundOf16Team GroupE top4groupRows
+
+            else
+                getRoundOf16Team GroupE top4groupRows
+
+        E1 ->
+            if sortedStringGroups == "ABCD" then
+                getRoundOf16Team GroupB top4groupRows
+
+            else if sortedStringGroups == "ABCE" then
+                getRoundOf16Team GroupB top4groupRows
+
+            else if sortedStringGroups == "ABCF" then
+                getRoundOf16Team GroupB top4groupRows
+
+            else if sortedStringGroups == "ABDE" then
+                getRoundOf16Team GroupA top4groupRows
+
+            else if sortedStringGroups == "ABDF" then
+                getRoundOf16Team GroupA top4groupRows
+
+            else if sortedStringGroups == "ABEF" then
+                getRoundOf16Team GroupB top4groupRows
+
+            else if sortedStringGroups == "ACDE" then
+                getRoundOf16Team GroupC top4groupRows
+
+            else if sortedStringGroups == "ACDF" then
+                getRoundOf16Team GroupC top4groupRows
+
+            else if sortedStringGroups == "ACEF" then
+                getRoundOf16Team GroupC top4groupRows
+
+            else if sortedStringGroups == "ADEF" then
+                getRoundOf16Team GroupD top4groupRows
+
+            else if sortedStringGroups == "BCDE" then
+                getRoundOf16Team GroupB top4groupRows
+
+            else if sortedStringGroups == "BCDF" then
+                getRoundOf16Team GroupC top4groupRows
+
+            else if sortedStringGroups == "BCEF" then
+                getRoundOf16Team GroupC top4groupRows
+
+            else if sortedStringGroups == "BDEF" then
+                getRoundOf16Team GroupD top4groupRows
+
+            else
+                getRoundOf16Team GroupD top4groupRows
+
+        F1 ->
+            if sortedStringGroups == "ABCD" then
+                getRoundOf16Team GroupC top4groupRows
+
+            else if sortedStringGroups == "ABCE" then
+                getRoundOf16Team GroupC top4groupRows
+
+            else if sortedStringGroups == "ABCF" then
+                getRoundOf16Team GroupC top4groupRows
+
+            else if sortedStringGroups == "ABDE" then
+                getRoundOf16Team GroupB top4groupRows
+
+            else if sortedStringGroups == "ABDF" then
+                getRoundOf16Team GroupB top4groupRows
+
+            else if sortedStringGroups == "ABEF" then
+                getRoundOf16Team GroupA top4groupRows
+
+            else if sortedStringGroups == "ACDE" then
+                getRoundOf16Team GroupA top4groupRows
+
+            else if sortedStringGroups == "ACDF" then
+                getRoundOf16Team GroupA top4groupRows
+
+            else if sortedStringGroups == "ACEF" then
+                getRoundOf16Team GroupA top4groupRows
+
+            else if sortedStringGroups == "ADEF" then
+                getRoundOf16Team GroupA top4groupRows
+
+            else if sortedStringGroups == "BCDE" then
+                getRoundOf16Team GroupC top4groupRows
+
+            else if sortedStringGroups == "BCDF" then
+                getRoundOf16Team GroupB top4groupRows
+
+            else if sortedStringGroups == "BCEF" then
+                getRoundOf16Team GroupB top4groupRows
+
+            else if sortedStringGroups == "BDEF" then
+                getRoundOf16Team GroupB top4groupRows
+
+            else
+                getRoundOf16Team GroupC top4groupRows
+
+
 
 -- MODEL
 
@@ -170,7 +564,6 @@ updateGroup match group =
 type alias Model =
     { matches : List Match
     , groups : List GroupRow
-    , selectedGroup : String
     }
 
 
@@ -182,8 +575,14 @@ type HomeOrAway
 init =
     { matches = matches
     , groups = groups
-    , selectedGroup = "groupA"
     }
+
+
+type TeamPosition
+    = B1
+    | C1
+    | E1
+    | F1
 
 
 
@@ -220,8 +619,8 @@ view model =
                 , viewGroupTitle "Group F"
                 , viewGroup model.groups GroupF
                 , viewMatches model.matches GroupF
-
-                --, viewMatches model.matches "roundOf16"
+                , viewGroupTitle "Round Of 16"
+                , viewMatches model.matches RoundOf16
                 ]
             ]
 
@@ -245,14 +644,14 @@ myNav =
         [ Region.navigation
         , alignRight
         ]
-        [ myButton ]
+        []
 
 
 viewMatch : Match -> Element Msg
 viewMatch match =
     column
         [ Border.width 2
-        , width (px 250)
+        , width (px 300)
         ]
         [ row
             [ width fill ]
@@ -278,7 +677,7 @@ viewMatches matches group =
 viewGroupTitle : String -> Element Msg
 viewGroupTitle groupName =
     row
-        [ paddingEach edges
+        [ paddingEach { edges | bottom = 16 }
         , Background.color grey
         , width fill
         ]
@@ -289,7 +688,7 @@ viewGroup : List GroupRow -> Group -> Element Msg
 viewGroup groups groupName =
     let
         group =
-            getGroup groupName groups
+            getGroupRows groupName groups
     in
     Element.indexedTable
         [ paddingEach { edges | bottom = 16 }
@@ -380,26 +779,4 @@ viewMatchInput matchId homeOrAway score =
                     String.fromInt value
         , placeholder = Nothing
         , label = Element.Input.labelHidden ""
-        }
-
-
-myButton =
-    button
-        [ Background.color red
-        , Element.focused
-            [ Background.color blue ]
-        ]
-        { onPress = Just ClickedGroupButton
-        , label = text "groupB"
-        }
-
-
-myButton2 =
-    button
-        [ Background.color red
-        , Element.focused
-            [ Background.color blue ]
-        ]
-        { onPress = Just ClickedGroupButton
-        , label = text "groupC"
         }
