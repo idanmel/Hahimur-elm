@@ -25,7 +25,7 @@ red =
 
 
 grey =
-    Element.rgb255 211 211 211
+    Element.rgb255 242 242 242
 
 
 edges =
@@ -592,15 +592,18 @@ type TeamPosition
 view : Model -> Html Msg
 view model =
     Element.layout
-        [ Background.color (rgba 1 1 1 1)
+        [ Background.color grey
         , Font.color (rgba 0 0 0 1)
-        , inFront <| header
+
+        --, inFront <| header
         ]
     <|
-        column
-            [ width fill ]
-            [ header
-            , column [ width fill, centerX ]
+        row
+            [ width (fillPortion 1)
+            ]
+            --[ header
+            [ column [ width (fillPortion 1) ] []
+            , column [ width (fillPortion 2), centerX ]
                 [ viewGroupTitle "Group A"
                 , viewGroup model.groups GroupA
                 , viewMatches model.matches GroupA
@@ -620,8 +623,9 @@ view model =
                 , viewGroup model.groups GroupF
                 , viewMatches model.matches GroupF
                 , viewGroupTitle "Round Of 16"
-                , viewMatches model.matches RoundOf16
+                , viewPlayoffMatches model.matches RoundOf16
                 ]
+            , column [ width (fillPortion 1) ] []
             ]
 
 
@@ -652,6 +656,7 @@ viewMatch match =
     column
         [ Border.width 2
         , width (px 300)
+        , Background.color (rgba 1 1 1 1)
         ]
         [ row
             [ width fill ]
@@ -668,9 +673,51 @@ viewMatch match =
 
 viewMatches : List Match -> Group -> Element Msg
 viewMatches matches group =
+    let
+        groupMatches =
+            List.filter (\m -> m.group == group) matches
+
+        firstDay =
+            List.take 2 groupMatches
+
+        secondDay =
+            List.take 2 (List.drop 2 groupMatches)
+
+        thirdDay =
+            List.drop 4 groupMatches
+    in
+    column [ centerX ]
+        [ row [ spacing 20, padding 24 ] (List.map viewMatch firstDay)
+        , row [ spacing 20, padding 24 ] (List.map viewMatch secondDay)
+        , row [ spacing 20, padding 24 ] (List.map viewMatch thirdDay)
+        ]
+
+
+viewSingleMatch : Match -> Element Msg
+viewSingleMatch match =
+    column
+        [ Border.width 2
+        , width (px 300)
+        , Background.color (rgba 1 1 1 1)
+        ]
+        [ row
+            [ width fill ]
+            [ el [ alignLeft, paddingEach { edges | left = 10, top = 0 }, centerY ] (text match.homeTeam.name)
+            , el [ alignRight ] (viewMatchInput match.id Home match.homeScore)
+            ]
+        , row
+            [ width fill ]
+            [ el [ alignLeft, paddingEach { edges | left = 10, top = 0 } ] (text match.awayTeam.name)
+            , el [ alignRight ] (viewMatchInput match.id Away match.awayScore)
+            ]
+        ]
+
+
+viewPlayoffMatches : List Match -> Group -> Element Msg
+viewPlayoffMatches matches group =
     matches
         |> List.filter (\m -> m.group == group)
-        |> List.map viewMatch
+        |> List.map viewSingleMatch
         |> wrappedRow [ width fill, spacing 20, padding 24 ]
 
 
@@ -681,7 +728,10 @@ viewGroupTitle groupName =
         , Background.color grey
         , width fill
         ]
-        [ text groupName ]
+        [ column
+            [ width fill ]
+            [ text groupName ]
+        ]
 
 
 viewGroup : List GroupRow -> Group -> Element Msg
@@ -693,7 +743,8 @@ viewGroup groups groupName =
     Element.indexedTable
         [ paddingEach { edges | bottom = 16 }
         , spacing 8
-        , Background.color grey
+        , width (fill |> maximum 800)
+        , centerX
         ]
         { data = group
         , columns =
@@ -766,6 +817,7 @@ viewMatchInput matchId homeOrAway score =
     Element.Input.text
         [ width (px 80)
         , Font.color (rgba 0 0 0 1)
+        , Background.color (rgba 1 1 1 0.8)
         , Element.htmlAttribute (Html.Attributes.type_ "number")
         , paddingEach { edges | top = 12, bottom = 12, left = 12 }
         ]
