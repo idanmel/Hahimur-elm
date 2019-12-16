@@ -634,10 +634,10 @@ header =
     row
         [ width fill
         , Background.color (rgb255 9 62 132)
-        , padding 18
+        , paddingEach { edges | left = 4, bottom = 24, top = 24 }
         , Font.color (rgb 1 1 1)
         ]
-        [ el [ width (fillPortion 1) ] (text "")
+        [ el [ width (fillPortion 1), centerY ] (text "")
         , el [ width (fillPortion 8) ] (text "Hahimur!")
         , myNav
         ]
