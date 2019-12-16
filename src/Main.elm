@@ -10,10 +10,11 @@ import Element.Border as Border
 import Element.Font as Font
 import Element.Input exposing (button)
 import Element.Region as Region
-import Euro2020 exposing (Group(..), GroupRow, Match, Team, filterByGroup, getGroupRows, getTeamPlaying, groups, matches, playOffMatches)
+import Euro2020 exposing (Group(..), GroupRow, Match, Team, defaultFlag, filterByGroup, getGroupRows, getTeamPlaying, groups, matches, playOffMatches)
 import Html exposing (Html)
 import Html.Attributes
 import Set
+import Tuple
 
 
 blue =
@@ -86,50 +87,50 @@ update msg model =
                     case m.id of
                         37 ->
                             { m
-                                | homeTeam = getTeamPlaying (Team "Winner Group A") GroupA 1 groupRows
-                                , awayTeam = getTeamPlaying (Team "Runner-up Group C") GroupC 2 groupRows
+                                | homeTeam = getTeamPlaying (Team "Winner Group A" defaultFlag) GroupA 1 groupRows
+                                , awayTeam = getTeamPlaying (Team "Runner-up Group C" defaultFlag) GroupC 2 groupRows
                             }
 
                         38 ->
                             { m
-                                | homeTeam = getTeamPlaying (Team "Runner-up Group A") GroupA 2 groupRows
-                                , awayTeam = getTeamPlaying (Team "Runner-up Group B") GroupB 2 groupRows
+                                | homeTeam = getTeamPlaying (Team "Runner-up Group A" defaultFlag) GroupA 2 groupRows
+                                , awayTeam = getTeamPlaying (Team "Runner-up Group B" defaultFlag) GroupB 2 groupRows
                             }
 
                         39 ->
                             { m
-                                | homeTeam = getTeamPlaying (Team "Winner Group B") GroupB 1 groupRows
-                                , awayTeam = get3rdTeam (Team "3rd Group A/D/E/F") B1 thirdPlaces
+                                | homeTeam = getTeamPlaying (Team "Winner Group B" defaultFlag) GroupB 1 groupRows
+                                , awayTeam = get3rdTeam (Team "3rd Group A/D/E/F" defaultFlag) B1 thirdPlaces
                             }
 
                         40 ->
                             { m
-                                | homeTeam = getTeamPlaying (Team "Winner Group C") GroupC 1 groupRows
-                                , awayTeam = get3rdTeam (Team "3rd Group D/E/F") C1 thirdPlaces
+                                | homeTeam = getTeamPlaying (Team "Winner Group C" defaultFlag) GroupC 1 groupRows
+                                , awayTeam = get3rdTeam (Team "3rd Group D/E/F" defaultFlag) C1 thirdPlaces
                             }
 
                         41 ->
                             { m
-                                | homeTeam = getTeamPlaying (Team "Winner Group F") GroupF 1 groupRows
-                                , awayTeam = get3rdTeam (Team "3rd Group A/B/C") F1 thirdPlaces
+                                | homeTeam = getTeamPlaying (Team "Winner Group F" defaultFlag) GroupF 1 groupRows
+                                , awayTeam = get3rdTeam (Team "3rd Group A/B/C" defaultFlag) F1 thirdPlaces
                             }
 
                         42 ->
                             { m
-                                | homeTeam = getTeamPlaying (Team "Runner-up Group D") GroupD 2 groupRows
-                                , awayTeam = getTeamPlaying (Team "Runner-up Group E") GroupE 2 groupRows
+                                | homeTeam = getTeamPlaying (Team "Runner-up Group D" defaultFlag) GroupD 2 groupRows
+                                , awayTeam = getTeamPlaying (Team "Runner-up Group E" defaultFlag) GroupE 2 groupRows
                             }
 
                         43 ->
                             { m
-                                | homeTeam = getTeamPlaying (Team "Winner Group E") GroupE 1 groupRows
-                                , awayTeam = get3rdTeam (Team "3rd Group A/B/C/D") E1 thirdPlaces
+                                | homeTeam = getTeamPlaying (Team "Winner Group E" defaultFlag) GroupE 1 groupRows
+                                , awayTeam = get3rdTeam (Team "3rd Group A/B/C/D" defaultFlag) E1 thirdPlaces
                             }
 
                         44 ->
                             { m
-                                | homeTeam = getTeamPlaying (Team "Winner Group D") GroupD 1 groupRows
-                                , awayTeam = getTeamPlaying (Team "Runner-up Group F") GroupF 2 groupRows
+                                | homeTeam = getTeamPlaying (Team "Winner Group D" defaultFlag) GroupD 1 groupRows
+                                , awayTeam = getTeamPlaying (Team "Runner-up Group F" defaultFlag) GroupF 2 groupRows
                             }
 
                         _ ->
@@ -237,7 +238,7 @@ get3rdPlaceTeam groupRows =
             gr
 
         Nothing ->
-            GroupRow (Team "Turkey") 0 0 0 0 0 0 0 0 4 GroupA
+            GroupRow (Team "Turkey" "") 0 0 0 0 0 0 0 0 4 GroupA
 
 
 get3rdTeamTable : List GroupRow -> List GroupRow
@@ -349,7 +350,7 @@ teamFromMaybeGroupRow gr =
             row.team
 
         Nothing ->
-            Team "Wow14"
+            Team "Wow14" ""
 
 
 getRoundOf16Team : Group -> List GroupRow -> Team
@@ -592,19 +593,18 @@ type TeamPosition
 view : Model -> Html Msg
 view model =
     Element.layout
-        [ Background.color grey
-        , Font.color (rgba 0 0 0 1)
-
-        --, inFront <| header
+        [ Font.color (rgba 0 0 0 1)
+        , Background.color grey
+        , inFront <| header
         ]
     <|
         row
             [ width (fillPortion 1)
             ]
-            --[ header
             [ column [ width (fillPortion 1) ] []
             , column [ width (fillPortion 2), centerX ]
-                [ viewGroupTitle "Group A"
+                [ row [ padding 40 ] []
+                , viewGroupTitle "Group A"
                 , viewGroup model.groups GroupA
                 , viewMatches model.matches GroupA
                 , viewGroupTitle "Group B"
@@ -633,12 +633,13 @@ header : Element Msg
 header =
     row
         [ width fill
-        , Background.color red
+        , Background.color (rgb255 9 62 132)
         , padding 18
+        , Font.color (rgb 1 1 1)
         ]
-        [ el [] (text "Hahimur!")
-
-        --, myNav
+        [ el [ width (fillPortion 1) ] (text "")
+        , el [ width (fillPortion 8) ] (text "Hahimur!")
+        , myNav
         ]
 
 
@@ -647,28 +648,36 @@ myNav =
     row
         [ Region.navigation
         , alignRight
+        , width (fillPortion 1)
         ]
-        []
+        [ text "navbar " ]
 
 
 viewMatch : Match -> Element Msg
 viewMatch match =
     column
         [ Border.width 2
-        , width (px 300)
+        , width (px 350)
         , Background.color (rgba 1 1 1 1)
         ]
         [ row
             [ width fill ]
-            [ el [ alignLeft, paddingEach { edges | left = 10, top = 0 }, centerY ] (text match.homeTeam.name)
+            [ image [ alignLeft, paddingEach { edges | left = 10, top = 0 }, centerY, width (fillPortion 1) ] { src = match.homeTeam.flag, description = "" }
+            , el [ alignLeft, paddingEach { edges | left = 10, top = 0 }, centerY, width (fillPortion 6) ] (text match.homeTeam.name)
             , el [ alignRight ] (viewMatchInput match.id Home match.homeScore)
             ]
         , row
             [ width fill ]
-            [ el [ alignLeft, paddingEach { edges | left = 10, top = 0 } ] (text match.awayTeam.name)
+            [ image [ alignLeft, paddingEach { edges | left = 10, top = 0 }, centerY, width (fillPortion 1) ] { src = match.awayTeam.flag, description = "" }
+            , el [ alignLeft, paddingEach { edges | left = 10, top = 0 }, width (fillPortion 6) ] (text match.awayTeam.name)
             , el [ alignRight ] (viewMatchInput match.id Away match.awayScore)
             ]
         ]
+
+
+viewTwoMatches : List Match -> Element Msg
+viewTwoMatches matches =
+    row [ spacing 20, padding 24 ] (List.map viewMatch matches)
 
 
 viewMatches : List Match -> Group -> Element Msg
@@ -687,45 +696,46 @@ viewMatches matches group =
             List.drop 4 groupMatches
     in
     column [ centerX ]
-        [ row [ spacing 20, padding 24 ] (List.map viewMatch firstDay)
-        , row [ spacing 20, padding 24 ] (List.map viewMatch secondDay)
-        , row [ spacing 20, padding 24 ] (List.map viewMatch thirdDay)
-        ]
-
-
-viewSingleMatch : Match -> Element Msg
-viewSingleMatch match =
-    column
-        [ Border.width 2
-        , width (px 300)
-        , Background.color (rgba 1 1 1 1)
-        ]
-        [ row
-            [ width fill ]
-            [ el [ alignLeft, paddingEach { edges | left = 10, top = 0 }, centerY ] (text match.homeTeam.name)
-            , el [ alignRight ] (viewMatchInput match.id Home match.homeScore)
-            ]
-        , row
-            [ width fill ]
-            [ el [ alignLeft, paddingEach { edges | left = 10, top = 0 } ] (text match.awayTeam.name)
-            , el [ alignRight ] (viewMatchInput match.id Away match.awayScore)
-            ]
+        [ viewTwoMatches firstDay
+        , viewTwoMatches secondDay
+        , viewTwoMatches thirdDay
         ]
 
 
 viewPlayoffMatches : List Match -> Group -> Element Msg
 viewPlayoffMatches matches group =
-    matches
-        |> List.filter (\m -> m.group == group)
-        |> List.map viewSingleMatch
-        |> wrappedRow [ width fill, spacing 20, padding 24 ]
+    let
+        playOffMatches =
+            List.filter (\m -> m.group == group) matches
+
+        firstCouple =
+            List.take 2 playOffMatches
+
+        secondCouple =
+            playOffMatches
+                |> List.drop 2
+                |> List.take 2
+
+        thirdCouple =
+            playOffMatches
+                |> List.drop 4
+                |> List.take 2
+
+        fourthCouple =
+            List.drop 6 playOffMatches
+    in
+    column [ centerX ]
+        [ viewTwoMatches firstCouple
+        , viewTwoMatches secondCouple
+        , viewTwoMatches thirdCouple
+        , viewTwoMatches fourthCouple
+        ]
 
 
 viewGroupTitle : String -> Element Msg
 viewGroupTitle groupName =
     row
         [ paddingEach { edges | bottom = 16 }
-        , Background.color grey
         , width fill
         ]
         [ column

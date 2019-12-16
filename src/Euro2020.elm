@@ -1,4 +1,4 @@
-module Euro2020 exposing (Group(..), GroupRow, Match, Team, filterByGroup, getGroupRows, getTeamPlaying, groups, matches, playOffMatches)
+module Euro2020 exposing (Group(..), GroupRow, Match, Team, defaultFlag, filterByGroup, getGroupRows, getTeamPlaying, groups, matches, playOffMatches)
 
 import Array
 
@@ -30,6 +30,7 @@ type alias Match =
 
 type alias Team =
     { name : String
+    , flag : String
     }
 
 
@@ -48,104 +49,108 @@ type alias GroupRow =
     }
 
 
+defaultFlag =
+    "https://upload.wikimedia.org/wikipedia/en/9/96/UEFA_Euro_2020_Logo.svg"
+
+
 
 -- Teams
 
 
 turkey =
-    Team "Turkey"
+    Team "Turkey" "https://www.countryflags.io/tr/flat/64.png"
 
 
 italy =
-    Team "Italy"
+    Team "Italy" "https://www.countryflags.io/it/flat/64.png"
 
 
 wales =
-    Team "Wales"
+    Team "Wales" "https://upload.wikimedia.org/wikipedia/commons/a/a9/Flag_of_Wales_%281959%E2%80%93present%29.svg"
 
 
 switzerland =
-    Team "Switzerland"
+    Team "Switzerland" "https://www.countryflags.io/ch/flat/64.png"
 
 
 belgium =
-    Team "Belgium"
+    Team "Belgium" "https://www.countryflags.io/be/flat/64.png"
 
 
 russia =
-    Team "Russia"
+    Team "Russia" "https://www.countryflags.io/ru/flat/64.png"
 
 
 finland =
-    Team "Finland"
+    Team "Finland" "https://www.countryflags.io/fi/flat/64.png"
 
 
 denmark =
-    Team "Denmark"
+    Team "Denmark" "https://www.countryflags.io/dk/flat/64.png"
 
 
 netherlands =
-    Team "Netherlands"
+    Team "Netherlands" "https://www.countryflags.io/nl/flat/64.png"
 
 
 ukraine =
-    Team "Ukraine"
+    Team "Ukraine" "https://www.countryflags.io/ua/flat/64.png"
 
 
 austria =
-    Team "Austria"
+    Team "Austria" "https://www.countryflags.io/at/flat/64.png"
 
 
 romania =
-    Team "Romania"
+    Team "Romania" "https://www.countryflags.io/ro/flat/64.png"
 
 
 england =
-    Team "England"
+    Team "England" "https://www.countryflags.io/gb/flat/64.png"
 
 
 crotia =
-    Team "Croatia"
+    Team "Croatia" "https://www.countryflags.io/hr/flat/64.png"
 
 
 ireland =
-    Team "Ireland"
+    Team "Ireland" "https://www.countryflags.io/ie/flat/64.png"
 
 
 czech =
-    Team "Czech Republic"
+    Team "Czech Republic" "https://www.countryflags.io/cz/flat/64.png"
 
 
 spain =
-    Team "Spain"
+    Team "Spain" "https://www.countryflags.io/es/flat/64.png"
 
 
 sweden =
-    Team "Sweden"
+    Team "Sweden" "https://www.countryflags.io/se/flat/64.png"
 
 
 poland =
-    Team "Poland"
+    Team "Poland" "https://www.countryflags.io/pl/flat/64.png"
 
 
 iceland =
-    Team "Iceland"
+    Team "Iceland" "https://www.countryflags.io/is/flat/64.png"
 
 
 serbia =
-    Team "Serbia"
+    Team "Serbia" "https://www.countryflags.io/rs/flat/64.png"
 
 
 portugal =
-    Team "Portugal"
+    Team "Portugal" "https://www.countryflags.io/pt/flat/64.png"
 
 
 france =
-    Team "France"
+    Team "France" "https://www.countryflags.io/fr/flat/64.png"
 
 
 germany =
-    Team "Germany"
+    Team "Germany" "https://www.countryflags.io/de/flat/64.png"
 
 
 
@@ -337,14 +342,14 @@ matchesGroupF =
 
 
 playOffMatches =
-    [ Match 38 (Team "Runner-up Group A") Nothing (Team "Runner-up Group B") Nothing RoundOf16 "16 June 2020" "18:00"
-    , Match 37 (Team "Winner Group A") Nothing (Team "Runner-up Group C") Nothing RoundOf16 "16 June 2020" "18:00"
-    , Match 40 (Team "Winner Group C") Nothing (Team "3rd Group D/E/F") Nothing RoundOf16 "16 June 2020" "18:00"
-    , Match 39 (Team "Winner Group B") Nothing (Team "3rd Group A/D/E/F") Nothing RoundOf16 "16 June 2020" "18:00"
-    , Match 42 (Team "Runner-up Group D") Nothing (Team "Runner-up Group E") Nothing RoundOf16 "16 June 2020" "18:00"
-    , Match 41 (Team "Winner Group F") Nothing (Team "3rd Group A/B/C") Nothing RoundOf16 "16 June 2020" "18:00"
-    , Match 44 (Team "Winner Group D") Nothing (Team "Runner-up Group F") Nothing RoundOf16 "16 June 2020" "18:00"
-    , Match 43 (Team "Winner Group E") Nothing (Team "3rd Group A/B/C/D") Nothing RoundOf16 "16 June 2020" "18:00"
+    [ Match 38 (Team "Runner-up Group A" defaultFlag) Nothing (Team "Runner-up Group B" defaultFlag) Nothing RoundOf16 "16 June 2020" "18:00"
+    , Match 37 (Team "Winner Group A" defaultFlag) Nothing (Team "Runner-up Group C" defaultFlag) Nothing RoundOf16 "16 June 2020" "18:00"
+    , Match 40 (Team "Winner Group C" defaultFlag) Nothing (Team "3rd Group D/E/F" defaultFlag) Nothing RoundOf16 "16 June 2020" "18:00"
+    , Match 39 (Team "Winner Group B" defaultFlag) Nothing (Team "3rd Group A/D/E/F" defaultFlag) Nothing RoundOf16 "16 June 2020" "18:00"
+    , Match 42 (Team "Runner-up Group D" defaultFlag) Nothing (Team "Runner-up Group E" defaultFlag) Nothing RoundOf16 "16 June 2020" "18:00"
+    , Match 41 (Team "Winner Group F" defaultFlag) Nothing (Team "3rd Group A/B/C" defaultFlag) Nothing RoundOf16 "16 June 2020" "18:00"
+    , Match 44 (Team "Winner Group D" defaultFlag) Nothing (Team "Runner-up Group F" defaultFlag) Nothing RoundOf16 "16 June 2020" "18:00"
+    , Match 43 (Team "Winner Group E" defaultFlag) Nothing (Team "3rd Group A/B/C/D" "") Nothing RoundOf16 "16 June 2020" "18:00"
     ]
 
 
