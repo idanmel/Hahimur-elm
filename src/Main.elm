@@ -10,7 +10,7 @@ import Element.Border as Border
 import Element.Font as Font
 import Element.Input exposing (button)
 import Element.Region as Region
-import Euro2020 exposing (Group(..), GroupRow, Match, Team, defaultFlag, filterByGroup, getGroupRows, getTeamPlaying, groups, matches, playOffMatches)
+import Euro2020 exposing (Group(..), GroupRow, Match, Team, defaultFlag, filterByGroup, getGroupRows, getTeamPlaying, groups, matches, playOffMatches, playedAllGames)
 import Html exposing (Html)
 import Html.Attributes
 import Set
@@ -18,7 +18,7 @@ import Tuple
 
 
 blue =
-    Element.rgb 0 0 0.4
+    rgb255 9 62 132
 
 
 red =
@@ -27,6 +27,14 @@ red =
 
 grey =
     Element.rgb255 242 242 242
+
+
+white =
+    rgb 1 1 1
+
+
+green =
+    rgb255 0 204 102
 
 
 edges =
@@ -50,13 +58,17 @@ main =
 
 
 type Msg
-    = UpdateScore Int HomeOrAway String
+    = UpdatedScore Int HomeOrAway String
+    | ClickedGroup Group
 
 
 update : Msg -> Model -> Model
 update msg model =
     case msg of
-        UpdateScore matchId homeOrAway score ->
+        ClickedGroup group ->
+            { model | selectedGroup = group }
+
+        UpdatedScore matchId homeOrAway score ->
             let
                 updateScore : Match -> Match
                 updateScore m =
@@ -100,19 +112,19 @@ update msg model =
                         39 ->
                             { m
                                 | homeTeam = getTeamPlaying (Team "Winner Group B" defaultFlag) GroupB 1 groupRows
-                                , awayTeam = get3rdTeam (Team "3rd Group A/D/E/F" defaultFlag) B1 thirdPlaces
+                                , awayTeam = get3rdTeam (Team "3rd Group A/D/E/F" defaultFlag) B1 thirdPlaces newGroupRows
                             }
 
                         40 ->
                             { m
                                 | homeTeam = getTeamPlaying (Team "Winner Group C" defaultFlag) GroupC 1 groupRows
-                                , awayTeam = get3rdTeam (Team "3rd Group D/E/F" defaultFlag) C1 thirdPlaces
+                                , awayTeam = get3rdTeam (Team "3rd Group D/E/F" defaultFlag) C1 thirdPlaces newGroupRows
                             }
 
                         41 ->
                             { m
                                 | homeTeam = getTeamPlaying (Team "Winner Group F" defaultFlag) GroupF 1 groupRows
-                                , awayTeam = get3rdTeam (Team "3rd Group A/B/C" defaultFlag) F1 thirdPlaces
+                                , awayTeam = get3rdTeam (Team "3rd Group A/B/C" defaultFlag) F1 thirdPlaces newGroupRows
                             }
 
                         42 ->
@@ -124,7 +136,7 @@ update msg model =
                         43 ->
                             { m
                                 | homeTeam = getTeamPlaying (Team "Winner Group E" defaultFlag) GroupE 1 groupRows
-                                , awayTeam = get3rdTeam (Team "3rd Group A/B/C/D" defaultFlag) E1 thirdPlaces
+                                , awayTeam = get3rdTeam (Team "3rd Group A/B/C/D" defaultFlag) E1 thirdPlaces newGroupRows
                             }
 
                         44 ->
@@ -279,13 +291,13 @@ get3rdTeamTable groupRows =
         |> List.reverse
 
 
-get3rdTeam : Team -> TeamPosition -> List GroupRow -> Team
-get3rdTeam defaultTeam tp groupRows =
+get3rdTeam : Team -> TeamPosition -> List GroupRow -> List GroupRow -> Team
+get3rdTeam defaultTeam tp groupRows allGroupRows =
     let
         topFour =
             List.take 4 groupRows
     in
-    if List.all (\gr -> gr.pld == 3) groupRows then
+    if List.all playedAllGames allGroupRows then
         case tp of
             B1 ->
                 applyCrazyUefaLogic topFour B1
@@ -303,44 +315,38 @@ get3rdTeam defaultTeam tp groupRows =
         defaultTeam
 
 
-
---subset : List comparable -> List comparable -> Bool
---subset group1 group2 =
---    let
---        set1 =
---            Set.fromList group1
---        set2 =
---            Set.fromList group2
---    in
---    if Set.size set1 <= Set.size set2 then
---        Set.intersect set1 set2 == set2
---    else
---        Set.intersect set1 set2 == set1
-
-
 groupToString : Group -> String
 groupToString g =
     case g of
         GroupA ->
-            "A"
+            "Group A"
 
         GroupB ->
-            "B"
+            "Group B"
 
         GroupC ->
-            "C"
+            "Group C"
 
         GroupD ->
-            "D"
+            "Group D"
 
         GroupE ->
-            "E"
+            "Group E"
 
         GroupF ->
-            "F"
+            "Group F"
 
-        _ ->
-            ""
+        RoundOf16 ->
+            "Round Of 16"
+
+        QuarterFinals ->
+            "Quarter Finals"
+
+        SemiFinals ->
+            "Semi Finals"
+
+        Final ->
+            "Final"
 
 
 teamFromMaybeGroupRow : Maybe GroupRow -> Team
@@ -369,6 +375,7 @@ applyCrazyUefaLogic top4groupRows tp =
             top4groupRows
                 |> List.map .group
                 |> List.map groupToString
+                |> List.map (String.replace "Group " "")
                 |> List.sort
                 |> String.concat
     in
@@ -565,6 +572,7 @@ applyCrazyUefaLogic top4groupRows tp =
 type alias Model =
     { matches : List Match
     , groups : List GroupRow
+    , selectedGroup : Group
     }
 
 
@@ -576,6 +584,7 @@ type HomeOrAway
 init =
     { matches = matches
     , groups = groups
+    , selectedGroup = GroupA
     }
 
 
@@ -588,6 +597,10 @@ type TeamPosition
 
 
 -- VIEW
+
+
+groupStageGroups =
+    [ GroupA, GroupB, GroupC, GroupD, GroupE, GroupF ]
 
 
 view : Model -> Html Msg
@@ -604,25 +617,11 @@ view model =
             [ column [ width (fillPortion 1) ] []
             , column [ width (fillPortion 2), centerX ]
                 [ row [ padding 40 ] []
-                , viewGroupTitle "Group A"
-                , viewGroup model.groups GroupA
-                , viewMatches model.matches GroupA
-                , viewGroupTitle "Group B"
-                , viewGroup model.groups GroupB
-                , viewMatches model.matches GroupB
-                , viewGroupTitle "Group C"
-                , viewGroup model.groups GroupC
-                , viewMatches model.matches GroupC
-                , viewGroupTitle "Group D"
-                , viewGroup model.groups GroupD
-                , viewMatches model.matches GroupD
-                , viewGroupTitle "Group E"
-                , viewGroup model.groups GroupE
-                , viewMatches model.matches GroupE
-                , viewGroupTitle "Group F"
-                , viewGroup model.groups GroupF
-                , viewMatches model.matches GroupF
-                , viewGroupTitle "Round Of 16"
+                , row [ width fill, spaceEvenly ] (List.map (viewGroupButton model.groups) groupStageGroups)
+                , viewGroupTitle model.selectedGroup
+                , viewGroup model.groups model.selectedGroup
+                , viewMatches model.matches model.selectedGroup
+                , viewGroupTitle RoundOf16
                 , viewPlayoffMatches model.matches RoundOf16
                 ]
             , column [ width (fillPortion 1) ] []
@@ -633,13 +632,13 @@ header : Element Msg
 header =
     row
         [ width fill
-        , Background.color (rgb255 9 62 132)
+        , Background.color blue
         , paddingEach { edges | left = 4, bottom = 24, top = 24 }
-        , Font.color (rgb 1 1 1)
+        , Font.color white
         ]
         [ el [ width (fillPortion 1), centerY ] (text "")
-        , el [ width (fillPortion 8) ] (text "Hahimur!")
-        , myNav
+        , el [ width (fillPortion 2) ] (text "Hahimur!")
+        , el [ width (fillPortion 1), centerY ] (text "")
         ]
 
 
@@ -651,6 +650,26 @@ myNav =
         , width (fillPortion 1)
         ]
         [ text "navbar " ]
+
+
+viewGroupButton : List GroupRow -> Group -> Element Msg
+viewGroupButton allGroupRows group =
+    let
+        groupRows =
+            getGroupRows group allGroupRows
+    in
+    Element.Input.button
+        [ if List.all playedAllGames groupRows then
+            Background.color green
+
+          else
+            Background.color blue
+        , Font.color white
+        , padding 20
+        ]
+        { onPress = Just (ClickedGroup group)
+        , label = text (groupToString group)
+        }
 
 
 viewMatch : Match -> Element Msg
@@ -732,15 +751,15 @@ viewPlayoffMatches matches group =
         ]
 
 
-viewGroupTitle : String -> Element Msg
-viewGroupTitle groupName =
+viewGroupTitle : Group -> Element Msg
+viewGroupTitle group =
     row
         [ paddingEach { edges | bottom = 16 }
         , width fill
         ]
         [ column
             [ width fill ]
-            [ text groupName ]
+            [ text (groupToString group) ]
         ]
 
 
@@ -831,7 +850,7 @@ viewMatchInput matchId homeOrAway score =
         , Element.htmlAttribute (Html.Attributes.type_ "number")
         , paddingEach { edges | top = 12, bottom = 12, left = 12 }
         ]
-        { onChange = UpdateScore matchId homeOrAway
+        { onChange = UpdatedScore matchId homeOrAway
         , text =
             case score of
                 Nothing ->

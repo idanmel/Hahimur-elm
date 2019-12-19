@@ -1,4 +1,4 @@
-module Euro2020 exposing (Group(..), GroupRow, Match, Team, defaultFlag, filterByGroup, getGroupRows, getTeamPlaying, groups, matches, playOffMatches)
+module Euro2020 exposing (Group(..), GroupRow, Match, Team, defaultFlag, filterByGroup, getGroupRows, getTeamPlaying, groups, matches, playOffMatches, playedAllGames)
 
 import Array
 
