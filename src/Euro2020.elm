@@ -1,4 +1,4 @@
-module Euro2020 exposing (Group(..), GroupRow, Match, Team, defaultFlag, filterByGroup, getGroupRows, getTeamPlaying, groups, matches, playOffMatches, playedAllGames)
+module Euro2020 exposing (Group(..), GroupRow, Match, Team, defaultFlag, filterByGroup, getGroupRows, getScore, getTeamPlaying, groups, matches, playOffMatches, playedAllGames)
 
 import Array
 
@@ -44,8 +44,10 @@ type alias GroupRow =
     , ga : Int
     , gd : Int
     , pts : Int
-    , score : Int
     , group : Group
+    , tieBreakPoints : Int
+    , tieBreakGd : Int
+    , tieBreakGf : Int
     }
 
 
@@ -158,99 +160,99 @@ germany =
 
 
 turkeyRow =
-    GroupRow turkey 0 0 0 0 0 0 0 0 4 GroupA
+    GroupRow turkey 0 0 0 0 0 0 0 0 GroupA 0 0 0
 
 
 italyRow =
-    GroupRow italy 0 0 0 0 0 0 0 0 3 GroupA
+    GroupRow italy 0 0 0 0 0 0 0 0 GroupA 0 0 0
 
 
 walesRow =
-    GroupRow wales 0 0 0 0 0 0 0 0 2 GroupA
+    GroupRow wales 0 0 0 0 0 0 0 0 GroupA 0 0 0
 
 
 switzerlandRow =
-    GroupRow switzerland 0 0 0 0 0 0 0 0 1 GroupA
+    GroupRow switzerland 0 0 0 0 0 0 0 0 GroupA 0 0 0
 
 
 belgiumRow =
-    GroupRow belgium 0 0 0 0 0 0 0 0 2 GroupB
+    GroupRow belgium 0 0 0 0 0 0 0 0 GroupB 0 0 0
 
 
 russiaRow =
-    GroupRow russia 0 0 0 0 0 0 0 0 1 GroupB
+    GroupRow russia 0 0 0 0 0 0 0 0 GroupB 0 0 0
 
 
 finlandRow =
-    GroupRow finland 0 0 0 0 0 0 0 0 3 GroupB
+    GroupRow finland 0 0 0 0 0 0 0 0 GroupB 0 0 0
 
 
 denmarkRow =
-    GroupRow denmark 0 0 0 0 0 0 0 0 4 GroupB
+    GroupRow denmark 0 0 0 0 0 0 0 0 GroupB 0 0 0
 
 
 netherlandsRow =
-    GroupRow netherlands 0 0 0 0 0 0 0 0 4 GroupC
+    GroupRow netherlands 0 0 0 0 0 0 0 0 GroupC 0 0 0
 
 
 ukraineRow =
-    GroupRow ukraine 0 0 0 0 0 0 0 0 3 GroupC
+    GroupRow ukraine 0 0 0 0 0 0 0 0 GroupC 0 0 0
 
 
 austriaRow =
-    GroupRow austria 0 0 0 0 0 0 0 0 2 GroupC
+    GroupRow austria 0 0 0 0 0 0 0 0 GroupC 0 0 0
 
 
 romaniaRow =
-    GroupRow romania 0 0 0 0 0 0 0 0 1 GroupC
+    GroupRow romania 0 0 0 0 0 0 0 0 GroupC 0 0 0
 
 
 englandRow =
-    GroupRow england 0 0 0 0 0 0 0 0 4 GroupD
+    GroupRow england 0 0 0 0 0 0 0 0 GroupD 0 0 0
 
 
 croatiaRow =
-    GroupRow crotia 0 0 0 0 0 0 0 0 3 GroupD
+    GroupRow crotia 0 0 0 0 0 0 0 0 GroupD 0 0 0
 
 
 irelandRow =
-    GroupRow ireland 0 0 0 0 0 0 0 0 2 GroupD
+    GroupRow ireland 0 0 0 0 0 0 0 0 GroupD 0 0 0
 
 
 czechRow =
-    GroupRow czech 0 0 0 0 0 0 0 0 1 GroupD
+    GroupRow czech 0 0 0 0 0 0 0 0 GroupD 0 0 0
 
 
 spainRow =
-    GroupRow spain 0 0 0 0 0 0 0 0 4 GroupE
+    GroupRow spain 0 0 0 0 0 0 0 0 GroupE 0 0 0
 
 
 swedenRow =
-    GroupRow sweden 0 0 0 0 0 0 0 0 3 GroupE
+    GroupRow sweden 0 0 0 0 0 0 0 0 GroupE 0 0 0
 
 
 polandRow =
-    GroupRow poland 0 0 0 0 0 0 0 0 2 GroupE
+    GroupRow poland 0 0 0 0 0 0 0 0 GroupE 0 0 0
 
 
 icelandRow =
-    GroupRow iceland 0 0 0 0 0 0 0 0 1 GroupE
+    GroupRow iceland 0 0 0 0 0 0 0 0 GroupE 0 0 0
 
 
 serbiaRow =
-    GroupRow serbia 0 0 0 0 0 0 0 0 4 GroupF
+    GroupRow serbia 0 0 0 0 0 0 0 0 GroupF 0 0 0
 
 
 portugalRow =
-    GroupRow portugal 0 0 0 0 0 0 0 0 3 GroupF
+    GroupRow portugal 0 0 0 0 0 0 0 0 GroupF 0 0 0
 
 
 franceRow =
-    GroupRow france 0 0 0 0 0 0 0 0 2 GroupF
+    GroupRow france 0 0 0 0 0 0 0 0 GroupF 0 0 0
 
 
 germanyRow =
-    GroupRow germany 0 0 0 0 0 0 0 0 1 GroupF
+    GroupRow germany 0 0 0 0 0 0 0 0 GroupF 0 0 0
 
 
 groupA =
@@ -372,11 +374,23 @@ filterByGroup groupName groupRows =
     List.filter (\gr -> gr.group == groupName) groupRows
 
 
+getScore : GroupRow -> List Int
+getScore gr =
+    [ gr.pts
+    , gr.tieBreakPoints
+    , gr.tieBreakGd
+    , gr.tieBreakGf
+    , gr.gd
+    , gr.gf
+    , gr.w
+    ]
+
+
 getGroupRows : Group -> List GroupRow -> List GroupRow
 getGroupRows groupName groupRows =
     groupRows
         |> filterByGroup groupName
-        |> List.sortBy .score
+        |> List.sortBy getScore
         |> List.reverse
 
 

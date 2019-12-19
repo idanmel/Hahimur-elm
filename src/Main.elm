@@ -4,17 +4,16 @@ module Main exposing (..)
 
 import Array
 import Browser
+import Dict exposing (Dict)
 import Element exposing (..)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Element.Input exposing (button)
 import Element.Region as Region
-import Euro2020 exposing (Group(..), GroupRow, Match, Team, defaultFlag, filterByGroup, getGroupRows, getTeamPlaying, groups, matches, playOffMatches, playedAllGames)
+import Euro2020 exposing (Group(..), GroupRow, Match, Team, defaultFlag, filterByGroup, getGroupRows, getScore, getTeamPlaying, groups, matches, playOffMatches, playedAllGames)
 import Html exposing (Html)
 import Html.Attributes
-import Set
-import Tuple
 
 
 blue =
@@ -82,17 +81,18 @@ update msg model =
                     else
                         m
 
-                newMatchesScores =
+                newMatches =
                     List.map updateScore model.matches
 
                 newGroupRows =
-                    newMatchesScores
+                    newMatches
                         |> List.foldl updateGroup groups
-                        |> List.sortBy .score
-                        |> List.reverse
+
+                groupRowsAfterTieBreaks =
+                    List.map (resolveTieBreak newMatches newGroupRows) newGroupRows
 
                 thirdPlaces =
-                    get3rdTeamTable newGroupRows
+                    get3rdTeamTable groupRowsAfterTieBreaks
 
                 updateTeams : List GroupRow -> Match -> Match
                 updateTeams groupRows m =
@@ -112,19 +112,19 @@ update msg model =
                         39 ->
                             { m
                                 | homeTeam = getTeamPlaying (Team "Winner Group B" defaultFlag) GroupB 1 groupRows
-                                , awayTeam = get3rdTeam (Team "3rd Group A/D/E/F" defaultFlag) B1 thirdPlaces newGroupRows
+                                , awayTeam = get3rdTeam (Team "3rd Group A/D/E/F" defaultFlag) B1 thirdPlaces groupRowsAfterTieBreaks
                             }
 
                         40 ->
                             { m
                                 | homeTeam = getTeamPlaying (Team "Winner Group C" defaultFlag) GroupC 1 groupRows
-                                , awayTeam = get3rdTeam (Team "3rd Group D/E/F" defaultFlag) C1 thirdPlaces newGroupRows
+                                , awayTeam = get3rdTeam (Team "3rd Group D/E/F" defaultFlag) C1 thirdPlaces groupRowsAfterTieBreaks
                             }
 
                         41 ->
                             { m
                                 | homeTeam = getTeamPlaying (Team "Winner Group F" defaultFlag) GroupF 1 groupRows
-                                , awayTeam = get3rdTeam (Team "3rd Group A/B/C" defaultFlag) F1 thirdPlaces newGroupRows
+                                , awayTeam = get3rdTeam (Team "3rd Group A/B/C" defaultFlag) F1 thirdPlaces groupRowsAfterTieBreaks
                             }
 
                         42 ->
@@ -136,7 +136,7 @@ update msg model =
                         43 ->
                             { m
                                 | homeTeam = getTeamPlaying (Team "Winner Group E" defaultFlag) GroupE 1 groupRows
-                                , awayTeam = get3rdTeam (Team "3rd Group A/B/C/D" defaultFlag) E1 thirdPlaces newGroupRows
+                                , awayTeam = get3rdTeam (Team "3rd Group A/B/C/D" defaultFlag) E1 thirdPlaces groupRowsAfterTieBreaks
                             }
 
                         44 ->
@@ -149,17 +149,12 @@ update msg model =
                             m
 
                 newPlayOffMatches =
-                    List.map (updateTeams newGroupRows) newMatchesScores
+                    List.map (updateTeams newGroupRows) newMatches
             in
             { model
                 | matches = newPlayOffMatches
-                , groups = newGroupRows
+                , groups = groupRowsAfterTieBreaks
             }
-
-
-getScore : Int -> Int -> Int -> Int -> Int
-getScore pts gd gf w =
-    (pts * 1000) + (gd * 100) + (gf * 10) + w
 
 
 updateGroupRow2 : GroupRow -> Int -> Int -> GroupRow
@@ -184,11 +179,8 @@ updateGroupRow2 groupRow gf ga =
 
             newPts =
                 3 * newW + groupRow.d
-
-            newScore =
-                getScore newPts newGd newGf newW
         in
-        { groupRow | pld = newPld, w = newW, gf = newGf, ga = newGa, gd = newGd, pts = newPts, score = newScore }
+        { groupRow | pld = newPld, w = newW, gf = newGf, ga = newGa, gd = newGd, pts = newPts }
 
     else if gf == ga then
         let
@@ -197,21 +189,15 @@ updateGroupRow2 groupRow gf ga =
 
             newPts =
                 3 * groupRow.w + newD
-
-            newScore =
-                getScore newPts newGd newGf groupRow.w
         in
-        { groupRow | pld = newPld, d = newD, gf = newGf, ga = newGa, gd = newGd, pts = newPts, score = newScore }
+        { groupRow | pld = newPld, d = newD, gf = newGf, ga = newGa, gd = newGd, pts = newPts }
 
     else
         let
             newL =
                 groupRow.l + 1
-
-            newscore =
-                getScore groupRow.pts newGd newGf groupRow.w
         in
-        { groupRow | pld = newPld, l = newL, gf = newGf, ga = newGa, gd = newGd, score = newscore }
+        { groupRow | pld = newPld, l = newL, gf = newGf, ga = newGa, gd = newGd }
 
 
 updateGroupRow : Match -> GroupRow -> GroupRow
@@ -250,7 +236,112 @@ get3rdPlaceTeam groupRows =
             gr
 
         Nothing ->
-            GroupRow (Team "Turkey" "") 0 0 0 0 0 0 0 0 4 GroupA
+            GroupRow (Team "Turkey" "") 0 0 0 0 0 0 0 0 GroupA 0 0 0
+
+
+
+--permutations : List a -> Int
+
+
+sameTeams : List Team -> Match -> Bool
+sameTeams teams m =
+    if List.member m.awayTeam teams then
+        if List.member m.homeTeam teams then
+            True
+
+        else
+            False
+
+    else
+        False
+
+
+getPointsFromMatch : Team -> Match -> Int
+getPointsFromMatch t m =
+    case ( m.homeScore, m.awayScore ) of
+        ( Just homeScore, Just awayScore ) ->
+            if homeScore > awayScore then
+                if m.homeTeam == t then
+                    3
+
+                else
+                    0
+
+            else if awayScore > homeScore then
+                if m.awayTeam == t then
+                    3
+
+                else
+                    0
+
+            else
+                1
+
+        _ ->
+            0
+
+
+getGdFromMatch : Team -> Match -> Int
+getGdFromMatch t m =
+    case ( m.homeScore, m.awayScore ) of
+        ( Just homeScore, Just awayScore ) ->
+            if m.homeTeam == t then
+                homeScore - awayScore
+
+            else if m.awayTeam == t then
+                awayScore - homeScore
+
+            else
+                0
+
+        _ ->
+            0
+
+
+getGfFromMatch : Team -> Match -> Int
+getGfFromMatch t m =
+    case ( m.homeScore, m.awayScore ) of
+        ( Just homeScore, Just awayScore ) ->
+            if m.homeTeam == t then
+                homeScore
+
+            else if m.awayTeam == t then
+                awayScore
+
+            else
+                0
+
+        _ ->
+            0
+
+
+resolveTieBreak : List Match -> List GroupRow -> GroupRow -> GroupRow
+resolveTieBreak matches allGroupRow gr =
+    let
+        groupRows =
+            getGroupRows gr.group allGroupRow
+
+        teamsWithSamePoints =
+            groupRows
+                |> List.filter (\x -> x.pts == gr.pts)
+                |> List.map .team
+
+        getGroupMatches =
+            List.filter (\x -> x.group == gr.group) matches
+
+        matchesBetweenTeamWithSamePoints =
+            List.filter (sameTeams teamsWithSamePoints) getGroupMatches
+
+        tieBreakPoints =
+            List.sum (List.map (getPointsFromMatch gr.team) matchesBetweenTeamWithSamePoints)
+
+        tieBreakGd =
+            List.sum (List.map (getGdFromMatch gr.team) matchesBetweenTeamWithSamePoints)
+
+        tieBreakGf =
+            List.sum (List.map (getGfFromMatch gr.team) matchesBetweenTeamWithSamePoints)
+    in
+    gr
 
 
 get3rdTeamTable : List GroupRow -> List GroupRow
@@ -287,7 +378,7 @@ get3rdTeamTable groupRows =
                 |> get3rdPlaceTeam
     in
     [ thirdPlaceA, thirdPlaceB, thirdPlaceC, thirdPlaceD, thirdPlaceE, thirdPlaceF ]
-        |> List.sortBy .score
+        |> List.sortBy getScore
         |> List.reverse
 
 
