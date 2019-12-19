@@ -41,7 +41,7 @@ edges =
     { top = 16
     , right = 0
     , bottom = 0
-    , left = 24
+    , left = 0
     }
 
 
@@ -607,6 +607,7 @@ view : Model -> Html Msg
 view model =
     Element.layout
         [ Font.color (rgba 0 0 0 1)
+        , Font.size 20
         , Background.color grey
         , inFront <| header
         ]
@@ -616,12 +617,17 @@ view model =
             ]
             [ column [ width (fillPortion 1) ] []
             , column [ width (fillPortion 2), centerX ]
-                [ row [ padding 40 ] []
+                [ row [ padding 50 ] []
                 , row [ width fill, spaceEvenly ] (List.map (viewGroupButton model.groups) groupStageGroups)
+                , viewSpacer 16
                 , viewGroupTitle model.selectedGroup
+                , viewSpacer 16
                 , viewGroup model.groups model.selectedGroup
+                , viewSpacer 8
                 , viewMatches model.matches model.selectedGroup
+                , viewSpacer 16
                 , viewGroupTitle RoundOf16
+                , viewSpacer 8
                 , viewPlayoffMatches model.matches RoundOf16
                 ]
             , column [ width (fillPortion 1) ] []
@@ -633,13 +639,18 @@ header =
     row
         [ width fill
         , Background.color blue
-        , paddingEach { edges | left = 4, bottom = 24, top = 24 }
+        , paddingEach { edges | bottom = 24, top = 24 }
         , Font.color white
         ]
         [ el [ width (fillPortion 1), centerY ] (text "")
         , el [ width (fillPortion 2) ] (text "Hahimur!")
         , el [ width (fillPortion 1), centerY ] (text "")
         ]
+
+
+viewSpacer : Int -> Element Msg
+viewSpacer p =
+    row [ padding p ] []
 
 
 myNav : Element Msg
@@ -754,12 +765,12 @@ viewPlayoffMatches matches group =
 viewGroupTitle : Group -> Element Msg
 viewGroupTitle group =
     row
-        [ paddingEach { edges | bottom = 16 }
-        , width fill
+        [ centerX
+        , paddingEach edges
+        , Region.heading 3
+        , Font.size 28
         ]
-        [ column
-            [ width fill ]
-            [ text (groupToString group) ]
+        [ text (groupToString group)
         ]
 
 
@@ -772,8 +783,6 @@ viewGroup groups groupName =
     Element.indexedTable
         [ paddingEach { edges | bottom = 16 }
         , spacing 8
-        , width (fill |> maximum 800)
-        , centerX
         ]
         { data = group
         , columns =
@@ -784,7 +793,7 @@ viewGroup groups groupName =
                         Element.text (String.fromInt (n + 1))
               }
             , { header = Element.text "Team"
-              , width = fill
+              , width = fillPortion 2
               , view =
                     \n groupRow ->
                         Element.text groupRow.team.name
