@@ -341,7 +341,7 @@ resolveTieBreak matches allGroupRow gr =
         tieBreakGf =
             List.sum (List.map (getGfFromMatch gr.team) matchesBetweenTeamWithSamePoints)
     in
-    gr
+    { gr | tieBreakPoints = tieBreakPoints, tieBreakGd = tieBreakGd, tieBreakGf = tieBreakGf }
 
 
 get3rdTeamTable : List GroupRow -> List GroupRow

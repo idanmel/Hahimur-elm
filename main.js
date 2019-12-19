@@ -5928,7 +5928,9 @@ var $author$project$Main$resolveTieBreak = F3(
 				$elm$core$List$map,
 				$author$project$Main$getPointsFromMatch(gr.bE),
 				matchesBetweenTeamWithSamePoints));
-		return gr;
+		return _Utils_update(
+			gr,
+			{bF: tieBreakGd, bG: tieBreakGf, bH: tieBreakPoints});
 	});
 var $author$project$Main$updateGroupRow2 = F3(
 	function (groupRow, gf, ga) {
