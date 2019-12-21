@@ -5820,6 +5820,161 @@ var $author$project$Main$get3rdTeamTable = function (groupRows) {
 			_List_fromArray(
 				[thirdPlaceA, thirdPlaceB, thirdPlaceC, thirdPlaceD, thirdPlaceE, thirdPlaceF])));
 };
+var $author$project$Euro2020$FinishedDifferentScores = 2;
+var $author$project$Euro2020$FinishedSameScore = 1;
+var $author$project$Euro2020$NotFinished = 0;
+var $elm$core$Set$Set_elm_builtin = $elm$core$Basics$identity;
+var $elm$core$Dict$RBEmpty_elm_builtin = {$: -2};
+var $elm$core$Dict$empty = $elm$core$Dict$RBEmpty_elm_builtin;
+var $elm$core$Set$empty = $elm$core$Dict$empty;
+var $elm$core$Dict$Black = 1;
+var $elm$core$Dict$RBNode_elm_builtin = F5(
+	function (a, b, c, d, e) {
+		return {$: -1, a: a, b: b, c: c, d: d, e: e};
+	});
+var $elm$core$Dict$Red = 0;
+var $elm$core$Dict$balance = F5(
+	function (color, key, value, left, right) {
+		if ((right.$ === -1) && (!right.a)) {
+			var _v1 = right.a;
+			var rK = right.b;
+			var rV = right.c;
+			var rLeft = right.d;
+			var rRight = right.e;
+			if ((left.$ === -1) && (!left.a)) {
+				var _v3 = left.a;
+				var lK = left.b;
+				var lV = left.c;
+				var lLeft = left.d;
+				var lRight = left.e;
+				return A5(
+					$elm$core$Dict$RBNode_elm_builtin,
+					0,
+					key,
+					value,
+					A5($elm$core$Dict$RBNode_elm_builtin, 1, lK, lV, lLeft, lRight),
+					A5($elm$core$Dict$RBNode_elm_builtin, 1, rK, rV, rLeft, rRight));
+			} else {
+				return A5(
+					$elm$core$Dict$RBNode_elm_builtin,
+					color,
+					rK,
+					rV,
+					A5($elm$core$Dict$RBNode_elm_builtin, 0, key, value, left, rLeft),
+					rRight);
+			}
+		} else {
+			if ((((left.$ === -1) && (!left.a)) && (left.d.$ === -1)) && (!left.d.a)) {
+				var _v5 = left.a;
+				var lK = left.b;
+				var lV = left.c;
+				var _v6 = left.d;
+				var _v7 = _v6.a;
+				var llK = _v6.b;
+				var llV = _v6.c;
+				var llLeft = _v6.d;
+				var llRight = _v6.e;
+				var lRight = left.e;
+				return A5(
+					$elm$core$Dict$RBNode_elm_builtin,
+					0,
+					lK,
+					lV,
+					A5($elm$core$Dict$RBNode_elm_builtin, 1, llK, llV, llLeft, llRight),
+					A5($elm$core$Dict$RBNode_elm_builtin, 1, key, value, lRight, right));
+			} else {
+				return A5($elm$core$Dict$RBNode_elm_builtin, color, key, value, left, right);
+			}
+		}
+	});
+var $elm$core$Basics$compare = _Utils_compare;
+var $elm$core$Dict$insertHelp = F3(
+	function (key, value, dict) {
+		if (dict.$ === -2) {
+			return A5($elm$core$Dict$RBNode_elm_builtin, 0, key, value, $elm$core$Dict$RBEmpty_elm_builtin, $elm$core$Dict$RBEmpty_elm_builtin);
+		} else {
+			var nColor = dict.a;
+			var nKey = dict.b;
+			var nValue = dict.c;
+			var nLeft = dict.d;
+			var nRight = dict.e;
+			var _v1 = A2($elm$core$Basics$compare, key, nKey);
+			switch (_v1) {
+				case 0:
+					return A5(
+						$elm$core$Dict$balance,
+						nColor,
+						nKey,
+						nValue,
+						A3($elm$core$Dict$insertHelp, key, value, nLeft),
+						nRight);
+				case 1:
+					return A5($elm$core$Dict$RBNode_elm_builtin, nColor, nKey, value, nLeft, nRight);
+				default:
+					return A5(
+						$elm$core$Dict$balance,
+						nColor,
+						nKey,
+						nValue,
+						nLeft,
+						A3($elm$core$Dict$insertHelp, key, value, nRight));
+			}
+		}
+	});
+var $elm$core$Dict$insert = F3(
+	function (key, value, dict) {
+		var _v0 = A3($elm$core$Dict$insertHelp, key, value, dict);
+		if ((_v0.$ === -1) && (!_v0.a)) {
+			var _v1 = _v0.a;
+			var k = _v0.b;
+			var v = _v0.c;
+			var l = _v0.d;
+			var r = _v0.e;
+			return A5($elm$core$Dict$RBNode_elm_builtin, 1, k, v, l, r);
+		} else {
+			var x = _v0;
+			return x;
+		}
+	});
+var $elm$core$Set$insert = F2(
+	function (key, _v0) {
+		var dict = _v0;
+		return A3($elm$core$Dict$insert, key, 0, dict);
+	});
+var $elm$core$Set$fromList = function (list) {
+	return A3($elm$core$List$foldl, $elm$core$Set$insert, $elm$core$Set$empty, list);
+};
+var $elm$core$Dict$sizeHelp = F2(
+	function (n, dict) {
+		sizeHelp:
+		while (true) {
+			if (dict.$ === -2) {
+				return n;
+			} else {
+				var left = dict.d;
+				var right = dict.e;
+				var $temp$n = A2($elm$core$Dict$sizeHelp, n + 1, right),
+					$temp$dict = left;
+				n = $temp$n;
+				dict = $temp$dict;
+				continue sizeHelp;
+			}
+		}
+	});
+var $elm$core$Dict$size = function (dict) {
+	return A2($elm$core$Dict$sizeHelp, 0, dict);
+};
+var $elm$core$Set$size = function (_v0) {
+	var dict = _v0;
+	return $elm$core$Dict$size(dict);
+};
+var $author$project$Euro2020$getGroupState = function (grs) {
+	var scores = A2($elm$core$List$map, $author$project$Euro2020$getScore, grs);
+	var allGamesHaveDifferentScores = $elm$core$Set$size(
+		$elm$core$Set$fromList(scores)) === 4;
+	var allGamesCompleted = A2($elm$core$List$all, $author$project$Euro2020$playedAllGames, grs);
+	return (!allGamesCompleted) ? 0 : ((!allGamesHaveDifferentScores) ? 1 : 2);
+};
 var $author$project$Euro2020$maybeOrDefaultTeam = F2(
 	function (defaultTeam, maybeGroupRow) {
 		if (!maybeGroupRow.$) {
@@ -5832,7 +5987,8 @@ var $author$project$Euro2020$maybeOrDefaultTeam = F2(
 var $author$project$Euro2020$getTeamPlaying = F4(
 	function (placeHolderTeam, group, pos, allGroupRows) {
 		var groupRows = A2($author$project$Euro2020$getGroupRows, group, allGroupRows);
-		return A2($elm$core$List$all, $author$project$Euro2020$playedAllGames, groupRows) ? A2(
+		var groupState = $author$project$Euro2020$getGroupState(groupRows);
+		return (groupState === 2) ? A2(
 			$author$project$Euro2020$maybeOrDefaultTeam,
 			placeHolderTeam,
 			A2(
@@ -6019,13 +6175,13 @@ var $author$project$Main$update = F2(
 										A2($author$project$Euro2020$Team, 'Runner-up Group C', $author$project$Euro2020$defaultFlag),
 										2,
 										2,
-										groupRows),
+										groupRowsAfterTieBreaks),
 									cG: A4(
 										$author$project$Euro2020$getTeamPlaying,
 										A2($author$project$Euro2020$Team, 'Winner Group A', $author$project$Euro2020$defaultFlag),
 										0,
 										1,
-										groupRows)
+										groupRowsAfterTieBreaks)
 								});
 						case 38:
 							return _Utils_update(
@@ -6036,13 +6192,13 @@ var $author$project$Main$update = F2(
 										A2($author$project$Euro2020$Team, 'Runner-up Group B', $author$project$Euro2020$defaultFlag),
 										1,
 										2,
-										groupRows),
+										groupRowsAfterTieBreaks),
 									cG: A4(
 										$author$project$Euro2020$getTeamPlaying,
 										A2($author$project$Euro2020$Team, 'Runner-up Group A', $author$project$Euro2020$defaultFlag),
 										0,
 										2,
-										groupRows)
+										groupRowsAfterTieBreaks)
 								});
 						case 39:
 							return _Utils_update(
@@ -6059,7 +6215,7 @@ var $author$project$Main$update = F2(
 										A2($author$project$Euro2020$Team, 'Winner Group B', $author$project$Euro2020$defaultFlag),
 										1,
 										1,
-										groupRows)
+										groupRowsAfterTieBreaks)
 								});
 						case 40:
 							return _Utils_update(
@@ -6076,7 +6232,7 @@ var $author$project$Main$update = F2(
 										A2($author$project$Euro2020$Team, 'Winner Group C', $author$project$Euro2020$defaultFlag),
 										2,
 										1,
-										groupRows)
+										groupRowsAfterTieBreaks)
 								});
 						case 41:
 							return _Utils_update(
@@ -6093,7 +6249,7 @@ var $author$project$Main$update = F2(
 										A2($author$project$Euro2020$Team, 'Winner Group F', $author$project$Euro2020$defaultFlag),
 										5,
 										1,
-										groupRows)
+										groupRowsAfterTieBreaks)
 								});
 						case 42:
 							return _Utils_update(
@@ -6104,13 +6260,13 @@ var $author$project$Main$update = F2(
 										A2($author$project$Euro2020$Team, 'Runner-up Group E', $author$project$Euro2020$defaultFlag),
 										4,
 										2,
-										groupRows),
+										groupRowsAfterTieBreaks),
 									cG: A4(
 										$author$project$Euro2020$getTeamPlaying,
 										A2($author$project$Euro2020$Team, 'Runner-up Group D', $author$project$Euro2020$defaultFlag),
 										3,
 										2,
-										groupRows)
+										groupRowsAfterTieBreaks)
 								});
 						case 43:
 							return _Utils_update(
@@ -6127,7 +6283,7 @@ var $author$project$Main$update = F2(
 										A2($author$project$Euro2020$Team, 'Winner Group E', $author$project$Euro2020$defaultFlag),
 										4,
 										1,
-										groupRows)
+										groupRowsAfterTieBreaks)
 								});
 						case 44:
 							return _Utils_update(
@@ -6138,13 +6294,13 @@ var $author$project$Main$update = F2(
 										A2($author$project$Euro2020$Team, 'Runner-up Group F', $author$project$Euro2020$defaultFlag),
 										5,
 										2,
-										groupRows),
+										groupRowsAfterTieBreaks),
 									cG: A4(
 										$author$project$Euro2020$getTeamPlaying,
 										A2($author$project$Euro2020$Team, 'Winner Group D', $author$project$Euro2020$defaultFlag),
 										3,
 										1,
-										groupRows)
+										groupRowsAfterTieBreaks)
 								});
 						default:
 							return m;
@@ -6338,10 +6494,6 @@ var $elm$html$Html$Attributes$stringProperty = F2(
 	});
 var $elm$html$Html$Attributes$class = $elm$html$Html$Attributes$stringProperty('className');
 var $elm$html$Html$div = _VirtualDom_node('div');
-var $elm$core$Set$Set_elm_builtin = $elm$core$Basics$identity;
-var $elm$core$Dict$RBEmpty_elm_builtin = {$: -2};
-var $elm$core$Dict$empty = $elm$core$Dict$RBEmpty_elm_builtin;
-var $elm$core$Set$empty = $elm$core$Dict$empty;
 var $mdgriffith$elm_ui$Internal$Model$lengthClassName = function (x) {
 	switch (x.$) {
 		case 0:
@@ -6495,120 +6647,6 @@ var $mdgriffith$elm_ui$Internal$Model$getStyleName = function (style) {
 				$mdgriffith$elm_ui$Internal$Model$transformClass(x));
 	}
 };
-var $elm$core$Dict$Black = 1;
-var $elm$core$Dict$RBNode_elm_builtin = F5(
-	function (a, b, c, d, e) {
-		return {$: -1, a: a, b: b, c: c, d: d, e: e};
-	});
-var $elm$core$Dict$Red = 0;
-var $elm$core$Dict$balance = F5(
-	function (color, key, value, left, right) {
-		if ((right.$ === -1) && (!right.a)) {
-			var _v1 = right.a;
-			var rK = right.b;
-			var rV = right.c;
-			var rLeft = right.d;
-			var rRight = right.e;
-			if ((left.$ === -1) && (!left.a)) {
-				var _v3 = left.a;
-				var lK = left.b;
-				var lV = left.c;
-				var lLeft = left.d;
-				var lRight = left.e;
-				return A5(
-					$elm$core$Dict$RBNode_elm_builtin,
-					0,
-					key,
-					value,
-					A5($elm$core$Dict$RBNode_elm_builtin, 1, lK, lV, lLeft, lRight),
-					A5($elm$core$Dict$RBNode_elm_builtin, 1, rK, rV, rLeft, rRight));
-			} else {
-				return A5(
-					$elm$core$Dict$RBNode_elm_builtin,
-					color,
-					rK,
-					rV,
-					A5($elm$core$Dict$RBNode_elm_builtin, 0, key, value, left, rLeft),
-					rRight);
-			}
-		} else {
-			if ((((left.$ === -1) && (!left.a)) && (left.d.$ === -1)) && (!left.d.a)) {
-				var _v5 = left.a;
-				var lK = left.b;
-				var lV = left.c;
-				var _v6 = left.d;
-				var _v7 = _v6.a;
-				var llK = _v6.b;
-				var llV = _v6.c;
-				var llLeft = _v6.d;
-				var llRight = _v6.e;
-				var lRight = left.e;
-				return A5(
-					$elm$core$Dict$RBNode_elm_builtin,
-					0,
-					lK,
-					lV,
-					A5($elm$core$Dict$RBNode_elm_builtin, 1, llK, llV, llLeft, llRight),
-					A5($elm$core$Dict$RBNode_elm_builtin, 1, key, value, lRight, right));
-			} else {
-				return A5($elm$core$Dict$RBNode_elm_builtin, color, key, value, left, right);
-			}
-		}
-	});
-var $elm$core$Basics$compare = _Utils_compare;
-var $elm$core$Dict$insertHelp = F3(
-	function (key, value, dict) {
-		if (dict.$ === -2) {
-			return A5($elm$core$Dict$RBNode_elm_builtin, 0, key, value, $elm$core$Dict$RBEmpty_elm_builtin, $elm$core$Dict$RBEmpty_elm_builtin);
-		} else {
-			var nColor = dict.a;
-			var nKey = dict.b;
-			var nValue = dict.c;
-			var nLeft = dict.d;
-			var nRight = dict.e;
-			var _v1 = A2($elm$core$Basics$compare, key, nKey);
-			switch (_v1) {
-				case 0:
-					return A5(
-						$elm$core$Dict$balance,
-						nColor,
-						nKey,
-						nValue,
-						A3($elm$core$Dict$insertHelp, key, value, nLeft),
-						nRight);
-				case 1:
-					return A5($elm$core$Dict$RBNode_elm_builtin, nColor, nKey, value, nLeft, nRight);
-				default:
-					return A5(
-						$elm$core$Dict$balance,
-						nColor,
-						nKey,
-						nValue,
-						nLeft,
-						A3($elm$core$Dict$insertHelp, key, value, nRight));
-			}
-		}
-	});
-var $elm$core$Dict$insert = F3(
-	function (key, value, dict) {
-		var _v0 = A3($elm$core$Dict$insertHelp, key, value, dict);
-		if ((_v0.$ === -1) && (!_v0.a)) {
-			var _v1 = _v0.a;
-			var k = _v0.b;
-			var v = _v0.c;
-			var l = _v0.d;
-			var r = _v0.e;
-			return A5($elm$core$Dict$RBNode_elm_builtin, 1, k, v, l, r);
-		} else {
-			var x = _v0;
-			return x;
-		}
-	});
-var $elm$core$Set$insert = F2(
-	function (key, _v0) {
-		var dict = _v0;
-		return A3($elm$core$Dict$insert, key, 0, dict);
-	});
 var $elm$core$Dict$get = F2(
 	function (targetKey, dict) {
 		get:
@@ -12661,6 +12699,7 @@ var $mdgriffith$elm_ui$Element$Input$button = F2(
 					[label])));
 	});
 var $author$project$Main$green = A3($mdgriffith$elm_ui$Element$rgb255, 0, 204, 102);
+var $author$project$Main$red = A3($mdgriffith$elm_ui$Element$rgb, 0.8, 0, 0);
 var $author$project$Main$viewGroupButton = F2(
 	function (allGroupRows, group) {
 		var groupRows = A2($author$project$Euro2020$getGroupRows, group, allGroupRows);
@@ -12668,7 +12707,7 @@ var $author$project$Main$viewGroupButton = F2(
 			$mdgriffith$elm_ui$Element$Input$button,
 			_List_fromArray(
 				[
-					A2($elm$core$List$all, $author$project$Euro2020$playedAllGames, groupRows) ? $mdgriffith$elm_ui$Element$Background$color($author$project$Main$green) : $mdgriffith$elm_ui$Element$Background$color($author$project$Main$blue),
+					($author$project$Euro2020$getGroupState(groupRows) === 2) ? $mdgriffith$elm_ui$Element$Background$color($author$project$Main$green) : (($author$project$Euro2020$getGroupState(groupRows) === 1) ? $mdgriffith$elm_ui$Element$Background$color($author$project$Main$red) : $mdgriffith$elm_ui$Element$Background$color($author$project$Main$blue)),
 					$mdgriffith$elm_ui$Element$Font$color($author$project$Main$white),
 					$mdgriffith$elm_ui$Element$padding(20)
 				]),
@@ -13653,25 +13692,35 @@ var $mdgriffith$elm_ui$Element$Input$text = $mdgriffith$elm_ui$Element$Input$tex
 		v: false,
 		j: $mdgriffith$elm_ui$Element$Input$TextInputNode('text')
 	});
-var $author$project$Main$viewMatchInput = F3(
-	function (matchId, homeOrAway, score) {
+var $author$project$Main$viewMatchInput = F4(
+	function (matchId, homeOrAway, score, flag) {
+		var disableSettings = _Utils_eq(flag, $author$project$Euro2020$defaultFlag) ? _List_fromArray(
+			[
+				$mdgriffith$elm_ui$Element$htmlAttribute(
+				$elm$html$Html$Attributes$disabled(true)),
+				$mdgriffith$elm_ui$Element$Background$color($author$project$Main$grey)
+			]) : _List_fromArray(
+			[
+				$mdgriffith$elm_ui$Element$htmlAttribute(
+				$elm$html$Html$Attributes$type_('number')),
+				$mdgriffith$elm_ui$Element$Background$color(
+				A4($mdgriffith$elm_ui$Element$rgba, 1, 1, 1, 0.8))
+			]);
 		return A2(
 			$mdgriffith$elm_ui$Element$Input$text,
-			_List_fromArray(
-				[
-					$mdgriffith$elm_ui$Element$width(
-					$mdgriffith$elm_ui$Element$px(80)),
-					$mdgriffith$elm_ui$Element$Font$color(
-					A4($mdgriffith$elm_ui$Element$rgba, 0, 0, 0, 1)),
-					$mdgriffith$elm_ui$Element$Background$color(
-					A4($mdgriffith$elm_ui$Element$rgba, 1, 1, 1, 0.8)),
-					$mdgriffith$elm_ui$Element$htmlAttribute(
-					$elm$html$Html$Attributes$type_('number')),
-					$mdgriffith$elm_ui$Element$paddingEach(
-					_Utils_update(
-						$author$project$Main$edges,
-						{an: 12, W: 12, Q: 12}))
-				]),
+			_Utils_ap(
+				_List_fromArray(
+					[
+						$mdgriffith$elm_ui$Element$width(
+						$mdgriffith$elm_ui$Element$px(80)),
+						$mdgriffith$elm_ui$Element$Font$color(
+						A4($mdgriffith$elm_ui$Element$rgba, 0, 0, 0, 1)),
+						$mdgriffith$elm_ui$Element$paddingEach(
+						_Utils_update(
+							$author$project$Main$edges,
+							{an: 12, W: 12, Q: 12}))
+					]),
+				disableSettings),
 			{
 				be: $mdgriffith$elm_ui$Element$Input$labelHidden(''),
 				cX: A2($author$project$Main$UpdatedScore, matchId, homeOrAway),
@@ -13739,7 +13788,7 @@ var $author$project$Main$viewMatch = function (match) {
 						$mdgriffith$elm_ui$Element$el,
 						_List_fromArray(
 							[$mdgriffith$elm_ui$Element$alignRight]),
-						A3($author$project$Main$viewMatchInput, match.bb, 0, match.cF))
+						A4($author$project$Main$viewMatchInput, match.bb, 0, match.cF, match.cG.cz))
 					])),
 				A2(
 				$mdgriffith$elm_ui$Element$row,
@@ -13780,7 +13829,7 @@ var $author$project$Main$viewMatch = function (match) {
 						$mdgriffith$elm_ui$Element$el,
 						_List_fromArray(
 							[$mdgriffith$elm_ui$Element$alignRight]),
-						A3($author$project$Main$viewMatchInput, match.bb, 1, match.b3))
+						A4($author$project$Main$viewMatchInput, match.bb, 1, match.b3, match.b4.cz))
 					]))
 			]));
 };
