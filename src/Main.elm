@@ -11,7 +11,7 @@ import Element.Border as Border
 import Element.Font as Font
 import Element.Input exposing (button)
 import Element.Region as Region
-import Euro2020 exposing (Group(..), GroupRow, Match, Team, defaultFlag, filterByGroup, getGroupRows, getScore, getTeamPlaying, groups, matches, playOffMatches, playedAllGames)
+import Euro2020 exposing (Group(..), GroupRow, GroupState(..), Match, Team, defaultFlag, filterByGroup, getGroupRows, getGroupState, getScore, getTeamPlaying, groups, matches, playOffMatches, playedAllGames)
 import Html exposing (Html)
 import Html.Attributes
 
@@ -99,50 +99,50 @@ update msg model =
                     case m.id of
                         37 ->
                             { m
-                                | homeTeam = getTeamPlaying (Team "Winner Group A" defaultFlag) GroupA 1 groupRows
-                                , awayTeam = getTeamPlaying (Team "Runner-up Group C" defaultFlag) GroupC 2 groupRows
+                                | homeTeam = getTeamPlaying (Team "Winner Group A" defaultFlag) GroupA 1 groupRowsAfterTieBreaks
+                                , awayTeam = getTeamPlaying (Team "Runner-up Group C" defaultFlag) GroupC 2 groupRowsAfterTieBreaks
                             }
 
                         38 ->
                             { m
-                                | homeTeam = getTeamPlaying (Team "Runner-up Group A" defaultFlag) GroupA 2 groupRows
-                                , awayTeam = getTeamPlaying (Team "Runner-up Group B" defaultFlag) GroupB 2 groupRows
+                                | homeTeam = getTeamPlaying (Team "Runner-up Group A" defaultFlag) GroupA 2 groupRowsAfterTieBreaks
+                                , awayTeam = getTeamPlaying (Team "Runner-up Group B" defaultFlag) GroupB 2 groupRowsAfterTieBreaks
                             }
 
                         39 ->
                             { m
-                                | homeTeam = getTeamPlaying (Team "Winner Group B" defaultFlag) GroupB 1 groupRows
+                                | homeTeam = getTeamPlaying (Team "Winner Group B" defaultFlag) GroupB 1 groupRowsAfterTieBreaks
                                 , awayTeam = get3rdTeam (Team "3rd Group A/D/E/F" defaultFlag) B1 thirdPlaces groupRowsAfterTieBreaks
                             }
 
                         40 ->
                             { m
-                                | homeTeam = getTeamPlaying (Team "Winner Group C" defaultFlag) GroupC 1 groupRows
+                                | homeTeam = getTeamPlaying (Team "Winner Group C" defaultFlag) GroupC 1 groupRowsAfterTieBreaks
                                 , awayTeam = get3rdTeam (Team "3rd Group D/E/F" defaultFlag) C1 thirdPlaces groupRowsAfterTieBreaks
                             }
 
                         41 ->
                             { m
-                                | homeTeam = getTeamPlaying (Team "Winner Group F" defaultFlag) GroupF 1 groupRows
+                                | homeTeam = getTeamPlaying (Team "Winner Group F" defaultFlag) GroupF 1 groupRowsAfterTieBreaks
                                 , awayTeam = get3rdTeam (Team "3rd Group A/B/C" defaultFlag) F1 thirdPlaces groupRowsAfterTieBreaks
                             }
 
                         42 ->
                             { m
-                                | homeTeam = getTeamPlaying (Team "Runner-up Group D" defaultFlag) GroupD 2 groupRows
-                                , awayTeam = getTeamPlaying (Team "Runner-up Group E" defaultFlag) GroupE 2 groupRows
+                                | homeTeam = getTeamPlaying (Team "Runner-up Group D" defaultFlag) GroupD 2 groupRowsAfterTieBreaks
+                                , awayTeam = getTeamPlaying (Team "Runner-up Group E" defaultFlag) GroupE 2 groupRowsAfterTieBreaks
                             }
 
                         43 ->
                             { m
-                                | homeTeam = getTeamPlaying (Team "Winner Group E" defaultFlag) GroupE 1 groupRows
+                                | homeTeam = getTeamPlaying (Team "Winner Group E" defaultFlag) GroupE 1 groupRowsAfterTieBreaks
                                 , awayTeam = get3rdTeam (Team "3rd Group A/B/C/D" defaultFlag) E1 thirdPlaces groupRowsAfterTieBreaks
                             }
 
                         44 ->
                             { m
-                                | homeTeam = getTeamPlaying (Team "Winner Group D" defaultFlag) GroupD 1 groupRows
-                                , awayTeam = getTeamPlaying (Team "Runner-up Group F" defaultFlag) GroupF 2 groupRows
+                                | homeTeam = getTeamPlaying (Team "Winner Group D" defaultFlag) GroupD 1 groupRowsAfterTieBreaks
+                                , awayTeam = getTeamPlaying (Team "Runner-up Group F" defaultFlag) GroupF 2 groupRowsAfterTieBreaks
                             }
 
                         _ ->
@@ -761,8 +761,11 @@ viewGroupButton allGroupRows group =
             getGroupRows group allGroupRows
     in
     Element.Input.button
-        [ if List.all playedAllGames groupRows then
+        [ if getGroupState groupRows == FinishedDifferentScores then
             Background.color green
+
+          else if getGroupState groupRows == FinishedSameScore then
+            Background.color red
 
           else
             Background.color blue
@@ -785,13 +788,13 @@ viewMatch match =
             [ width fill ]
             [ image [ alignLeft, paddingEach { edges | left = 10, top = 0 }, centerY, width (fillPortion 1) ] { src = match.homeTeam.flag, description = "" }
             , el [ alignLeft, paddingEach { edges | left = 10, top = 0 }, centerY, width (fillPortion 6) ] (text match.homeTeam.name)
-            , el [ alignRight ] (viewMatchInput match.id Home match.homeScore)
+            , el [ alignRight ] (viewMatchInput match.id Home match.homeScore match.homeTeam.flag)
             ]
         , row
             [ width fill ]
             [ image [ alignLeft, paddingEach { edges | left = 10, top = 0 }, centerY, width (fillPortion 1) ] { src = match.awayTeam.flag, description = "" }
             , el [ alignLeft, paddingEach { edges | left = 10, top = 0 }, width (fillPortion 6) ] (text match.awayTeam.name)
-            , el [ alignRight ] (viewMatchInput match.id Away match.awayScore)
+            , el [ alignRight ] (viewMatchInput match.id Away match.awayScore match.awayTeam.flag)
             ]
         ]
 
@@ -941,15 +944,27 @@ viewGroup groups groupName =
         }
 
 
-viewMatchInput : Int -> HomeOrAway -> Maybe Int -> Element Msg
-viewMatchInput matchId homeOrAway score =
+viewMatchInput : Int -> HomeOrAway -> Maybe Int -> String -> Element Msg
+viewMatchInput matchId homeOrAway score flag =
+    let
+        disableSettings =
+            if flag == defaultFlag then
+                [ Element.htmlAttribute (Html.Attributes.disabled True)
+                , Background.color grey
+                ]
+
+            else
+                [ Element.htmlAttribute (Html.Attributes.type_ "number")
+                , Background.color (rgba 1 1 1 0.8)
+                ]
+    in
     Element.Input.text
-        [ width (px 80)
-        , Font.color (rgba 0 0 0 1)
-        , Background.color (rgba 1 1 1 0.8)
-        , Element.htmlAttribute (Html.Attributes.type_ "number")
-        , paddingEach { edges | top = 12, bottom = 12, left = 12 }
-        ]
+        ([ width (px 80)
+         , Font.color (rgba 0 0 0 1)
+         , paddingEach { edges | top = 12, bottom = 12, left = 12 }
+         ]
+            ++ disableSettings
+        )
         { onChange = UpdatedScore matchId homeOrAway
         , text =
             case score of

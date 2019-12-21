@@ -1,6 +1,7 @@
-module Euro2020 exposing (Group(..), GroupRow, Match, Team, defaultFlag, filterByGroup, getGroupRows, getScore, getTeamPlaying, groups, matches, playOffMatches, playedAllGames)
+module Euro2020 exposing (Group(..), GroupRow, GroupState(..), Match, Team, defaultFlag, filterByGroup, getGroupRows, getGroupState, getScore, getTeamPlaying, groups, matches, playOffMatches, playedAllGames)
 
 import Array
+import Set
 
 
 type Group
@@ -14,6 +15,12 @@ type Group
     | QuarterFinals
     | SemiFinals
     | Final
+
+
+type GroupState
+    = NotFinished
+    | FinishedSameScore
+    | FinishedDifferentScores
 
 
 type alias Match =
@@ -399,13 +406,38 @@ playedAllGames gr =
     gr.pld == 3
 
 
+getGroupState : List GroupRow -> GroupState
+getGroupState grs =
+    let
+        allGamesCompleted =
+            List.all playedAllGames grs
+
+        scores =
+            List.map getScore grs
+
+        allGamesHaveDifferentScores =
+            Set.size (Set.fromList scores) == 4
+    in
+    if not allGamesCompleted then
+        NotFinished
+
+    else if not allGamesHaveDifferentScores then
+        FinishedSameScore
+
+    else
+        FinishedDifferentScores
+
+
 getTeamPlaying : Team -> Group -> Int -> List GroupRow -> Team
 getTeamPlaying placeHolderTeam group pos allGroupRows =
     let
         groupRows =
             getGroupRows group allGroupRows
+
+        groupState =
+            getGroupState groupRows
     in
-    if List.all playedAllGames groupRows then
+    if groupState == FinishedDifferentScores then
         maybeOrDefaultTeam placeHolderTeam (Array.get (pos - 1) (Array.fromList groupRows))
 
     else
