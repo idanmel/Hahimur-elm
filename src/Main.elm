@@ -955,6 +955,8 @@ viewMatchInput matchId homeOrAway score flag =
 
             else
                 [ Element.htmlAttribute (Html.Attributes.type_ "number")
+                , Element.htmlAttribute (Html.Attributes.min "0")
+                , Element.htmlAttribute (Html.Attributes.max "100")
                 , Background.color (rgba 1 1 1 0.8)
                 ]
     in

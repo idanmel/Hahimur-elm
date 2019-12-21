@@ -12824,6 +12824,8 @@ var $mdgriffith$elm_ui$Element$Input$HiddenLabel = function (a) {
 	return {$: 1, a: a};
 };
 var $mdgriffith$elm_ui$Element$Input$labelHidden = $mdgriffith$elm_ui$Element$Input$HiddenLabel;
+var $elm$html$Html$Attributes$max = $elm$html$Html$Attributes$stringProperty('max');
+var $elm$html$Html$Attributes$min = $elm$html$Html$Attributes$stringProperty('min');
 var $mdgriffith$elm_ui$Element$Input$TextInputNode = function (a) {
 	return {$: 0, a: a};
 };
@@ -13703,6 +13705,10 @@ var $author$project$Main$viewMatchInput = F4(
 			[
 				$mdgriffith$elm_ui$Element$htmlAttribute(
 				$elm$html$Html$Attributes$type_('number')),
+				$mdgriffith$elm_ui$Element$htmlAttribute(
+				$elm$html$Html$Attributes$min('0')),
+				$mdgriffith$elm_ui$Element$htmlAttribute(
+				$elm$html$Html$Attributes$max('100')),
 				$mdgriffith$elm_ui$Element$Background$color(
 				A4($mdgriffith$elm_ui$Element$rgba, 1, 1, 1, 0.8))
 			]);
