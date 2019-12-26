@@ -14,6 +14,7 @@ import Element.Region as Region
 import Euro2020 exposing (Group(..), GroupRow, GroupState(..), Match, Team, defaultFlag, filterByGroup, getGroupRows, getGroupState, getScore, getTeamPlaying, groups, matches, playOffMatches, playedAllGames)
 import Html exposing (Html)
 import Html.Attributes
+import List.Extra
 
 
 blue =
@@ -225,11 +226,8 @@ updateGroup match group =
 get3rdPlaceTeam : List GroupRow -> GroupRow
 get3rdPlaceTeam groupRows =
     let
-        groupRowsArray =
-            Array.fromList groupRows
-
         thirdPlace =
-            Array.get 2 groupRowsArray
+            List.Extra.getAt 2 groupRows
     in
     case thirdPlace of
         Just gr ->
@@ -810,50 +808,21 @@ viewMatches matches group =
         groupMatches =
             List.filter (\m -> m.group == group) matches
 
-        firstDay =
-            List.take 2 groupMatches
-
-        secondDay =
-            List.take 2 (List.drop 2 groupMatches)
-
-        thirdDay =
-            List.drop 4 groupMatches
+        grouped =
+            List.Extra.groupsOf 2 groupMatches
     in
     column [ centerX ]
-        [ viewTwoMatches firstDay
-        , viewTwoMatches secondDay
-        , viewTwoMatches thirdDay
-        ]
+        (List.map viewTwoMatches grouped)
 
 
 viewPlayoffMatches : List Match -> Group -> Element Msg
 viewPlayoffMatches matches group =
     let
-        playOffMatches =
-            List.filter (\m -> m.group == group) matches
-
-        firstCouple =
-            List.take 2 playOffMatches
-
-        secondCouple =
-            playOffMatches
-                |> List.drop 2
-                |> List.take 2
-
-        thirdCouple =
-            playOffMatches
-                |> List.drop 4
-                |> List.take 2
-
-        fourthCouple =
-            List.drop 6 playOffMatches
+        grouped =
+            List.Extra.groupsOf 2 playOffMatches
     in
     column [ centerX ]
-        [ viewTwoMatches firstCouple
-        , viewTwoMatches secondCouple
-        , viewTwoMatches thirdCouple
-        , viewTwoMatches fourthCouple
-        ]
+        (List.map viewTwoMatches grouped)
 
 
 viewGroupTitle : Group -> Element Msg

@@ -5777,9 +5777,43 @@ var $author$project$Main$get3rdTeam = F4(
 			return defaultTeam;
 		}
 	});
+var $elm$core$List$drop = F2(
+	function (n, list) {
+		drop:
+		while (true) {
+			if (n <= 0) {
+				return list;
+			} else {
+				if (!list.b) {
+					return list;
+				} else {
+					var x = list.a;
+					var xs = list.b;
+					var $temp$n = n - 1,
+						$temp$list = xs;
+					n = $temp$n;
+					list = $temp$list;
+					continue drop;
+				}
+			}
+		}
+	});
+var $elm$core$List$head = function (list) {
+	if (list.b) {
+		var x = list.a;
+		var xs = list.b;
+		return $elm$core$Maybe$Just(x);
+	} else {
+		return $elm$core$Maybe$Nothing;
+	}
+};
+var $elm_community$list_extra$List$Extra$getAt = F2(
+	function (idx, xs) {
+		return (idx < 0) ? $elm$core$Maybe$Nothing : $elm$core$List$head(
+			A2($elm$core$List$drop, idx, xs));
+	});
 var $author$project$Main$get3rdPlaceTeam = function (groupRows) {
-	var groupRowsArray = $elm$core$Array$fromList(groupRows);
-	var thirdPlace = A2($elm$core$Array$get, 2, groupRowsArray);
+	var thirdPlace = A2($elm_community$list_extra$List$Extra$getAt, 2, groupRows);
 	if (!thirdPlace.$) {
 		var gr = thirdPlace.a;
 		return gr;
@@ -12738,26 +12772,22 @@ var $author$project$Main$viewGroupTitle = function (group) {
 				$author$project$Main$groupToString(group))
 			]));
 };
-var $elm$core$List$drop = F2(
-	function (n, list) {
-		drop:
-		while (true) {
-			if (n <= 0) {
-				return list;
-			} else {
-				if (!list.b) {
-					return list;
-				} else {
-					var x = list.a;
-					var xs = list.b;
-					var $temp$n = n - 1,
-						$temp$list = xs;
-					n = $temp$n;
-					list = $temp$list;
-					continue drop;
-				}
-			}
-		}
+var $elm_community$list_extra$List$Extra$groupsOfWithStep = F3(
+	function (size, step, xs) {
+		var xs_ = A2($elm$core$List$drop, step, xs);
+		var thisGroup = A2($elm$core$List$take, size, xs);
+		var okayLength = _Utils_eq(
+			size,
+			$elm$core$List$length(thisGroup));
+		var okayArgs = (size > 0) && (step > 0);
+		return (okayArgs && okayLength) ? A2(
+			$elm$core$List$cons,
+			thisGroup,
+			A3($elm_community$list_extra$List$Extra$groupsOfWithStep, size, step, xs_)) : _List_Nil;
+	});
+var $elm_community$list_extra$List$Extra$groupsOf = F2(
+	function (size, xs) {
+		return A3($elm_community$list_extra$List$Extra$groupsOfWithStep, size, size, xs);
 	});
 var $author$project$Main$Away = 1;
 var $mdgriffith$elm_ui$Internal$Model$Left = 0;
@@ -13024,15 +13054,6 @@ var $mdgriffith$elm_ui$Element$Input$getHeight = function (attr) {
 	if (attr.$ === 8) {
 		var h = attr.a;
 		return $elm$core$Maybe$Just(h);
-	} else {
-		return $elm$core$Maybe$Nothing;
-	}
-};
-var $elm$core$List$head = function (list) {
-	if (list.b) {
-		var x = list.a;
-		var xs = list.b;
-		return $elm$core$Maybe$Just(x);
 	} else {
 		return $elm$core$Maybe$Nothing;
 	}
@@ -13857,52 +13878,21 @@ var $author$project$Main$viewMatches = F2(
 				return _Utils_eq(m.aD, group);
 			},
 			matches);
-		var secondDay = A2(
-			$elm$core$List$take,
-			2,
-			A2($elm$core$List$drop, 2, groupMatches));
-		var thirdDay = A2($elm$core$List$drop, 4, groupMatches);
-		var firstDay = A2($elm$core$List$take, 2, groupMatches);
+		var grouped = A2($elm_community$list_extra$List$Extra$groupsOf, 2, groupMatches);
 		return A2(
 			$mdgriffith$elm_ui$Element$column,
 			_List_fromArray(
 				[$mdgriffith$elm_ui$Element$centerX]),
-			_List_fromArray(
-				[
-					$author$project$Main$viewTwoMatches(firstDay),
-					$author$project$Main$viewTwoMatches(secondDay),
-					$author$project$Main$viewTwoMatches(thirdDay)
-				]));
+			A2($elm$core$List$map, $author$project$Main$viewTwoMatches, grouped));
 	});
 var $author$project$Main$viewPlayoffMatches = F2(
 	function (matches, group) {
-		var playOffMatches = A2(
-			$elm$core$List$filter,
-			function (m) {
-				return _Utils_eq(m.aD, group);
-			},
-			matches);
-		var secondCouple = A2(
-			$elm$core$List$take,
-			2,
-			A2($elm$core$List$drop, 2, playOffMatches));
-		var thirdCouple = A2(
-			$elm$core$List$take,
-			2,
-			A2($elm$core$List$drop, 4, playOffMatches));
-		var fourthCouple = A2($elm$core$List$drop, 6, playOffMatches);
-		var firstCouple = A2($elm$core$List$take, 2, playOffMatches);
+		var grouped = A2($elm_community$list_extra$List$Extra$groupsOf, 2, $author$project$Euro2020$playOffMatches);
 		return A2(
 			$mdgriffith$elm_ui$Element$column,
 			_List_fromArray(
 				[$mdgriffith$elm_ui$Element$centerX]),
-			_List_fromArray(
-				[
-					$author$project$Main$viewTwoMatches(firstCouple),
-					$author$project$Main$viewTwoMatches(secondCouple),
-					$author$project$Main$viewTwoMatches(thirdCouple),
-					$author$project$Main$viewTwoMatches(fourthCouple)
-				]));
+			A2($elm$core$List$map, $author$project$Main$viewTwoMatches, grouped));
 	});
 var $author$project$Main$viewSpacer = function (p) {
 	return A2(
