@@ -1,4 +1,4 @@
-module Euro2020 exposing (Group(..), GroupRow, GroupState(..), Match, Team, defaultFlag, filterByGroup, getGroupRows, getGroupState, getScore, getTeamPlaying, groupRows, isPlayoffMatch, matches, playOffMatches, playedAllGames)
+module Euro2020 exposing (Group(..), GroupRow, GroupState(..), Match, Team, TeamPosition, defaultFlag, filterByGroup, getGroupRows, getGroupState, getScore, getTeamPlaying, groupRows, groupToString, isPlayoffMatch, matches, playOffMatches, playedAllGames, updateTeams)
 
 import Array
 import Set
@@ -21,6 +21,13 @@ type GroupState
     = NotFinished
     | FinishedSameScore
     | FinishedDifferentScores
+
+
+type TeamPosition
+    = B1
+    | C1
+    | E1
+    | F1
 
 
 type alias Match =
@@ -457,3 +464,332 @@ maybeOrDefaultTeam defaultTeam maybeGroupRow =
 isPlayoffMatch : Match -> Bool
 isPlayoffMatch match =
     List.member match.id [ 37, 38, 39, 40, 41, 42, 43, 44 ]
+
+
+updateTeams : List GroupRow -> List GroupRow -> Match -> Match
+updateTeams grs thirdPlaces m =
+    case m.id of
+        37 ->
+            { m
+                | homeTeam = getTeamPlaying (Team "Winner Group A" defaultFlag) GroupA 1 grs
+                , awayTeam = getTeamPlaying (Team "Runner-up Group C" defaultFlag) GroupC 2 grs
+            }
+
+        38 ->
+            { m
+                | homeTeam = getTeamPlaying (Team "Runner-up Group A" defaultFlag) GroupA 2 grs
+                , awayTeam = getTeamPlaying (Team "Runner-up Group B" defaultFlag) GroupB 2 grs
+            }
+
+        39 ->
+            { m
+                | homeTeam = getTeamPlaying (Team "Winner Group B" defaultFlag) GroupB 1 grs
+                , awayTeam = get3rdTeam (Team "3rd Group A/D/E/F" defaultFlag) B1 thirdPlaces grs
+            }
+
+        40 ->
+            { m
+                | homeTeam = getTeamPlaying (Team "Winner Group C" defaultFlag) GroupC 1 grs
+                , awayTeam = get3rdTeam (Team "3rd Group D/E/F" defaultFlag) C1 thirdPlaces grs
+            }
+
+        41 ->
+            { m
+                | homeTeam = getTeamPlaying (Team "Winner Group F" defaultFlag) GroupF 1 grs
+                , awayTeam = get3rdTeam (Team "3rd Group A/B/C" defaultFlag) F1 thirdPlaces grs
+            }
+
+        42 ->
+            { m
+                | homeTeam = getTeamPlaying (Team "Runner-up Group D" defaultFlag) GroupD 2 grs
+                , awayTeam = getTeamPlaying (Team "Runner-up Group E" defaultFlag) GroupE 2 grs
+            }
+
+        43 ->
+            { m
+                | homeTeam = getTeamPlaying (Team "Winner Group E" defaultFlag) GroupE 1 grs
+                , awayTeam = get3rdTeam (Team "3rd Group A/B/C/D" defaultFlag) E1 thirdPlaces grs
+            }
+
+        44 ->
+            { m
+                | homeTeam = getTeamPlaying (Team "Winner Group D" defaultFlag) GroupD 1 grs
+                , awayTeam = getTeamPlaying (Team "Runner-up Group F" defaultFlag) GroupF 2 grs
+            }
+
+        _ ->
+            m
+
+
+get3rdTeam : Team -> TeamPosition -> List GroupRow -> List GroupRow -> Team
+get3rdTeam defaultTeam tp grs allGroupRows =
+    let
+        topFour =
+            List.take 4 grs
+    in
+    if List.all playedAllGames allGroupRows then
+        case tp of
+            B1 ->
+                applyCrazyUefaLogic topFour B1
+
+            C1 ->
+                applyCrazyUefaLogic topFour C1
+
+            E1 ->
+                applyCrazyUefaLogic topFour E1
+
+            F1 ->
+                applyCrazyUefaLogic topFour F1
+
+    else
+        defaultTeam
+
+
+applyCrazyUefaLogic : List GroupRow -> TeamPosition -> Team
+applyCrazyUefaLogic top4groupRows tp =
+    let
+        sortedStringGroups =
+            top4groupRows
+                |> List.map .group
+                |> List.map groupToString
+                |> List.map (String.replace "Group " "")
+                |> List.sort
+                |> String.concat
+    in
+    case tp of
+        B1 ->
+            if sortedStringGroups == "ABCD" then
+                getRoundOf16Team GroupA top4groupRows
+
+            else if sortedStringGroups == "ABCE" then
+                getRoundOf16Team GroupA top4groupRows
+
+            else if sortedStringGroups == "ABCF" then
+                getRoundOf16Team GroupA top4groupRows
+
+            else if sortedStringGroups == "ABDE" then
+                getRoundOf16Team GroupD top4groupRows
+
+            else if sortedStringGroups == "ABDF" then
+                getRoundOf16Team GroupD top4groupRows
+
+            else if sortedStringGroups == "ABEF" then
+                getRoundOf16Team GroupE top4groupRows
+
+            else if sortedStringGroups == "ACDE" then
+                getRoundOf16Team GroupE top4groupRows
+
+            else if sortedStringGroups == "ACDF" then
+                getRoundOf16Team GroupF top4groupRows
+
+            else if sortedStringGroups == "ACEF" then
+                getRoundOf16Team GroupE top4groupRows
+
+            else if sortedStringGroups == "ADEF" then
+                getRoundOf16Team GroupE top4groupRows
+
+            else if sortedStringGroups == "BCDE" then
+                getRoundOf16Team GroupE top4groupRows
+
+            else if sortedStringGroups == "BCDF" then
+                getRoundOf16Team GroupF top4groupRows
+
+            else if sortedStringGroups == "BCEF" then
+                getRoundOf16Team GroupF top4groupRows
+
+            else if sortedStringGroups == "BDEF" then
+                getRoundOf16Team GroupF top4groupRows
+
+            else
+                getRoundOf16Team GroupF top4groupRows
+
+        C1 ->
+            if sortedStringGroups == "ABCD" then
+                getRoundOf16Team GroupD top4groupRows
+
+            else if sortedStringGroups == "ABCE" then
+                getRoundOf16Team GroupE top4groupRows
+
+            else if sortedStringGroups == "ABCF" then
+                getRoundOf16Team GroupF top4groupRows
+
+            else if sortedStringGroups == "ABDE" then
+                getRoundOf16Team GroupE top4groupRows
+
+            else if sortedStringGroups == "ABDF" then
+                getRoundOf16Team GroupF top4groupRows
+
+            else if sortedStringGroups == "ABEF" then
+                getRoundOf16Team GroupF top4groupRows
+
+            else if sortedStringGroups == "ACDE" then
+                getRoundOf16Team GroupD top4groupRows
+
+            else if sortedStringGroups == "ACDF" then
+                getRoundOf16Team GroupD top4groupRows
+
+            else if sortedStringGroups == "ACEF" then
+                getRoundOf16Team GroupF top4groupRows
+
+            else if sortedStringGroups == "ADEF" then
+                getRoundOf16Team GroupF top4groupRows
+
+            else if sortedStringGroups == "BCDE" then
+                getRoundOf16Team GroupD top4groupRows
+
+            else if sortedStringGroups == "BCDF" then
+                getRoundOf16Team GroupD top4groupRows
+
+            else if sortedStringGroups == "BCEF" then
+                getRoundOf16Team GroupE top4groupRows
+
+            else if sortedStringGroups == "BDEF" then
+                getRoundOf16Team GroupE top4groupRows
+
+            else
+                getRoundOf16Team GroupE top4groupRows
+
+        E1 ->
+            if sortedStringGroups == "ABCD" then
+                getRoundOf16Team GroupB top4groupRows
+
+            else if sortedStringGroups == "ABCE" then
+                getRoundOf16Team GroupB top4groupRows
+
+            else if sortedStringGroups == "ABCF" then
+                getRoundOf16Team GroupB top4groupRows
+
+            else if sortedStringGroups == "ABDE" then
+                getRoundOf16Team GroupA top4groupRows
+
+            else if sortedStringGroups == "ABDF" then
+                getRoundOf16Team GroupA top4groupRows
+
+            else if sortedStringGroups == "ABEF" then
+                getRoundOf16Team GroupB top4groupRows
+
+            else if sortedStringGroups == "ACDE" then
+                getRoundOf16Team GroupC top4groupRows
+
+            else if sortedStringGroups == "ACDF" then
+                getRoundOf16Team GroupC top4groupRows
+
+            else if sortedStringGroups == "ACEF" then
+                getRoundOf16Team GroupC top4groupRows
+
+            else if sortedStringGroups == "ADEF" then
+                getRoundOf16Team GroupD top4groupRows
+
+            else if sortedStringGroups == "BCDE" then
+                getRoundOf16Team GroupB top4groupRows
+
+            else if sortedStringGroups == "BCDF" then
+                getRoundOf16Team GroupC top4groupRows
+
+            else if sortedStringGroups == "BCEF" then
+                getRoundOf16Team GroupC top4groupRows
+
+            else if sortedStringGroups == "BDEF" then
+                getRoundOf16Team GroupD top4groupRows
+
+            else
+                getRoundOf16Team GroupD top4groupRows
+
+        F1 ->
+            if sortedStringGroups == "ABCD" then
+                getRoundOf16Team GroupC top4groupRows
+
+            else if sortedStringGroups == "ABCE" then
+                getRoundOf16Team GroupC top4groupRows
+
+            else if sortedStringGroups == "ABCF" then
+                getRoundOf16Team GroupC top4groupRows
+
+            else if sortedStringGroups == "ABDE" then
+                getRoundOf16Team GroupB top4groupRows
+
+            else if sortedStringGroups == "ABDF" then
+                getRoundOf16Team GroupB top4groupRows
+
+            else if sortedStringGroups == "ABEF" then
+                getRoundOf16Team GroupA top4groupRows
+
+            else if sortedStringGroups == "ACDE" then
+                getRoundOf16Team GroupA top4groupRows
+
+            else if sortedStringGroups == "ACDF" then
+                getRoundOf16Team GroupA top4groupRows
+
+            else if sortedStringGroups == "ACEF" then
+                getRoundOf16Team GroupA top4groupRows
+
+            else if sortedStringGroups == "ADEF" then
+                getRoundOf16Team GroupA top4groupRows
+
+            else if sortedStringGroups == "BCDE" then
+                getRoundOf16Team GroupC top4groupRows
+
+            else if sortedStringGroups == "BCDF" then
+                getRoundOf16Team GroupB top4groupRows
+
+            else if sortedStringGroups == "BCEF" then
+                getRoundOf16Team GroupB top4groupRows
+
+            else if sortedStringGroups == "BDEF" then
+                getRoundOf16Team GroupB top4groupRows
+
+            else
+                getRoundOf16Team GroupC top4groupRows
+
+
+groupToString : Group -> String
+groupToString g =
+    case g of
+        GroupA ->
+            "Group A"
+
+        GroupB ->
+            "Group B"
+
+        GroupC ->
+            "Group C"
+
+        GroupD ->
+            "Group D"
+
+        GroupE ->
+            "Group E"
+
+        GroupF ->
+            "Group F"
+
+        RoundOf16 ->
+            "Round Of 16"
+
+        QuarterFinals ->
+            "Quarter Finals"
+
+        SemiFinals ->
+            "Semi Finals"
+
+        Final ->
+            "Final"
+
+
+getRoundOf16Team : Group -> List GroupRow -> Team
+getRoundOf16Team g top4Table =
+    top4Table
+        |> filterByGroup g
+        |> Array.fromList
+        |> Array.get 0
+        |> teamFromMaybeGroupRow
+
+
+teamFromMaybeGroupRow : Maybe GroupRow -> Team
+teamFromMaybeGroupRow gr =
+    case gr of
+        Just row ->
+            row.team
+
+        Nothing ->
+            Team "Wow14" ""
