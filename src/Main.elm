@@ -11,7 +11,7 @@ import Element.Border as Border
 import Element.Font as Font
 import Element.Input exposing (button)
 import Element.Region as Region
-import Euro2020 exposing (Group(..), GroupRow, GroupState(..), Match, Team, defaultFlag, filterByGroup, getGroupRows, getGroupState, getScore, getTeamPlaying, groups, matches, playOffMatches, playedAllGames)
+import Euro2020 exposing (Group(..), GroupRow, GroupState(..), Match, Team, defaultFlag, filterByGroup, getGroupRows, getGroupState, getScore, getTeamPlaying, groupRows, isPlayoffMatch, matches, playOffMatches, playedAllGames)
 import Html exposing (Html)
 import Html.Attributes
 import List.Extra
@@ -58,8 +58,22 @@ main =
 
 
 type Msg
-    = UpdatedScore Int HomeOrAway String
+    = UpdatedGroupScore Int HomeOrAway String
+    | UpdatedPlayoffScore Int HomeOrAway String
     | ClickedGroup Group
+
+
+updateScore : Int -> HomeOrAway -> String -> Match -> Match
+updateScore matchId homeOrAway score m =
+    if m.id == matchId then
+        if homeOrAway == Home then
+            { m | homeScore = String.toInt score }
+
+        else
+            { m | awayScore = String.toInt score }
+
+    else
+        m
 
 
 update : Msg -> Model -> Model
@@ -68,26 +82,23 @@ update msg model =
         ClickedGroup group ->
             { model | selectedGroup = group }
 
-        UpdatedScore matchId homeOrAway score ->
+        UpdatedPlayoffScore matchId homeOrAway score ->
             let
-                updateScore : Match -> Match
-                updateScore m =
-                    if m.id == matchId then
-                        if homeOrAway == Home then
-                            { m | homeScore = String.toInt score }
+                newPlayOffMatches =
+                    List.map (updateScore matchId homeOrAway score) model.playOffMatches
+            in
+            { model
+                | playOffMatches = newPlayOffMatches
+            }
 
-                        else
-                            { m | awayScore = String.toInt score }
-
-                    else
-                        m
-
+        UpdatedGroupScore matchId homeOrAway score ->
+            let
                 newMatches =
-                    List.map updateScore model.matches
+                    List.map (updateScore matchId homeOrAway score) model.matches
 
                 newGroupRows =
                     newMatches
-                        |> List.foldl updateGroup groups
+                        |> List.foldl updateGroup groupRows
 
                 groupRowsAfterTieBreaks =
                     List.map (resolveTieBreak newMatches newGroupRows) newGroupRows
@@ -102,58 +113,75 @@ update msg model =
                             { m
                                 | homeTeam = getTeamPlaying (Team "Winner Group A" defaultFlag) GroupA 1 groupRowsAfterTieBreaks
                                 , awayTeam = getTeamPlaying (Team "Runner-up Group C" defaultFlag) GroupC 2 groupRowsAfterTieBreaks
+                                , homeScore = Nothing
+                                , awayScore = Nothing
                             }
 
                         38 ->
                             { m
                                 | homeTeam = getTeamPlaying (Team "Runner-up Group A" defaultFlag) GroupA 2 groupRowsAfterTieBreaks
                                 , awayTeam = getTeamPlaying (Team "Runner-up Group B" defaultFlag) GroupB 2 groupRowsAfterTieBreaks
+                                , homeScore = Nothing
+                                , awayScore = Nothing
                             }
 
                         39 ->
                             { m
                                 | homeTeam = getTeamPlaying (Team "Winner Group B" defaultFlag) GroupB 1 groupRowsAfterTieBreaks
                                 , awayTeam = get3rdTeam (Team "3rd Group A/D/E/F" defaultFlag) B1 thirdPlaces groupRowsAfterTieBreaks
+                                , homeScore = Nothing
+                                , awayScore = Nothing
                             }
 
                         40 ->
                             { m
                                 | homeTeam = getTeamPlaying (Team "Winner Group C" defaultFlag) GroupC 1 groupRowsAfterTieBreaks
                                 , awayTeam = get3rdTeam (Team "3rd Group D/E/F" defaultFlag) C1 thirdPlaces groupRowsAfterTieBreaks
+                                , homeScore = Nothing
+                                , awayScore = Nothing
                             }
 
                         41 ->
                             { m
                                 | homeTeam = getTeamPlaying (Team "Winner Group F" defaultFlag) GroupF 1 groupRowsAfterTieBreaks
                                 , awayTeam = get3rdTeam (Team "3rd Group A/B/C" defaultFlag) F1 thirdPlaces groupRowsAfterTieBreaks
+                                , homeScore = Nothing
+                                , awayScore = Nothing
                             }
 
                         42 ->
                             { m
                                 | homeTeam = getTeamPlaying (Team "Runner-up Group D" defaultFlag) GroupD 2 groupRowsAfterTieBreaks
                                 , awayTeam = getTeamPlaying (Team "Runner-up Group E" defaultFlag) GroupE 2 groupRowsAfterTieBreaks
+                                , homeScore = Nothing
+                                , awayScore = Nothing
                             }
 
                         43 ->
                             { m
                                 | homeTeam = getTeamPlaying (Team "Winner Group E" defaultFlag) GroupE 1 groupRowsAfterTieBreaks
                                 , awayTeam = get3rdTeam (Team "3rd Group A/B/C/D" defaultFlag) E1 thirdPlaces groupRowsAfterTieBreaks
+                                , homeScore = Nothing
+                                , awayScore = Nothing
                             }
 
                         44 ->
                             { m
                                 | homeTeam = getTeamPlaying (Team "Winner Group D" defaultFlag) GroupD 1 groupRowsAfterTieBreaks
                                 , awayTeam = getTeamPlaying (Team "Runner-up Group F" defaultFlag) GroupF 2 groupRowsAfterTieBreaks
+                                , homeScore = Nothing
+                                , awayScore = Nothing
                             }
 
                         _ ->
                             m
 
                 newPlayOffMatches =
-                    List.map (updateTeams newGroupRows) newMatches
+                    List.map (updateTeams groupRowsAfterTieBreaks) playOffMatches
             in
             { model
-                | matches = newPlayOffMatches
+                | matches = newMatches
+                , playOffMatches = newPlayOffMatches
                 , groups = groupRowsAfterTieBreaks
             }
 
@@ -660,6 +688,7 @@ applyCrazyUefaLogic top4groupRows tp =
 
 type alias Model =
     { matches : List Match
+    , playOffMatches : List Match
     , groups : List GroupRow
     , selectedGroup : Group
     }
@@ -672,7 +701,8 @@ type HomeOrAway
 
 init =
     { matches = matches
-    , groups = groups
+    , groups = groupRows
+    , playOffMatches = playOffMatches
     , selectedGroup = GroupA
     }
 
@@ -717,7 +747,7 @@ view model =
                 , viewSpacer 16
                 , viewGroupTitle RoundOf16
                 , viewSpacer 8
-                , viewPlayoffMatches model.matches RoundOf16
+                , viewPlayoffMatches model.playOffMatches RoundOf16
                 ]
             , column [ width (fillPortion 1) ] []
             ]
@@ -786,13 +816,13 @@ viewMatch match =
             [ width fill ]
             [ image [ alignLeft, paddingEach { edges | left = 10, top = 0 }, centerY, width (fillPortion 1) ] { src = match.homeTeam.flag, description = "" }
             , el [ alignLeft, paddingEach { edges | left = 10, top = 0 }, centerY, width (fillPortion 6) ] (text match.homeTeam.name)
-            , el [ alignRight ] (viewMatchInput match.id Home match.homeScore match.homeTeam.flag)
+            , el [ alignRight ] (viewMatchInput match Home)
             ]
         , row
             [ width fill ]
             [ image [ alignLeft, paddingEach { edges | left = 10, top = 0 }, centerY, width (fillPortion 1) ] { src = match.awayTeam.flag, description = "" }
             , el [ alignLeft, paddingEach { edges | left = 10, top = 0 }, width (fillPortion 6) ] (text match.awayTeam.name)
-            , el [ alignRight ] (viewMatchInput match.id Away match.awayScore match.awayTeam.flag)
+            , el [ alignRight ] (viewMatchInput match Away)
             ]
         ]
 
@@ -916,11 +946,27 @@ viewGroup groups groupName =
         }
 
 
-viewMatchInput : Int -> HomeOrAway -> Maybe Int -> String -> Element Msg
-viewMatchInput matchId homeOrAway score flag =
+viewMatchInput : Match -> HomeOrAway -> Element Msg
+viewMatchInput match homeOrAway =
     let
+        team =
+            case homeOrAway of
+                Home ->
+                    match.homeTeam
+
+                Away ->
+                    match.awayTeam
+
+        score =
+            case homeOrAway of
+                Home ->
+                    match.homeScore
+
+                Away ->
+                    match.awayScore
+
         disableSettings =
-            if flag == defaultFlag then
+            if team.flag == defaultFlag then
                 [ Element.htmlAttribute (Html.Attributes.disabled True)
                 , Background.color grey
                 ]
@@ -939,7 +985,12 @@ viewMatchInput matchId homeOrAway score flag =
          ]
             ++ disableSettings
         )
-        { onChange = UpdatedScore matchId homeOrAway
+        { onChange =
+            if isPlayoffMatch match then
+                UpdatedPlayoffScore match.id homeOrAway
+
+            else
+                UpdatedGroupScore match.id homeOrAway
         , text =
             case score of
                 Nothing ->

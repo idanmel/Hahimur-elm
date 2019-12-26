@@ -1,4 +1,4 @@
-module Euro2020 exposing (Group(..), GroupRow, GroupState(..), Match, Team, defaultFlag, filterByGroup, getGroupRows, getGroupState, getScore, getTeamPlaying, groups, matches, playOffMatches, playedAllGames)
+module Euro2020 exposing (Group(..), GroupRow, GroupState(..), Match, Team, defaultFlag, filterByGroup, getGroupRows, getGroupState, getScore, getTeamPlaying, groupRows, isPlayoffMatch, matches, playOffMatches, playedAllGames)
 
 import Array
 import Set
@@ -362,13 +362,13 @@ playOffMatches =
     ]
 
 
-groups : List GroupRow
-groups =
+groupRows : List GroupRow
+groupRows =
     groupA ++ groupB ++ groupC ++ groupD ++ groupE ++ groupF
 
 
 matches =
-    matchesGroupA ++ matchesGroupB ++ matchesGroupC ++ matchesGroupD ++ matchesGroupE ++ matchesGroupF ++ playOffMatches
+    matchesGroupA ++ matchesGroupB ++ matchesGroupC ++ matchesGroupD ++ matchesGroupE ++ matchesGroupF
 
 
 filterByMatchId : Int -> List Match -> List Match
@@ -377,8 +377,8 @@ filterByMatchId matchId matchess =
 
 
 filterByGroup : Group -> List GroupRow -> List GroupRow
-filterByGroup groupName groupRows =
-    List.filter (\gr -> gr.group == groupName) groupRows
+filterByGroup groupName grs =
+    List.filter (\gr -> gr.group == groupName) grs
 
 
 getScore : GroupRow -> List Int
@@ -394,8 +394,8 @@ getScore gr =
 
 
 getGroupRows : Group -> List GroupRow -> List GroupRow
-getGroupRows groupName groupRows =
-    groupRows
+getGroupRows groupName grs =
+    grs
         |> filterByGroup groupName
         |> List.sortBy getScore
         |> List.reverse
@@ -431,14 +431,14 @@ getGroupState grs =
 getTeamPlaying : Team -> Group -> Int -> List GroupRow -> Team
 getTeamPlaying placeHolderTeam group pos allGroupRows =
     let
-        groupRows =
+        grs =
             getGroupRows group allGroupRows
 
         groupState =
-            getGroupState groupRows
+            getGroupState grs
     in
     if groupState == FinishedDifferentScores then
-        maybeOrDefaultTeam placeHolderTeam (Array.get (pos - 1) (Array.fromList groupRows))
+        maybeOrDefaultTeam placeHolderTeam (Array.get (pos - 1) (Array.fromList grs))
 
     else
         placeHolderTeam
@@ -452,3 +452,8 @@ maybeOrDefaultTeam defaultTeam maybeGroupRow =
 
         Nothing ->
             defaultTeam
+
+
+isPlayoffMatch : Match -> Bool
+isPlayoffMatch match =
+    List.member match.id [ 37, 38, 39, 40, 41, 42, 43, 44 ]
