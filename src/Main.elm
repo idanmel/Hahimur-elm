@@ -818,6 +818,9 @@ viewMatches matches group =
 viewPlayoffMatches : List Match -> Group -> Element Msg
 viewPlayoffMatches matches group =
     let
+        playOffMatches =
+            List.filter (\m -> m.group == group) matches
+
         grouped =
             List.Extra.groupsOf 2 playOffMatches
     in

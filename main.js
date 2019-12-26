@@ -13887,7 +13887,13 @@ var $author$project$Main$viewMatches = F2(
 	});
 var $author$project$Main$viewPlayoffMatches = F2(
 	function (matches, group) {
-		var grouped = A2($elm_community$list_extra$List$Extra$groupsOf, 2, $author$project$Euro2020$playOffMatches);
+		var playOffMatches = A2(
+			$elm$core$List$filter,
+			function (m) {
+				return _Utils_eq(m.aD, group);
+			},
+			matches);
+		var grouped = A2($elm_community$list_extra$List$Extra$groupsOf, 2, playOffMatches);
 		return A2(
 			$mdgriffith$elm_ui$Element$column,
 			_List_fromArray(
