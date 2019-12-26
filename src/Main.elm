@@ -66,14 +66,35 @@ type Msg
 updateScore : Int -> HomeOrAway -> String -> Match -> Match
 updateScore matchId homeOrAway score m =
     if m.id == matchId then
-        if homeOrAway == Home then
-            { m | homeScore = String.toInt score }
+        case homeOrAway of
+            Home ->
+                { m | homeScore = String.toInt score }
 
-        else
-            { m | awayScore = String.toInt score }
+            Away ->
+                { m | awayScore = String.toInt score }
 
     else
         m
+
+
+updatePlayoffScore : Match -> Match
+updatePlayoffScore m =
+    let
+        homeScore =
+            if m.homeTeam.flag == defaultFlag then
+                Nothing
+
+            else
+                m.homeScore
+
+        awayScore =
+            if m.awayTeam.flag == defaultFlag then
+                Nothing
+
+            else
+                m.awayScore
+    in
+    { m | homeScore = homeScore, awayScore = awayScore }
 
 
 update : Msg -> Model -> Model
@@ -113,75 +134,62 @@ update msg model =
                             { m
                                 | homeTeam = getTeamPlaying (Team "Winner Group A" defaultFlag) GroupA 1 groupRowsAfterTieBreaks
                                 , awayTeam = getTeamPlaying (Team "Runner-up Group C" defaultFlag) GroupC 2 groupRowsAfterTieBreaks
-                                , homeScore = Nothing
-                                , awayScore = Nothing
                             }
 
                         38 ->
                             { m
                                 | homeTeam = getTeamPlaying (Team "Runner-up Group A" defaultFlag) GroupA 2 groupRowsAfterTieBreaks
                                 , awayTeam = getTeamPlaying (Team "Runner-up Group B" defaultFlag) GroupB 2 groupRowsAfterTieBreaks
-                                , homeScore = Nothing
-                                , awayScore = Nothing
                             }
 
                         39 ->
                             { m
                                 | homeTeam = getTeamPlaying (Team "Winner Group B" defaultFlag) GroupB 1 groupRowsAfterTieBreaks
                                 , awayTeam = get3rdTeam (Team "3rd Group A/D/E/F" defaultFlag) B1 thirdPlaces groupRowsAfterTieBreaks
-                                , homeScore = Nothing
-                                , awayScore = Nothing
                             }
 
                         40 ->
                             { m
                                 | homeTeam = getTeamPlaying (Team "Winner Group C" defaultFlag) GroupC 1 groupRowsAfterTieBreaks
                                 , awayTeam = get3rdTeam (Team "3rd Group D/E/F" defaultFlag) C1 thirdPlaces groupRowsAfterTieBreaks
-                                , homeScore = Nothing
-                                , awayScore = Nothing
                             }
 
                         41 ->
                             { m
                                 | homeTeam = getTeamPlaying (Team "Winner Group F" defaultFlag) GroupF 1 groupRowsAfterTieBreaks
                                 , awayTeam = get3rdTeam (Team "3rd Group A/B/C" defaultFlag) F1 thirdPlaces groupRowsAfterTieBreaks
-                                , homeScore = Nothing
-                                , awayScore = Nothing
                             }
 
                         42 ->
                             { m
                                 | homeTeam = getTeamPlaying (Team "Runner-up Group D" defaultFlag) GroupD 2 groupRowsAfterTieBreaks
                                 , awayTeam = getTeamPlaying (Team "Runner-up Group E" defaultFlag) GroupE 2 groupRowsAfterTieBreaks
-                                , homeScore = Nothing
-                                , awayScore = Nothing
                             }
 
                         43 ->
                             { m
                                 | homeTeam = getTeamPlaying (Team "Winner Group E" defaultFlag) GroupE 1 groupRowsAfterTieBreaks
                                 , awayTeam = get3rdTeam (Team "3rd Group A/B/C/D" defaultFlag) E1 thirdPlaces groupRowsAfterTieBreaks
-                                , homeScore = Nothing
-                                , awayScore = Nothing
                             }
 
                         44 ->
                             { m
                                 | homeTeam = getTeamPlaying (Team "Winner Group D" defaultFlag) GroupD 1 groupRowsAfterTieBreaks
                                 , awayTeam = getTeamPlaying (Team "Runner-up Group F" defaultFlag) GroupF 2 groupRowsAfterTieBreaks
-                                , homeScore = Nothing
-                                , awayScore = Nothing
                             }
 
                         _ ->
                             m
 
                 newPlayOffMatches =
-                    List.map (updateTeams groupRowsAfterTieBreaks) playOffMatches
+                    List.map (updateTeams groupRowsAfterTieBreaks) model.playOffMatches
+
+                newPlayOffMatchesScores =
+                    List.map updatePlayoffScore newPlayOffMatches
             in
             { model
                 | matches = newMatches
-                , playOffMatches = newPlayOffMatches
+                , playOffMatches = newPlayOffMatchesScores
                 , groups = groupRowsAfterTieBreaks
             }
 
@@ -783,10 +791,10 @@ myNav =
 
 
 viewGroupButton : List GroupRow -> Group -> Element Msg
-viewGroupButton allGroupRows group =
+viewGroupButton allGroupRows gr =
     let
         groupRows =
-            getGroupRows group allGroupRows
+            getGroupRows gr allGroupRows
     in
     Element.Input.button
         [ if getGroupState groupRows == FinishedDifferentScores then
@@ -800,8 +808,8 @@ viewGroupButton allGroupRows group =
         , Font.color white
         , padding 20
         ]
-        { onPress = Just (ClickedGroup group)
-        , label = text (groupToString group)
+        { onPress = Just (ClickedGroup gr)
+        , label = text (groupToString gr)
         }
 
 
