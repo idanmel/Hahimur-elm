@@ -63,22 +63,22 @@ type Msg
     | ClickedGroup Group
 
 
-updateScore : Int -> HomeOrAway -> String -> Match -> Match
-updateScore matchId homeOrAway score m =
+updateMatchScoreByID : Int -> HomeOrAway -> String -> Match -> Match
+updateMatchScoreByID matchId homeOrAway score m =
     if m.id == matchId then
         case homeOrAway of
             Home ->
-                { m | homeScore = String.toInt score }
+                updateMatchScore { m | homeScore = String.toInt score }
 
             Away ->
-                { m | awayScore = String.toInt score }
+                updateMatchScore { m | awayScore = String.toInt score }
 
     else
         m
 
 
-updatePlayoffScore : Match -> Match
-updatePlayoffScore m =
+updateMatchScore : Match -> Match
+updateMatchScore m =
     let
         homeScore =
             if m.homeTeam.flag == defaultFlag then
@@ -106,7 +106,7 @@ update msg model =
         UpdatedPlayoffScore matchId homeOrAway score ->
             let
                 newPlayOffMatches =
-                    List.map (updateScore matchId homeOrAway score) model.playOffMatches
+                    List.map (updateMatchScoreByID matchId homeOrAway score) model.playOffMatches
             in
             { model
                 | playOffMatches = newPlayOffMatches
@@ -115,7 +115,7 @@ update msg model =
         UpdatedGroupScore matchId homeOrAway score ->
             let
                 newMatches =
-                    List.map (updateScore matchId homeOrAway score) model.matches
+                    List.map (updateMatchScoreByID matchId homeOrAway score) model.matches
 
                 newGroupRows =
                     newMatches
@@ -131,7 +131,7 @@ update msg model =
                     List.map (updateTeams groupRowsAfterTieBreaks thirdPlaces) model.playOffMatches
 
                 newPlayOffMatchesScores =
-                    List.map updatePlayoffScore newPlayOffMatches
+                    List.map updateMatchScore newPlayOffMatches
             in
             { model
                 | matches = newMatches
