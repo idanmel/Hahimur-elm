@@ -1,17 +1,13 @@
 module Main exposing (..)
 
-{-| -}
-
-import Array
 import Browser
-import Dict exposing (Dict)
 import Element exposing (..)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
-import Element.Input exposing (button)
+import Element.Input
 import Element.Region as Region
-import Euro2020 exposing (Group(..), GroupRow, GroupState(..), Match, Team, TeamPosition, defaultFlag, filterByGroup, getGroupRows, getGroupState, getScore, getTeamPlaying, groupRows, groupToString, isPlayoffMatch, matches, playOffMatches, playedAllGames, updateTeams)
+import Euro2020 exposing (Group(..), GroupRow, GroupState(..), Match, Team, TeamPosition, defaultFlag, getGroupRows, getGroupState, getScore, groupRows, groupToString, isPlayoffMatch, matches, playOffMatches, updateTeams)
 import Html exposing (Html)
 import Html.Attributes
 import List.Extra
