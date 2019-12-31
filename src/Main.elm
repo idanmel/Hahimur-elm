@@ -7,7 +7,7 @@ import Element.Border as Border
 import Element.Font as Font
 import Element.Input
 import Element.Region as Region
-import Euro2020 exposing (Group(..), GroupRow, GroupState(..), Match, Team, TeamPosition, defaultFlag, filterByMatchId, getGroupRows, getGroupState, getScore, groupRows, groupToString, isPlayoffMatch, matches, maybeOrDefaultTeam, playOffMatches, updateTeams)
+import Euro2020 exposing (Group(..), GroupRow, GroupState(..), HomeOrAway(..), Match, Team, TeamPosition, defaultFlag, getGroupRows, getGroupState, getScore, groupRows, groupToString, isPlayoffMatch, matches, playOffMatches, updateTeams)
 import Html exposing (Html)
 import Html.Attributes
 import List.Extra
@@ -57,6 +57,7 @@ type Msg
     = UpdatedGroupScore Int HomeOrAway String
     | UpdatedPlayoffScore Int HomeOrAway String
     | ClickedGroup Group
+    | PickedWinner Int HomeOrAway
 
 
 updateMatchScoreByID : Int -> HomeOrAway -> String -> Match -> Match
@@ -129,9 +130,45 @@ updateMatchScore m =
 --            m
 
 
+updateWinner : Int -> HomeOrAway -> Match -> Match
+updateWinner matchId homeOrAway m =
+    if m.id == matchId then
+        { m | winner = Just homeOrAway }
+
+    else
+        m
+
+
+updateWinners : Match -> Match
+updateWinners m =
+    case ( m.homeScore, m.awayScore ) of
+        ( Just homeScore, Just awayScore ) ->
+            if homeScore > awayScore then
+                { m | winner = Just Home }
+
+            else if awayScore > homeScore then
+                { m | winner = Just Away }
+
+            else
+                { m | winner = Nothing }
+
+        ( _, Nothing ) ->
+            { m | winner = Nothing }
+
+        ( Nothing, _ ) ->
+            { m | winner = Nothing }
+
+
 update : Msg -> Model -> Model
 update msg model =
     case msg of
+        PickedWinner matchId homeOrAway ->
+            let
+                winnerWow =
+                    List.map (updateWinner matchId homeOrAway) model.playOffMatches
+            in
+            { model | playOffMatches = winnerWow }
+
         ClickedGroup group ->
             { model | selectedGroup = group }
 
@@ -140,11 +177,14 @@ update msg model =
                 newPlayOffMatches =
                     List.map (updateMatchScoreByID matchId homeOrAway score) model.playOffMatches
 
-                --newPlayOffMatches =
+                newPlayoffWinners =
+                    List.map updateWinners newPlayOffMatches
+
+                --newPlayOffMatches2 =
                 --    List.map (updatePlayoffMatches model.playOffMatches) newPlayOffMatchesScores
             in
             { model
-                | playOffMatches = newPlayOffMatches
+                | playOffMatches = newPlayoffWinners
             }
 
         UpdatedGroupScore matchId homeOrAway score ->
@@ -405,11 +445,6 @@ type alias Model =
     }
 
 
-type HomeOrAway
-    = Home
-    | Away
-
-
 init =
     { matches = matches
     , groups = groupRows
@@ -510,7 +545,7 @@ viewGroupButton allGroupRows gr =
 
 
 viewMatch : Match -> Element Msg
-viewMatch match =
+viewMatch m =
     column
         [ Border.width 2
         , width (px 350)
@@ -518,15 +553,100 @@ viewMatch match =
         ]
         [ row
             [ width fill ]
-            [ image [ alignLeft, paddingEach { edges | left = 10, top = 0 }, centerY, width (fillPortion 1) ] { src = match.homeTeam.flag, description = "" }
-            , el [ alignLeft, paddingEach { edges | left = 10, top = 0 }, centerY, width (fillPortion 6) ] (text match.homeTeam.name)
-            , el [ alignRight ] (viewMatchInput match Home)
+            [ image [ alignLeft, paddingEach { edges | left = 10, top = 0 }, centerY, width (fillPortion 1) ] { src = m.homeTeam.flag, description = "" }
+            , el [ alignLeft, paddingEach { edges | left = 10, top = 0 }, centerY, width (fillPortion 6) ] (text m.homeTeam.name)
+            , el [ alignRight ] (viewMatchInput m Home)
             ]
         , row
             [ width fill ]
-            [ image [ alignLeft, paddingEach { edges | left = 10, top = 0 }, centerY, width (fillPortion 1) ] { src = match.awayTeam.flag, description = "" }
-            , el [ alignLeft, paddingEach { edges | left = 10, top = 0 }, width (fillPortion 6) ] (text match.awayTeam.name)
-            , el [ alignRight ] (viewMatchInput match Away)
+            [ image [ alignLeft, paddingEach { edges | left = 10, top = 0 }, centerY, width (fillPortion 1) ] { src = m.awayTeam.flag, description = "" }
+            , el [ alignLeft, paddingEach { edges | left = 10, top = 0 }, width (fillPortion 6) ] (text m.awayTeam.name)
+            , el [ alignRight ] (viewMatchInput m Away)
+            ]
+        ]
+
+
+getPlayoffText : Match -> HomeOrAway -> String
+getPlayoffText m homeOrAway =
+    case homeOrAway of
+        Home ->
+            if m.winner == Just Home then
+                m.homeTeam.name ++ "   ✓"
+
+            else
+                m.homeTeam.name
+
+        Away ->
+            if m.winner == Just Away then
+                m.awayTeam.name ++ "   ✓"
+
+            else
+                m.awayTeam.name
+
+
+playoffWinnerButton : Match -> HomeOrAway -> Element Msg
+playoffWinnerButton m homeOrAway =
+    let
+        labelText =
+            getPlayoffText m homeOrAway
+    in
+    Element.Input.button
+        [ width (fillPortion 6)
+        , paddingEach { edges | left = 10, top = 0 }
+        ]
+        { onPress = Just (PickedWinner m.id homeOrAway)
+        , label = text labelText
+        }
+
+
+viewPlayoffMatch : Match -> Element Msg
+viewPlayoffMatch m =
+    let
+        draw =
+            case ( m.homeScore, m.awayScore ) of
+                ( Just a, Just b ) ->
+                    if a == b then
+                        True
+
+                    else
+                        False
+
+                ( Nothing, _ ) ->
+                    False
+
+                ( _, Nothing ) ->
+                    False
+
+        homeTeamText =
+            getPlayoffText m Home
+
+        awayTeamText =
+            getPlayoffText m Away
+    in
+    column
+        [ Border.width 2
+        , width (px 350)
+        , Background.color (rgba 1 1 1 1)
+        ]
+        [ row
+            [ width fill ]
+            [ image [ alignLeft, paddingEach { edges | left = 10, top = 0 }, centerY, width (fillPortion 1) ] { src = m.homeTeam.flag, description = m.homeTeam.name ++ " flag" }
+            , if draw then
+                playoffWinnerButton m Home
+
+              else
+                el [ alignLeft, paddingEach { edges | left = 10, top = 0 }, centerY, width (fillPortion 6) ] (text homeTeamText)
+            , el [ alignRight ] (viewMatchInput m Home)
+            ]
+        , row
+            [ width fill ]
+            [ image [ alignLeft, paddingEach { edges | left = 10, top = 0 }, centerY, width (fillPortion 1) ] { src = m.awayTeam.flag, description = m.awayTeam.name ++ " flag" }
+            , if draw then
+                playoffWinnerButton m Away
+
+              else
+                el [ alignLeft, paddingEach { edges | left = 10, top = 0 }, width (fillPortion 6) ] (text awayTeamText)
+            , el [ alignRight ] (viewMatchInput m Away)
             ]
         ]
 
@@ -554,12 +674,9 @@ viewPlayoffMatches matches group =
     let
         playOffMatches =
             List.filter (\m -> m.group == group) matches
-
-        grouped =
-            List.Extra.groupsOf 2 playOffMatches
     in
-    column [ centerX ]
-        (List.map viewTwoMatches grouped)
+    column []
+        (List.map viewPlayoffMatch playOffMatches)
 
 
 viewGroupTitle : Group -> Element Msg

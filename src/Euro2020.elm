@@ -1,7 +1,37 @@
-module Euro2020 exposing (Group(..), GroupRow, GroupState(..), Match, Team, TeamPosition, defaultFlag, filterByMatchId, getGroupRows, getGroupState, getScore, groupRows, groupToString, isPlayoffMatch, matches, maybeOrDefaultTeam, playOffMatches, updateTeams)
+module Euro2020 exposing (Group(..), GroupRow, GroupState(..), HomeOrAway(..), Match, Team, TeamPosition, defaultFlag, filterByMatchId, getGroupRows, getGroupState, getScore, groupRows, groupToString, isPlayoffMatch, matches, maybeOrDefaultTeam, playOffMatches, updateTeams)
 
 import Array
 import Set
+
+
+type alias Team =
+    { name : String
+    , flag : String
+    }
+
+
+type MatchState
+    = Undeclared
+    | Declared
+    | Finished
+
+
+type HomeOrAway
+    = Home
+    | Away
+
+
+type alias Match =
+    { id : Int
+    , homeTeam : Team
+    , homeScore : Maybe Int
+    , awayTeam : Team
+    , awayScore : Maybe Int
+    , group : Group
+    , date : String
+    , time : String
+    , winner : Maybe HomeOrAway
+    }
 
 
 type Group
@@ -28,24 +58,6 @@ type TeamPosition
     | C1
     | E1
     | F1
-
-
-type alias Match =
-    { id : Int
-    , homeTeam : Team
-    , homeScore : Maybe Int
-    , awayTeam : Team
-    , awayScore : Maybe Int
-    , group : Group
-    , date : String
-    , time : String
-    }
-
-
-type alias Team =
-    { name : String
-    , flag : String
-    }
 
 
 type alias GroupRow =
@@ -298,74 +310,74 @@ groupF =
 
 
 matchesGroupA =
-    [ Match 1 turkey Nothing italy Nothing GroupA "16 June 2020" "18:00"
-    , Match 2 wales Nothing switzerland Nothing GroupA "16 June 2020" "18:00"
-    , Match 3 turkey Nothing wales Nothing GroupA "16 June 2020" "18:00"
-    , Match 4 italy Nothing switzerland Nothing GroupA "16 June 2020" "18:00"
-    , Match 5 switzerland Nothing turkey Nothing GroupA "16 June 2020" "18:00"
-    , Match 6 italy Nothing wales Nothing GroupA "16 June 2020" "18:00"
+    [ Match 1 turkey Nothing italy Nothing GroupA "16 June 2020" "18:00" Nothing
+    , Match 2 wales Nothing switzerland Nothing GroupA "16 June 2020" "18:00" Nothing
+    , Match 3 turkey Nothing wales Nothing GroupA "16 June 2020" "18:00" Nothing
+    , Match 4 italy Nothing switzerland Nothing GroupA "16 June 2020" "18:00" Nothing
+    , Match 5 switzerland Nothing turkey Nothing GroupA "16 June 2020" "18:00" Nothing
+    , Match 6 italy Nothing wales Nothing GroupA "16 June 2020" "18:00" Nothing
     ]
 
 
 matchesGroupB =
-    [ Match 7 denmark Nothing finland Nothing GroupB "16 June 2020" "18:00"
-    , Match 8 belgium Nothing russia Nothing GroupB "16 June 2020" "18:00"
-    , Match 9 finland Nothing russia Nothing GroupB "16 June 2020" "18:00"
-    , Match 10 denmark Nothing belgium Nothing GroupB "16 June 2020" "18:00"
-    , Match 11 russia Nothing denmark Nothing GroupB "16 June 2020" "18:00"
-    , Match 12 finland Nothing belgium Nothing GroupB "16 June 2020" "18:00"
+    [ Match 7 denmark Nothing finland Nothing GroupB "16 June 2020" "18:00" Nothing
+    , Match 8 belgium Nothing russia Nothing GroupB "16 June 2020" "18:00" Nothing
+    , Match 9 finland Nothing russia Nothing GroupB "16 June 2020" "18:00" Nothing
+    , Match 10 denmark Nothing belgium Nothing GroupB "16 June 2020" "18:00" Nothing
+    , Match 11 russia Nothing denmark Nothing GroupB "16 June 2020" "18:00" Nothing
+    , Match 12 finland Nothing belgium Nothing GroupB "16 June 2020" "18:00" Nothing
     ]
 
 
 matchesGroupC =
-    [ Match 13 austria Nothing romania Nothing GroupC "16 June 2020" "18:00"
-    , Match 14 netherlands Nothing ukraine Nothing GroupC "16 June 2020" "18:00"
-    , Match 15 ukraine Nothing romania Nothing GroupC "16 June 2020" "18:00"
-    , Match 16 netherlands Nothing austria Nothing GroupC "16 June 2020" "18:00"
-    , Match 17 romania Nothing netherlands Nothing GroupC "16 June 2020" "18:00"
-    , Match 18 ukraine Nothing austria Nothing GroupC "16 June 2020" "18:00"
+    [ Match 13 austria Nothing romania Nothing GroupC "16 June 2020" "18:00" Nothing
+    , Match 14 netherlands Nothing ukraine Nothing GroupC "16 June 2020" "18:00" Nothing
+    , Match 15 ukraine Nothing romania Nothing GroupC "16 June 2020" "18:00" Nothing
+    , Match 16 netherlands Nothing austria Nothing GroupC "16 June 2020" "18:00" Nothing
+    , Match 17 romania Nothing netherlands Nothing GroupC "16 June 2020" "18:00" Nothing
+    , Match 18 ukraine Nothing austria Nothing GroupC "16 June 2020" "18:00" Nothing
     ]
 
 
 matchesGroupD =
-    [ Match 19 england Nothing crotia Nothing GroupD "16 June 2020" "18:00"
-    , Match 20 ireland Nothing czech Nothing GroupD "16 June 2020" "18:00"
-    , Match 21 crotia Nothing czech Nothing GroupD "16 June 2020" "18:00"
-    , Match 22 england Nothing ireland Nothing GroupD "16 June 2020" "18:00"
-    , Match 23 crotia Nothing ireland Nothing GroupD "16 June 2020" "18:00"
-    , Match 24 czech Nothing england Nothing GroupD "16 June 2020" "18:00"
+    [ Match 19 england Nothing crotia Nothing GroupD "16 June 2020" "18:00" Nothing
+    , Match 20 ireland Nothing czech Nothing GroupD "16 June 2020" "18:00" Nothing
+    , Match 21 crotia Nothing czech Nothing GroupD "16 June 2020" "18:00" Nothing
+    , Match 22 england Nothing ireland Nothing GroupD "16 June 2020" "18:00" Nothing
+    , Match 23 crotia Nothing ireland Nothing GroupD "16 June 2020" "18:00" Nothing
+    , Match 24 czech Nothing england Nothing GroupD "16 June 2020" "18:00" Nothing
     ]
 
 
 matchesGroupE =
-    [ Match 25 poland Nothing iceland Nothing GroupE "16 June 2020" "18:00"
-    , Match 26 spain Nothing sweden Nothing GroupE "16 June 2020" "18:00"
-    , Match 27 sweden Nothing iceland Nothing GroupE "16 June 2020" "18:00"
-    , Match 28 spain Nothing poland Nothing GroupE "16 June 2020" "18:00"
-    , Match 29 iceland Nothing spain Nothing GroupE "16 June 2020" "18:00"
-    , Match 30 sweden Nothing poland Nothing GroupE "16 June 2020" "18:00"
+    [ Match 25 poland Nothing iceland Nothing GroupE "16 June 2020" "18:00" Nothing
+    , Match 26 spain Nothing sweden Nothing GroupE "16 June 2020" "18:00" Nothing
+    , Match 27 sweden Nothing iceland Nothing GroupE "16 June 2020" "18:00" Nothing
+    , Match 28 spain Nothing poland Nothing GroupE "16 June 2020" "18:00" Nothing
+    , Match 29 iceland Nothing spain Nothing GroupE "16 June 2020" "18:00" Nothing
+    , Match 30 sweden Nothing poland Nothing GroupE "16 June 2020" "18:00" Nothing
     ]
 
 
 matchesGroupF =
-    [ Match 31 serbia Nothing portugal Nothing GroupF "16 June 2020" "18:00"
-    , Match 32 france Nothing germany Nothing GroupF "16 June 2020" "18:00"
-    , Match 33 serbia Nothing france Nothing GroupF "16 June 2020" "18:00"
-    , Match 34 portugal Nothing germany Nothing GroupF "16 June 2020" "18:00"
-    , Match 35 portugal Nothing france Nothing GroupF "16 June 2020" "18:00"
-    , Match 36 germany Nothing serbia Nothing GroupF "16 June 2020" "18:00"
+    [ Match 31 serbia Nothing portugal Nothing GroupF "16 June 2020" "18:00" Nothing
+    , Match 32 france Nothing germany Nothing GroupF "16 June 2020" "18:00" Nothing
+    , Match 33 serbia Nothing france Nothing GroupF "16 June 2020" "18:00" Nothing
+    , Match 34 portugal Nothing germany Nothing GroupF "16 June 2020" "18:00" Nothing
+    , Match 35 portugal Nothing france Nothing GroupF "16 June 2020" "18:00" Nothing
+    , Match 36 germany Nothing serbia Nothing GroupF "16 June 2020" "18:00" Nothing
     ]
 
 
 playOffMatches =
-    [ Match 38 (Team "Runner-up Group A" defaultFlag) Nothing (Team "Runner-up Group B" defaultFlag) Nothing RoundOf16 "16 June 2020" "18:00"
-    , Match 37 (Team "Winner Group A" defaultFlag) Nothing (Team "Runner-up Group C" defaultFlag) Nothing RoundOf16 "16 June 2020" "18:00"
-    , Match 40 (Team "Winner Group C" defaultFlag) Nothing (Team "3rd Group D/E/F" defaultFlag) Nothing RoundOf16 "16 June 2020" "18:00"
-    , Match 39 (Team "Winner Group B" defaultFlag) Nothing (Team "3rd Group A/D/E/F" defaultFlag) Nothing RoundOf16 "16 June 2020" "18:00"
-    , Match 42 (Team "Runner-up Group D" defaultFlag) Nothing (Team "Runner-up Group E" defaultFlag) Nothing RoundOf16 "16 June 2020" "18:00"
-    , Match 41 (Team "Winner Group F" defaultFlag) Nothing (Team "3rd Group A/B/C" defaultFlag) Nothing RoundOf16 "16 June 2020" "18:00"
-    , Match 44 (Team "Winner Group D" defaultFlag) Nothing (Team "Runner-up Group F" defaultFlag) Nothing RoundOf16 "16 June 2020" "18:00"
-    , Match 43 (Team "Winner Group E" defaultFlag) Nothing (Team "3rd Group A/B/C/D" defaultFlag) Nothing RoundOf16 "16 June 2020" "18:00"
+    [ Match 38 (Team "Runner-up Group A" defaultFlag) Nothing (Team "Runner-up Group B" defaultFlag) Nothing RoundOf16 "16 June 2020" "18:00" Nothing
+    , Match 37 (Team "Winner Group A" defaultFlag) Nothing (Team "Runner-up Group C" defaultFlag) Nothing RoundOf16 "16 June 2020" "18:00" Nothing
+    , Match 40 (Team "Winner Group C" defaultFlag) Nothing (Team "3rd Group D/E/F" defaultFlag) Nothing RoundOf16 "16 June 2020" "18:00" Nothing
+    , Match 39 (Team "Winner Group B" defaultFlag) Nothing (Team "3rd Group A/D/E/F" defaultFlag) Nothing RoundOf16 "16 June 2020" "18:00" Nothing
+    , Match 42 (Team "Runner-up Group D" defaultFlag) Nothing (Team "Runner-up Group E" defaultFlag) Nothing RoundOf16 "16 June 2020" "18:00" Nothing
+    , Match 41 (Team "Winner Group F" defaultFlag) Nothing (Team "3rd Group A/B/C" defaultFlag) Nothing RoundOf16 "16 June 2020" "18:00" Nothing
+    , Match 44 (Team "Winner Group D" defaultFlag) Nothing (Team "Runner-up Group F" defaultFlag) Nothing RoundOf16 "16 June 2020" "18:00" Nothing
+    , Match 43 (Team "Winner Group E" defaultFlag) Nothing (Team "3rd Group A/B/C/D" defaultFlag) Nothing RoundOf16 "16 June 2020" "18:00" Nothing
     ]
 
 
