@@ -7,7 +7,7 @@ import Element.Border as Border
 import Element.Font as Font
 import Element.Input
 import Element.Region as Region
-import Euro2020 exposing (Group(..), GroupRow, GroupState(..), HomeOrAway(..), Match, Team, TeamPosition, defaultFlag, getGroupRows, getGroupState, getScore, groupRows, groupToString, isPlayoffMatch, matches, playOffMatches, updateTeams)
+import Euro2020 exposing (Group(..), GroupRow, GroupState(..), HomeOrAway(..), Match, Team, TeamPosition, defaultFlag, filterByMatchId, getGroupRows, getGroupState, getScore, groupRows, groupToString, isPlayoffMatch, matches, playOffMatches, updateTeams)
 import Html exposing (Html)
 import Html.Attributes
 import List.Extra
@@ -94,40 +94,65 @@ updateMatchScore m =
     { m | homeScore = homeScore, awayScore = awayScore }
 
 
+getWinner : Team -> Int -> List Match -> Team
+getWinner team matchId ms =
+    let
+        one_matches =
+            filterByMatchId matchId ms
 
---getWinner : Team -> Int -> List Match -> Team
---getWinner team matchId ms =
---    let
---        one_matches =
---            filterByMatchId matchId ms
+        match =
+            List.Extra.getAt 0 one_matches
+    in
+    case match of
+        Just m ->
+            case m.winner of
+                Just Home ->
+                    m.homeTeam
+
+                Just Away ->
+                    m.awayTeam
+
+                Nothing ->
+                    team
+
+        Nothing ->
+            team
+
+
+
 --
---        match =
---            List.Extra.getAt 0 one_matches
---    in
---    case match of
---        Just m ->
---            case ( m.homeScore, m.awayScore ) of
---                ( Just homeScore, Just awayScore ) ->
---                    m.homeTeam
 --
---                _ ->
---                    m.awayTeam
---
---        Nothing ->
---            team
---
---
---updatePlayoffMatches : List Match -> Match -> Match
---updatePlayoffMatches ms m =
---    case m.id of
---        46 ->
---            { m
---                | homeTeam = getWinner (Team "Winner Match 39" defaultFlag) 39 ms
---                , awayTeam = getWinner (Team "Winner Match 37" defaultFlag) 37 ms
---            }
---
---        _ ->
---            m
+
+
+updatePlayoffMatches : List Match -> Match -> Match
+updatePlayoffMatches ms m =
+    case m.id of
+        45 ->
+            { m
+                | homeTeam = getWinner (Team "Winner Match 41" defaultFlag) 41 ms
+                , awayTeam = getWinner (Team "Winner Match 42" defaultFlag) 42 ms
+            }
+
+        46 ->
+            { m
+                | homeTeam = getWinner (Team "Winner Match 39" defaultFlag) 39 ms
+                , awayTeam = getWinner (Team "Winner Match 37" defaultFlag) 37 ms
+            }
+
+        47 ->
+            { m
+                | homeTeam = getWinner (Team "Winner Match 40" defaultFlag) 40 ms
+                , awayTeam = getWinner (Team "Winner Match 38" defaultFlag) 38 ms
+            }
+
+        48 ->
+            { m
+                | homeTeam = getWinner (Team "Winner Match 43" defaultFlag) 43 ms
+                , awayTeam = getWinner (Team "Winner Match 44" defaultFlag) 44 ms
+            }
+
+        _ ->
+            m
 
 
 updateWinner : Int -> HomeOrAway -> Match -> Match
@@ -164,10 +189,13 @@ update msg model =
     case msg of
         PickedWinner matchId homeOrAway ->
             let
-                winnerWow =
+                updatedWinners =
                     List.map (updateWinner matchId homeOrAway) model.playOffMatches
+
+                newPlayOffMatches =
+                    List.map (updatePlayoffMatches updatedWinners) updatedWinners
             in
-            { model | playOffMatches = winnerWow }
+            { model | playOffMatches = newPlayOffMatches }
 
         ClickedGroup group ->
             { model | selectedGroup = group }
@@ -180,11 +208,11 @@ update msg model =
                 newPlayoffWinners =
                     List.map updateWinners newPlayOffMatches
 
-                --newPlayOffMatches2 =
-                --    List.map (updatePlayoffMatches model.playOffMatches) newPlayOffMatchesScores
+                newPlayOffMatches2 =
+                    List.map (updatePlayoffMatches newPlayoffWinners) newPlayoffWinners
             in
             { model
-                | playOffMatches = newPlayoffWinners
+                | playOffMatches = newPlayOffMatches2
             }
 
         UpdatedGroupScore matchId homeOrAway score ->
@@ -484,9 +512,15 @@ view model =
                 , viewSpacer 8
                 , viewMatches model.matches model.selectedGroup
                 , viewSpacer 16
-                , viewGroupTitle RoundOf16
-                , viewSpacer 8
-                , viewPlayoffMatches model.playOffMatches RoundOf16
+                , row [ width fill, spaceEvenly ]
+                    [ viewGroupTitle RoundOf16
+                    , viewGroupTitle QuarterFinals
+                    , viewGroupTitle SemiFinals
+                    , viewGroupTitle Final
+                    ]
+                , viewSpacer 16
+                , row [] (List.map (viewPlayoffMatches model.playOffMatches) [ RoundOf16, QuarterFinals, SemiFinals, Final ])
+                , viewSpacer 48
                 ]
             , column [ width (fillPortion 1) ] []
             ]
@@ -625,8 +659,9 @@ viewPlayoffMatch m =
     in
     column
         [ Border.width 2
-        , width (px 350)
+        , width (px 250)
         , Background.color (rgba 1 1 1 1)
+        , Font.size 12
         ]
         [ row
             [ width fill ]
@@ -675,15 +710,14 @@ viewPlayoffMatches matches group =
         playOffMatches =
             List.filter (\m -> m.group == group) matches
     in
-    column []
+    column [ spacingXY 0 5 ]
         (List.map viewPlayoffMatch playOffMatches)
 
 
 viewGroupTitle : Group -> Element Msg
 viewGroupTitle group =
     row
-        [ centerX
-        , paddingEach edges
+        [ paddingEach edges
         , Region.heading 3
         , Font.size 28
         ]

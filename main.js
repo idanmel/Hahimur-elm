@@ -4602,16 +4602,17 @@ var $author$project$Euro2020$matches = _Utils_ap(
 			_Utils_ap(
 				$author$project$Euro2020$matchesGroupD,
 				_Utils_ap($author$project$Euro2020$matchesGroupE, $author$project$Euro2020$matchesGroupF)))));
+var $author$project$Euro2020$QuarterFinals = 7;
 var $author$project$Euro2020$RoundOf16 = 6;
 var $author$project$Euro2020$defaultFlag = 'https://upload.wikimedia.org/wikipedia/en/9/96/UEFA_Euro_2020_Logo.svg';
 var $author$project$Euro2020$playOffMatches = _List_fromArray(
 	[
 		A9(
 		$author$project$Euro2020$Match,
-		38,
-		A2($author$project$Euro2020$Team, 'Runner-up Group A', $author$project$Euro2020$defaultFlag),
+		39,
+		A2($author$project$Euro2020$Team, 'Winner Group B', $author$project$Euro2020$defaultFlag),
 		$elm$core$Maybe$Nothing,
-		A2($author$project$Euro2020$Team, 'Runner-up Group B', $author$project$Euro2020$defaultFlag),
+		A2($author$project$Euro2020$Team, '3rd Group A/D/E/F', $author$project$Euro2020$defaultFlag),
 		$elm$core$Maybe$Nothing,
 		6,
 		'16 June 2020',
@@ -4630,21 +4631,10 @@ var $author$project$Euro2020$playOffMatches = _List_fromArray(
 		$elm$core$Maybe$Nothing),
 		A9(
 		$author$project$Euro2020$Match,
-		40,
-		A2($author$project$Euro2020$Team, 'Winner Group C', $author$project$Euro2020$defaultFlag),
+		41,
+		A2($author$project$Euro2020$Team, 'Winner Group F', $author$project$Euro2020$defaultFlag),
 		$elm$core$Maybe$Nothing,
-		A2($author$project$Euro2020$Team, '3rd Group D/E/F', $author$project$Euro2020$defaultFlag),
-		$elm$core$Maybe$Nothing,
-		6,
-		'16 June 2020',
-		'18:00',
-		$elm$core$Maybe$Nothing),
-		A9(
-		$author$project$Euro2020$Match,
-		39,
-		A2($author$project$Euro2020$Team, 'Winner Group B', $author$project$Euro2020$defaultFlag),
-		$elm$core$Maybe$Nothing,
-		A2($author$project$Euro2020$Team, '3rd Group A/D/E/F', $author$project$Euro2020$defaultFlag),
+		A2($author$project$Euro2020$Team, '3rd Group A/B/C', $author$project$Euro2020$defaultFlag),
 		$elm$core$Maybe$Nothing,
 		6,
 		'16 June 2020',
@@ -4663,10 +4653,10 @@ var $author$project$Euro2020$playOffMatches = _List_fromArray(
 		$elm$core$Maybe$Nothing),
 		A9(
 		$author$project$Euro2020$Match,
-		41,
-		A2($author$project$Euro2020$Team, 'Winner Group F', $author$project$Euro2020$defaultFlag),
+		43,
+		A2($author$project$Euro2020$Team, 'Winner Group E', $author$project$Euro2020$defaultFlag),
 		$elm$core$Maybe$Nothing,
-		A2($author$project$Euro2020$Team, '3rd Group A/B/C', $author$project$Euro2020$defaultFlag),
+		A2($author$project$Euro2020$Team, '3rd Group A/B/C/D', $author$project$Euro2020$defaultFlag),
 		$elm$core$Maybe$Nothing,
 		6,
 		'16 June 2020',
@@ -4685,12 +4675,67 @@ var $author$project$Euro2020$playOffMatches = _List_fromArray(
 		$elm$core$Maybe$Nothing),
 		A9(
 		$author$project$Euro2020$Match,
-		43,
-		A2($author$project$Euro2020$Team, 'Winner Group E', $author$project$Euro2020$defaultFlag),
+		40,
+		A2($author$project$Euro2020$Team, 'Winner Group C', $author$project$Euro2020$defaultFlag),
 		$elm$core$Maybe$Nothing,
-		A2($author$project$Euro2020$Team, '3rd Group A/B/C/D', $author$project$Euro2020$defaultFlag),
+		A2($author$project$Euro2020$Team, '3rd Group D/E/F', $author$project$Euro2020$defaultFlag),
 		$elm$core$Maybe$Nothing,
 		6,
+		'16 June 2020',
+		'18:00',
+		$elm$core$Maybe$Nothing),
+		A9(
+		$author$project$Euro2020$Match,
+		38,
+		A2($author$project$Euro2020$Team, 'Runner-up Group A', $author$project$Euro2020$defaultFlag),
+		$elm$core$Maybe$Nothing,
+		A2($author$project$Euro2020$Team, 'Runner-up Group B', $author$project$Euro2020$defaultFlag),
+		$elm$core$Maybe$Nothing,
+		6,
+		'16 June 2020',
+		'18:00',
+		$elm$core$Maybe$Nothing),
+		A9(
+		$author$project$Euro2020$Match,
+		46,
+		A2($author$project$Euro2020$Team, 'Winner Match 39', $author$project$Euro2020$defaultFlag),
+		$elm$core$Maybe$Nothing,
+		A2($author$project$Euro2020$Team, 'Winner Match 37', $author$project$Euro2020$defaultFlag),
+		$elm$core$Maybe$Nothing,
+		7,
+		'16 June 2020',
+		'18:00',
+		$elm$core$Maybe$Nothing),
+		A9(
+		$author$project$Euro2020$Match,
+		45,
+		A2($author$project$Euro2020$Team, 'Winner Match 41', $author$project$Euro2020$defaultFlag),
+		$elm$core$Maybe$Nothing,
+		A2($author$project$Euro2020$Team, 'Winner Match 42', $author$project$Euro2020$defaultFlag),
+		$elm$core$Maybe$Nothing,
+		7,
+		'16 June 2020',
+		'18:00',
+		$elm$core$Maybe$Nothing),
+		A9(
+		$author$project$Euro2020$Match,
+		48,
+		A2($author$project$Euro2020$Team, 'Winner Match 43', $author$project$Euro2020$defaultFlag),
+		$elm$core$Maybe$Nothing,
+		A2($author$project$Euro2020$Team, 'Winner Match 44', $author$project$Euro2020$defaultFlag),
+		$elm$core$Maybe$Nothing,
+		7,
+		'16 June 2020',
+		'18:00',
+		$elm$core$Maybe$Nothing),
+		A9(
+		$author$project$Euro2020$Match,
+		47,
+		A2($author$project$Euro2020$Team, 'Winner Match 40', $author$project$Euro2020$defaultFlag),
+		$elm$core$Maybe$Nothing,
+		A2($author$project$Euro2020$Team, 'Winner Match 38', $author$project$Euro2020$defaultFlag),
+		$elm$core$Maybe$Nothing,
+		7,
 		'16 June 2020',
 		'18:00',
 		$elm$core$Maybe$Nothing)
@@ -5703,6 +5748,105 @@ var $author$project$Main$updateMatchScoreByID = F4(
 			return m;
 		}
 	});
+var $author$project$Euro2020$filterByMatchId = F2(
+	function (matchId, matchess) {
+		return A2(
+			$elm$core$List$filter,
+			function (m) {
+				return _Utils_eq(m.az, matchId);
+			},
+			matchess);
+	});
+var $author$project$Main$getWinner = F3(
+	function (team, matchId, ms) {
+		var one_matches = A2($author$project$Euro2020$filterByMatchId, matchId, ms);
+		var match = A2($elm_community$list_extra$List$Extra$getAt, 0, one_matches);
+		if (!match.$) {
+			var m = match.a;
+			var _v1 = m.dK;
+			if (!_v1.$) {
+				if (!_v1.a) {
+					var _v2 = _v1.a;
+					return m.B;
+				} else {
+					var _v3 = _v1.a;
+					return m.z;
+				}
+			} else {
+				return team;
+			}
+		} else {
+			return team;
+		}
+	});
+var $author$project$Main$updatePlayoffMatches = F2(
+	function (ms, m) {
+		var _v0 = m.az;
+		switch (_v0) {
+			case 45:
+				return _Utils_update(
+					m,
+					{
+						z: A3(
+							$author$project$Main$getWinner,
+							A2($author$project$Euro2020$Team, 'Winner Match 42', $author$project$Euro2020$defaultFlag),
+							42,
+							ms),
+						B: A3(
+							$author$project$Main$getWinner,
+							A2($author$project$Euro2020$Team, 'Winner Match 41', $author$project$Euro2020$defaultFlag),
+							41,
+							ms)
+					});
+			case 46:
+				return _Utils_update(
+					m,
+					{
+						z: A3(
+							$author$project$Main$getWinner,
+							A2($author$project$Euro2020$Team, 'Winner Match 37', $author$project$Euro2020$defaultFlag),
+							37,
+							ms),
+						B: A3(
+							$author$project$Main$getWinner,
+							A2($author$project$Euro2020$Team, 'Winner Match 39', $author$project$Euro2020$defaultFlag),
+							39,
+							ms)
+					});
+			case 47:
+				return _Utils_update(
+					m,
+					{
+						z: A3(
+							$author$project$Main$getWinner,
+							A2($author$project$Euro2020$Team, 'Winner Match 38', $author$project$Euro2020$defaultFlag),
+							38,
+							ms),
+						B: A3(
+							$author$project$Main$getWinner,
+							A2($author$project$Euro2020$Team, 'Winner Match 40', $author$project$Euro2020$defaultFlag),
+							40,
+							ms)
+					});
+			case 48:
+				return _Utils_update(
+					m,
+					{
+						z: A3(
+							$author$project$Main$getWinner,
+							A2($author$project$Euro2020$Team, 'Winner Match 44', $author$project$Euro2020$defaultFlag),
+							44,
+							ms),
+						B: A3(
+							$author$project$Main$getWinner,
+							A2($author$project$Euro2020$Team, 'Winner Match 43', $author$project$Euro2020$defaultFlag),
+							43,
+							ms)
+					});
+			default:
+				return m;
+		}
+	});
 var $author$project$Euro2020$B1 = 0;
 var $author$project$Euro2020$C1 = 1;
 var $author$project$Euro2020$E1 = 2;
@@ -6399,13 +6543,17 @@ var $author$project$Main$update = F2(
 			case 3:
 				var matchId = msg.a;
 				var homeOrAway = msg.b;
-				var winnerWow = A2(
+				var updatedWinners = A2(
 					$elm$core$List$map,
 					A2($author$project$Main$updateWinner, matchId, homeOrAway),
 					model.D);
+				var newPlayOffMatches = A2(
+					$elm$core$List$map,
+					$author$project$Main$updatePlayoffMatches(updatedWinners),
+					updatedWinners);
 				return _Utils_update(
 					model,
-					{D: winnerWow});
+					{D: newPlayOffMatches});
 			case 2:
 				var group = msg.a;
 				return _Utils_update(
@@ -6420,9 +6568,13 @@ var $author$project$Main$update = F2(
 					A3($author$project$Main$updateMatchScoreByID, matchId, homeOrAway, score),
 					model.D);
 				var newPlayoffWinners = A2($elm$core$List$map, $author$project$Main$updateWinners, newPlayOffMatches);
+				var newPlayOffMatches2 = A2(
+					$elm$core$List$map,
+					$author$project$Main$updatePlayoffMatches(newPlayoffWinners),
+					newPlayoffWinners);
 				return _Utils_update(
 					model,
-					{D: newPlayoffWinners});
+					{D: newPlayOffMatches2});
 			default:
 				var matchId = msg.a;
 				var homeOrAway = msg.b;
@@ -6447,6 +6599,8 @@ var $author$project$Main$update = F2(
 					{ah: groupRowsAfterTieBreaks, aj: newMatches, D: newPlayOffMatchesScores});
 		}
 	});
+var $author$project$Euro2020$Final = 9;
+var $author$project$Euro2020$SemiFinals = 8;
 var $mdgriffith$elm_ui$Internal$Model$AlignX = function (a) {
 	return {$: 6, a: a};
 };
@@ -12859,7 +13013,6 @@ var $author$project$Main$viewGroupTitle = function (group) {
 		$mdgriffith$elm_ui$Element$row,
 		_List_fromArray(
 			[
-				$mdgriffith$elm_ui$Element$centerX,
 				$mdgriffith$elm_ui$Element$paddingEach($author$project$Main$edges),
 				$mdgriffith$elm_ui$Element$Region$heading(3),
 				$mdgriffith$elm_ui$Element$Font$size(28)
@@ -14007,6 +14160,17 @@ var $author$project$Main$viewMatches = F2(
 				[$mdgriffith$elm_ui$Element$centerX]),
 			A2($elm$core$List$map, $author$project$Main$viewTwoMatches, grouped));
 	});
+var $mdgriffith$elm_ui$Element$spacingXY = F2(
+	function (x, y) {
+		return A2(
+			$mdgriffith$elm_ui$Internal$Model$StyleClass,
+			$mdgriffith$elm_ui$Internal$Flag$spacing,
+			A3(
+				$mdgriffith$elm_ui$Internal$Model$SpacingStyle,
+				A2($mdgriffith$elm_ui$Internal$Model$spacingName, x, y),
+				x,
+				y));
+	});
 var $author$project$Main$getPlayoffText = F2(
 	function (m, homeOrAway) {
 		if (!homeOrAway) {
@@ -14068,9 +14232,10 @@ var $author$project$Main$viewPlayoffMatch = function (m) {
 			[
 				$mdgriffith$elm_ui$Element$Border$width(2),
 				$mdgriffith$elm_ui$Element$width(
-				$mdgriffith$elm_ui$Element$px(350)),
+				$mdgriffith$elm_ui$Element$px(250)),
 				$mdgriffith$elm_ui$Element$Background$color(
-				A4($mdgriffith$elm_ui$Element$rgba, 1, 1, 1, 1))
+				A4($mdgriffith$elm_ui$Element$rgba, 1, 1, 1, 1)),
+				$mdgriffith$elm_ui$Element$Font$size(12)
 			]),
 		_List_fromArray(
 			[
@@ -14169,7 +14334,10 @@ var $author$project$Main$viewPlayoffMatches = F2(
 			matches);
 		return A2(
 			$mdgriffith$elm_ui$Element$column,
-			_List_Nil,
+			_List_fromArray(
+				[
+					A2($mdgriffith$elm_ui$Element$spacingXY, 0, 5)
+				]),
 			A2($elm$core$List$map, $author$project$Main$viewPlayoffMatch, playOffMatches));
 	});
 var $author$project$Main$viewSpacer = function (p) {
@@ -14244,9 +14412,30 @@ var $author$project$Main$view = function (model) {
 							$author$project$Main$viewSpacer(8),
 							A2($author$project$Main$viewMatches, model.aj, model.aa),
 							$author$project$Main$viewSpacer(16),
-							$author$project$Main$viewGroupTitle(6),
-							$author$project$Main$viewSpacer(8),
-							A2($author$project$Main$viewPlayoffMatches, model.D, 6)
+							A2(
+							$mdgriffith$elm_ui$Element$row,
+							_List_fromArray(
+								[
+									$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+									$mdgriffith$elm_ui$Element$spaceEvenly
+								]),
+							_List_fromArray(
+								[
+									$author$project$Main$viewGroupTitle(6),
+									$author$project$Main$viewGroupTitle(7),
+									$author$project$Main$viewGroupTitle(8),
+									$author$project$Main$viewGroupTitle(9)
+								])),
+							$author$project$Main$viewSpacer(16),
+							A2(
+							$mdgriffith$elm_ui$Element$row,
+							_List_Nil,
+							A2(
+								$elm$core$List$map,
+								$author$project$Main$viewPlayoffMatches(model.D),
+								_List_fromArray(
+									[6, 7, 8, 9]))),
+							$author$project$Main$viewSpacer(48)
 						])),
 					A2(
 					$mdgriffith$elm_ui$Element$column,

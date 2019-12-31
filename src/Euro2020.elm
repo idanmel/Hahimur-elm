@@ -370,14 +370,18 @@ matchesGroupF =
 
 
 playOffMatches =
-    [ Match 38 (Team "Runner-up Group A" defaultFlag) Nothing (Team "Runner-up Group B" defaultFlag) Nothing RoundOf16 "16 June 2020" "18:00" Nothing
+    [ Match 39 (Team "Winner Group B" defaultFlag) Nothing (Team "3rd Group A/D/E/F" defaultFlag) Nothing RoundOf16 "16 June 2020" "18:00" Nothing
     , Match 37 (Team "Winner Group A" defaultFlag) Nothing (Team "Runner-up Group C" defaultFlag) Nothing RoundOf16 "16 June 2020" "18:00" Nothing
-    , Match 40 (Team "Winner Group C" defaultFlag) Nothing (Team "3rd Group D/E/F" defaultFlag) Nothing RoundOf16 "16 June 2020" "18:00" Nothing
-    , Match 39 (Team "Winner Group B" defaultFlag) Nothing (Team "3rd Group A/D/E/F" defaultFlag) Nothing RoundOf16 "16 June 2020" "18:00" Nothing
-    , Match 42 (Team "Runner-up Group D" defaultFlag) Nothing (Team "Runner-up Group E" defaultFlag) Nothing RoundOf16 "16 June 2020" "18:00" Nothing
     , Match 41 (Team "Winner Group F" defaultFlag) Nothing (Team "3rd Group A/B/C" defaultFlag) Nothing RoundOf16 "16 June 2020" "18:00" Nothing
-    , Match 44 (Team "Winner Group D" defaultFlag) Nothing (Team "Runner-up Group F" defaultFlag) Nothing RoundOf16 "16 June 2020" "18:00" Nothing
+    , Match 42 (Team "Runner-up Group D" defaultFlag) Nothing (Team "Runner-up Group E" defaultFlag) Nothing RoundOf16 "16 June 2020" "18:00" Nothing
     , Match 43 (Team "Winner Group E" defaultFlag) Nothing (Team "3rd Group A/B/C/D" defaultFlag) Nothing RoundOf16 "16 June 2020" "18:00" Nothing
+    , Match 44 (Team "Winner Group D" defaultFlag) Nothing (Team "Runner-up Group F" defaultFlag) Nothing RoundOf16 "16 June 2020" "18:00" Nothing
+    , Match 40 (Team "Winner Group C" defaultFlag) Nothing (Team "3rd Group D/E/F" defaultFlag) Nothing RoundOf16 "16 June 2020" "18:00" Nothing
+    , Match 38 (Team "Runner-up Group A" defaultFlag) Nothing (Team "Runner-up Group B" defaultFlag) Nothing RoundOf16 "16 June 2020" "18:00" Nothing
+    , Match 46 (Team "Winner Match 39" defaultFlag) Nothing (Team "Winner Match 37" defaultFlag) Nothing QuarterFinals "16 June 2020" "18:00" Nothing
+    , Match 45 (Team "Winner Match 41" defaultFlag) Nothing (Team "Winner Match 42" defaultFlag) Nothing QuarterFinals "16 June 2020" "18:00" Nothing
+    , Match 48 (Team "Winner Match 43" defaultFlag) Nothing (Team "Winner Match 44" defaultFlag) Nothing QuarterFinals "16 June 2020" "18:00" Nothing
+    , Match 47 (Team "Winner Match 40" defaultFlag) Nothing (Team "Winner Match 38" defaultFlag) Nothing QuarterFinals "16 June 2020" "18:00" Nothing
     ]
 
 
