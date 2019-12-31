@@ -5351,8 +5351,10 @@ var $author$project$Euro2020$matches = _Utils_ap(
 				_Utils_ap($author$project$Euro2020$matchesGroupE, $author$project$Euro2020$matchesGroupF)))));
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
+var $author$project$Euro2020$Final = 9;
 var $author$project$Euro2020$QuarterFinals = 7;
 var $author$project$Euro2020$RoundOf16 = 6;
+var $author$project$Euro2020$SemiFinals = 8;
 var $author$project$Euro2020$defaultFlag = 'https://upload.wikimedia.org/wikipedia/en/9/96/UEFA_Euro_2020_Logo.svg';
 var $author$project$Euro2020$playOffMatches = _List_fromArray(
 	[
@@ -5485,6 +5487,39 @@ var $author$project$Euro2020$playOffMatches = _List_fromArray(
 		A2($author$project$Euro2020$Team, 'Winner Match 38', $author$project$Euro2020$defaultFlag),
 		$elm$core$Maybe$Nothing,
 		7,
+		'16 June 2020',
+		'18:00',
+		$elm$core$Maybe$Nothing),
+		A9(
+		$author$project$Euro2020$Match,
+		49,
+		A2($author$project$Euro2020$Team, 'Winner Match 46', $author$project$Euro2020$defaultFlag),
+		$elm$core$Maybe$Nothing,
+		A2($author$project$Euro2020$Team, 'Winner Match 45', $author$project$Euro2020$defaultFlag),
+		$elm$core$Maybe$Nothing,
+		8,
+		'16 June 2020',
+		'18:00',
+		$elm$core$Maybe$Nothing),
+		A9(
+		$author$project$Euro2020$Match,
+		50,
+		A2($author$project$Euro2020$Team, 'Winner Match 48', $author$project$Euro2020$defaultFlag),
+		$elm$core$Maybe$Nothing,
+		A2($author$project$Euro2020$Team, 'Winner Match 47', $author$project$Euro2020$defaultFlag),
+		$elm$core$Maybe$Nothing,
+		8,
+		'16 June 2020',
+		'18:00',
+		$elm$core$Maybe$Nothing),
+		A9(
+		$author$project$Euro2020$Match,
+		51,
+		A2($author$project$Euro2020$Team, 'Winner Match 49', $author$project$Euro2020$defaultFlag),
+		$elm$core$Maybe$Nothing,
+		A2($author$project$Euro2020$Team, 'Winner Match 50', $author$project$Euro2020$defaultFlag),
+		$elm$core$Maybe$Nothing,
+		9,
 		'16 June 2020',
 		'18:00',
 		$elm$core$Maybe$Nothing)
@@ -6207,6 +6242,51 @@ var $author$project$Main$updatePlayoffMatches = F2(
 							43,
 							ms)
 					});
+			case 49:
+				return _Utils_update(
+					m,
+					{
+						z: A3(
+							$author$project$Main$getWinner,
+							A2($author$project$Euro2020$Team, 'Winner Match 45', $author$project$Euro2020$defaultFlag),
+							45,
+							ms),
+						B: A3(
+							$author$project$Main$getWinner,
+							A2($author$project$Euro2020$Team, 'Winner Match 46', $author$project$Euro2020$defaultFlag),
+							46,
+							ms)
+					});
+			case 50:
+				return _Utils_update(
+					m,
+					{
+						z: A3(
+							$author$project$Main$getWinner,
+							A2($author$project$Euro2020$Team, 'Winner Match 47', $author$project$Euro2020$defaultFlag),
+							47,
+							ms),
+						B: A3(
+							$author$project$Main$getWinner,
+							A2($author$project$Euro2020$Team, 'Winner Match 48', $author$project$Euro2020$defaultFlag),
+							48,
+							ms)
+					});
+			case 51:
+				return _Utils_update(
+					m,
+					{
+						z: A3(
+							$author$project$Main$getWinner,
+							A2($author$project$Euro2020$Team, 'Winner Match 50', $author$project$Euro2020$defaultFlag),
+							50,
+							ms),
+						B: A3(
+							$author$project$Main$getWinner,
+							A2($author$project$Euro2020$Team, 'Winner Match 49', $author$project$Euro2020$defaultFlag),
+							49,
+							ms)
+					});
 			default:
 				return m;
 		}
@@ -6908,8 +6988,6 @@ var $author$project$Main$update = F2(
 			}
 		}
 	});
-var $author$project$Euro2020$Final = 9;
-var $author$project$Euro2020$SemiFinals = 8;
 var $mdgriffith$elm_ui$Internal$Model$AlignX = function (a) {
 	return {$: 6, a: a};
 };
@@ -13398,7 +13476,7 @@ var $author$project$Euro2020$isPlayoffMatch = function (match) {
 		$elm$core$List$member,
 		match.az,
 		_List_fromArray(
-			[37, 38, 39, 40, 41, 42, 43, 44]));
+			[37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51]));
 };
 var $mdgriffith$elm_ui$Element$Input$HiddenLabel = function (a) {
 	return {$: 1, a: a};

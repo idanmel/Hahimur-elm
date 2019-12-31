@@ -382,6 +382,9 @@ playOffMatches =
     , Match 45 (Team "Winner Match 41" defaultFlag) Nothing (Team "Winner Match 42" defaultFlag) Nothing QuarterFinals "16 June 2020" "18:00" Nothing
     , Match 48 (Team "Winner Match 43" defaultFlag) Nothing (Team "Winner Match 44" defaultFlag) Nothing QuarterFinals "16 June 2020" "18:00" Nothing
     , Match 47 (Team "Winner Match 40" defaultFlag) Nothing (Team "Winner Match 38" defaultFlag) Nothing QuarterFinals "16 June 2020" "18:00" Nothing
+    , Match 49 (Team "Winner Match 46" defaultFlag) Nothing (Team "Winner Match 45" defaultFlag) Nothing SemiFinals "16 June 2020" "18:00" Nothing
+    , Match 50 (Team "Winner Match 48" defaultFlag) Nothing (Team "Winner Match 47" defaultFlag) Nothing SemiFinals "16 June 2020" "18:00" Nothing
+    , Match 51 (Team "Winner Match 49" defaultFlag) Nothing (Team "Winner Match 50" defaultFlag) Nothing Final "16 June 2020" "18:00" Nothing
     ]
 
 
@@ -479,7 +482,7 @@ maybeOrDefaultTeam defaultTeam maybeGroupRow =
 
 isPlayoffMatch : Match -> Bool
 isPlayoffMatch match =
-    List.member match.id [ 37, 38, 39, 40, 41, 42, 43, 44 ]
+    List.member match.id [ 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51 ]
 
 
 updateTeams : List GroupRow -> List GroupRow -> Match -> Match

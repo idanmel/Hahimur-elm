@@ -169,6 +169,24 @@ updatePlayoffMatches ms m =
                 , awayTeam = getWinner (Team "Winner Match 44" defaultFlag) 44 ms
             }
 
+        49 ->
+            { m
+                | homeTeam = getWinner (Team "Winner Match 46" defaultFlag) 46 ms
+                , awayTeam = getWinner (Team "Winner Match 45" defaultFlag) 45 ms
+            }
+
+        50 ->
+            { m
+                | homeTeam = getWinner (Team "Winner Match 48" defaultFlag) 48 ms
+                , awayTeam = getWinner (Team "Winner Match 47" defaultFlag) 47 ms
+            }
+
+        51 ->
+            { m
+                | homeTeam = getWinner (Team "Winner Match 49" defaultFlag) 49 ms
+                , awayTeam = getWinner (Team "Winner Match 50" defaultFlag) 50 ms
+            }
+
         _ ->
             m
 
