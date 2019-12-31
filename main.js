@@ -5666,28 +5666,30 @@ var $author$project$Main$updateGroup = F2(
 			$author$project$Main$updateGroupRow(match),
 			group);
 	});
-var $author$project$Main$updatePlayoffScore = function (m) {
+var $author$project$Main$updateMatchScore = function (m) {
 	var homeScore = _Utils_eq(m.z.cB, $author$project$Euro2020$defaultFlag) ? $elm$core$Maybe$Nothing : m.cH;
 	var awayScore = _Utils_eq(m.x.cB, $author$project$Euro2020$defaultFlag) ? $elm$core$Maybe$Nothing : m.b6;
 	return _Utils_update(
 		m,
 		{b6: awayScore, cH: homeScore});
 };
-var $author$project$Main$updateScore = F4(
+var $author$project$Main$updateMatchScoreByID = F4(
 	function (matchId, homeOrAway, score, m) {
 		if (_Utils_eq(m.ay, matchId)) {
 			if (!homeOrAway) {
-				return _Utils_update(
-					m,
-					{
-						cH: $elm$core$String$toInt(score)
-					});
+				return $author$project$Main$updateMatchScore(
+					_Utils_update(
+						m,
+						{
+							cH: $elm$core$String$toInt(score)
+						}));
 			} else {
-				return _Utils_update(
-					m,
-					{
-						b6: $elm$core$String$toInt(score)
-					});
+				return $author$project$Main$updateMatchScore(
+					_Utils_update(
+						m,
+						{
+							b6: $elm$core$String$toInt(score)
+						}));
 			}
 		} else {
 			return m;
@@ -6349,7 +6351,7 @@ var $author$project$Main$update = F2(
 				var score = msg.c;
 				var newPlayOffMatches = A2(
 					$elm$core$List$map,
-					A3($author$project$Main$updateScore, matchId, homeOrAway, score),
+					A3($author$project$Main$updateMatchScoreByID, matchId, homeOrAway, score),
 					model.R);
 				return _Utils_update(
 					model,
@@ -6360,7 +6362,7 @@ var $author$project$Main$update = F2(
 				var score = msg.c;
 				var newMatches = A2(
 					$elm$core$List$map,
-					A3($author$project$Main$updateScore, matchId, homeOrAway, score),
+					A3($author$project$Main$updateMatchScoreByID, matchId, homeOrAway, score),
 					model.aj);
 				var newGroupRows = A3($elm$core$List$foldl, $author$project$Main$updateGroup, $author$project$Euro2020$groupRows, newMatches);
 				var groupRowsAfterTieBreaks = A2(
@@ -6372,7 +6374,7 @@ var $author$project$Main$update = F2(
 					$elm$core$List$map,
 					A2($author$project$Euro2020$updateTeams, groupRowsAfterTieBreaks, thirdPlaces),
 					model.R);
-				var newPlayOffMatchesScores = A2($elm$core$List$map, $author$project$Main$updatePlayoffScore, newPlayOffMatches);
+				var newPlayOffMatchesScores = A2($elm$core$List$map, $author$project$Main$updateMatchScore, newPlayOffMatches);
 				return _Utils_update(
 					model,
 					{ah: groupRowsAfterTieBreaks, aj: newMatches, R: newPlayOffMatchesScores});
