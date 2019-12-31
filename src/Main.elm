@@ -7,7 +7,7 @@ import Element.Border as Border
 import Element.Font as Font
 import Element.Input
 import Element.Region as Region
-import Euro2020 exposing (Group(..), GroupRow, GroupState(..), Match, Team, TeamPosition, defaultFlag, getGroupRows, getGroupState, getScore, groupRows, groupToString, isPlayoffMatch, matches, playOffMatches, updateTeams)
+import Euro2020 exposing (Group(..), GroupRow, GroupState(..), Match, Team, TeamPosition, defaultFlag, filterByMatchId, getGroupRows, getGroupState, getScore, groupRows, groupToString, isPlayoffMatch, matches, maybeOrDefaultTeam, playOffMatches, updateTeams)
 import Html exposing (Html)
 import Html.Attributes
 import List.Extra
@@ -93,6 +93,42 @@ updateMatchScore m =
     { m | homeScore = homeScore, awayScore = awayScore }
 
 
+
+--getWinner : Team -> Int -> List Match -> Team
+--getWinner team matchId ms =
+--    let
+--        one_matches =
+--            filterByMatchId matchId ms
+--
+--        match =
+--            List.Extra.getAt 0 one_matches
+--    in
+--    case match of
+--        Just m ->
+--            case ( m.homeScore, m.awayScore ) of
+--                ( Just homeScore, Just awayScore ) ->
+--                    m.homeTeam
+--
+--                _ ->
+--                    m.awayTeam
+--
+--        Nothing ->
+--            team
+--
+--
+--updatePlayoffMatches : List Match -> Match -> Match
+--updatePlayoffMatches ms m =
+--    case m.id of
+--        46 ->
+--            { m
+--                | homeTeam = getWinner (Team "Winner Match 39" defaultFlag) 39 ms
+--                , awayTeam = getWinner (Team "Winner Match 37" defaultFlag) 37 ms
+--            }
+--
+--        _ ->
+--            m
+
+
 update : Msg -> Model -> Model
 update msg model =
     case msg of
@@ -103,6 +139,9 @@ update msg model =
             let
                 newPlayOffMatches =
                     List.map (updateMatchScoreByID matchId homeOrAway score) model.playOffMatches
+
+                --newPlayOffMatches =
+                --    List.map (updatePlayoffMatches model.playOffMatches) newPlayOffMatchesScores
             in
             { model
                 | playOffMatches = newPlayOffMatches
@@ -213,10 +252,6 @@ get3rdPlaceTeam groupRows =
 
         Nothing ->
             GroupRow (Team "Turkey" "") 0 0 0 0 0 0 0 0 GroupA 0 0 0
-
-
-
---permutations : List a -> Int
 
 
 sameTeams : List Team -> Match -> Bool
