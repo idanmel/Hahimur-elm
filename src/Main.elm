@@ -11,6 +11,11 @@ import Euro2020 exposing (Group(..), GroupRow, GroupState(..), HomeOrAway(..), M
 import Html exposing (Html)
 import Html.Attributes
 import List.Extra
+import Random
+
+
+
+--import Random.Extra
 
 
 blue =
@@ -46,7 +51,16 @@ edges =
 
 
 main =
-    Browser.sandbox { init = init, update = update, view = view }
+    Browser.element { init = init, update = update, subscriptions = subscriptions, view = view }
+
+
+
+-- SUBSCRIPTIONS
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Sub.none
 
 
 
@@ -58,6 +72,9 @@ type Msg
     | UpdatedPlayoffScore Int HomeOrAway String
     | ClickedGroup Group
     | PickedWinner Int HomeOrAway
+    | ClickedRandom
+    | GotRandomScores (List Int)
+    | UpdateGroups (List Match)
 
 
 updateMatchScoreByID : Int -> HomeOrAway -> String -> Match -> Match
@@ -184,9 +201,44 @@ updateWinners m =
             { m | winner = Nothing }
 
 
-update : Msg -> Model -> Model
+randomScoresGen : Random.Generator (List Int)
+randomScoresGen =
+    let
+        numberOfMatches =
+            --List.length model.matches + List.length model.playOffMatches
+            36 * 2
+    in
+    Random.list numberOfMatches (Random.int 0 3)
+
+
+updateRandomScore : List Int -> Match -> Match
+updateRandomScore scores m =
+    let
+        homeScore =
+            List.head scores
+
+        awayScore =
+            List.Extra.last scores
+    in
+    { m | homeScore = homeScore, awayScore = awayScore }
+
+
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        ClickedRandom ->
+            ( model, Random.generate GotRandomScores randomScoresGen )
+
+        GotRandomScores randomScores ->
+            let
+                randomScoresGrouped =
+                    List.Extra.groupsOf 2 randomScores
+
+                newMatches =
+                    List.map2 updateRandomScore randomScoresGrouped model.matches
+            in
+            update (UpdateGroups newMatches) model
+
         PickedWinner matchId homeOrAway ->
             let
                 updatedWinners =
@@ -195,10 +247,10 @@ update msg model =
                 newPlayOffMatches =
                     List.map (updatePlayoffMatches updatedWinners) updatedWinners
             in
-            { model | playOffMatches = newPlayOffMatches }
+            ( { model | playOffMatches = newPlayOffMatches }, Cmd.none )
 
         ClickedGroup group ->
-            { model | selectedGroup = group }
+            ( { model | selectedGroup = group }, Cmd.none )
 
         UpdatedPlayoffScore matchId homeOrAway score ->
             let
@@ -211,21 +263,27 @@ update msg model =
                 newPlayOffMatches2 =
                     List.map (updatePlayoffMatches newPlayoffWinners) newPlayoffWinners
             in
-            { model
+            ( { model
                 | playOffMatches = newPlayOffMatches2
-            }
+              }
+            , Cmd.none
+            )
 
         UpdatedGroupScore matchId homeOrAway score ->
             let
                 newMatches =
                     List.map (updateMatchScoreByID matchId homeOrAway score) model.matches
+            in
+            update (UpdateGroups newMatches) model
 
+        UpdateGroups matches ->
+            let
                 newGroupRows =
-                    newMatches
+                    matches
                         |> List.foldl updateGroup groupRows
 
                 groupRowsAfterTieBreaks =
-                    List.map (resolveTieBreak newMatches newGroupRows) newGroupRows
+                    List.map (resolveTieBreak matches newGroupRows) newGroupRows
 
                 thirdPlaces =
                     get3rdTeamTable groupRowsAfterTieBreaks
@@ -236,11 +294,13 @@ update msg model =
                 newPlayOffMatchesScores =
                     List.map updateMatchScore newPlayOffMatches
             in
-            { model
-                | matches = newMatches
+            ( { model
+                | matches = matches
                 , playOffMatches = newPlayOffMatchesScores
                 , groups = groupRowsAfterTieBreaks
-            }
+              }
+            , Cmd.none
+            )
 
 
 updateGroupRow2 : GroupRow -> Int -> Int -> GroupRow
@@ -473,12 +533,15 @@ type alias Model =
     }
 
 
-init =
-    { matches = matches
-    , groups = groupRows
-    , playOffMatches = playOffMatches
-    , selectedGroup = GroupA
-    }
+init : () -> ( Model, Cmd Msg )
+init _ =
+    ( { matches = matches
+      , groups = groupRows
+      , playOffMatches = playOffMatches
+      , selectedGroup = GroupA
+      }
+    , Cmd.none
+    )
 
 
 
@@ -521,6 +584,7 @@ view model =
                 , viewSpacer 16
                 , row [] (List.map (viewPlayoffMatches model.playOffMatches) [ RoundOf16, QuarterFinals, SemiFinals, Final ])
                 , viewSpacer 48
+                , row [] [ viewRandomButton model.groups QuarterFinals ]
                 ]
             , column [ width (fillPortion 1) ] []
             ]
@@ -855,4 +919,20 @@ viewMatchInput match homeOrAway =
                     String.fromInt value
         , placeholder = Nothing
         , label = Element.Input.labelHidden ""
+        }
+
+
+viewRandomButton : List GroupRow -> Group -> Element Msg
+viewRandomButton allGroupRows gr =
+    let
+        groupRows =
+            getGroupRows gr allGroupRows
+    in
+    Element.Input.button
+        [ Background.color blue
+        , Font.color white
+        , padding 20
+        ]
+        { onPress = Just ClickedRandom
+        , label = text "Random"
         }

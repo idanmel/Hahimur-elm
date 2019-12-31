@@ -80,6 +80,190 @@ function A9(fun, a, b, c, d, e, f, g, h, i) {
 
 
 
+// EQUALITY
+
+function _Utils_eq(x, y)
+{
+	for (
+		var pair, stack = [], isEqual = _Utils_eqHelp(x, y, 0, stack);
+		isEqual && (pair = stack.pop());
+		isEqual = _Utils_eqHelp(pair.a, pair.b, 0, stack)
+		)
+	{}
+
+	return isEqual;
+}
+
+function _Utils_eqHelp(x, y, depth, stack)
+{
+	if (depth > 100)
+	{
+		stack.push(_Utils_Tuple2(x,y));
+		return true;
+	}
+
+	if (x === y)
+	{
+		return true;
+	}
+
+	if (typeof x !== 'object' || x === null || y === null)
+	{
+		typeof x === 'function' && _Debug_crash(5);
+		return false;
+	}
+
+	/**_UNUSED/
+	if (x.$ === 'Set_elm_builtin')
+	{
+		x = $elm$core$Set$toList(x);
+		y = $elm$core$Set$toList(y);
+	}
+	if (x.$ === 'RBNode_elm_builtin' || x.$ === 'RBEmpty_elm_builtin')
+	{
+		x = $elm$core$Dict$toList(x);
+		y = $elm$core$Dict$toList(y);
+	}
+	//*/
+
+	/**/
+	if (x.$ < 0)
+	{
+		x = $elm$core$Dict$toList(x);
+		y = $elm$core$Dict$toList(y);
+	}
+	//*/
+
+	for (var key in x)
+	{
+		if (!_Utils_eqHelp(x[key], y[key], depth + 1, stack))
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+var _Utils_equal = F2(_Utils_eq);
+var _Utils_notEqual = F2(function(a, b) { return !_Utils_eq(a,b); });
+
+
+
+// COMPARISONS
+
+// Code in Generate/JavaScript.hs, Basics.js, and List.js depends on
+// the particular integer values assigned to LT, EQ, and GT.
+
+function _Utils_cmp(x, y, ord)
+{
+	if (typeof x !== 'object')
+	{
+		return x === y ? /*EQ*/ 0 : x < y ? /*LT*/ -1 : /*GT*/ 1;
+	}
+
+	/**_UNUSED/
+	if (x instanceof String)
+	{
+		var a = x.valueOf();
+		var b = y.valueOf();
+		return a === b ? 0 : a < b ? -1 : 1;
+	}
+	//*/
+
+	/**/
+	if (typeof x.$ === 'undefined')
+	//*/
+	/**_UNUSED/
+	if (x.$[0] === '#')
+	//*/
+	{
+		return (ord = _Utils_cmp(x.a, y.a))
+			? ord
+			: (ord = _Utils_cmp(x.b, y.b))
+				? ord
+				: _Utils_cmp(x.c, y.c);
+	}
+
+	// traverse conses until end of a list or a mismatch
+	for (; x.b && y.b && !(ord = _Utils_cmp(x.a, y.a)); x = x.b, y = y.b) {} // WHILE_CONSES
+	return ord || (x.b ? /*GT*/ 1 : y.b ? /*LT*/ -1 : /*EQ*/ 0);
+}
+
+var _Utils_lt = F2(function(a, b) { return _Utils_cmp(a, b) < 0; });
+var _Utils_le = F2(function(a, b) { return _Utils_cmp(a, b) < 1; });
+var _Utils_gt = F2(function(a, b) { return _Utils_cmp(a, b) > 0; });
+var _Utils_ge = F2(function(a, b) { return _Utils_cmp(a, b) >= 0; });
+
+var _Utils_compare = F2(function(x, y)
+{
+	var n = _Utils_cmp(x, y);
+	return n < 0 ? $elm$core$Basics$LT : n ? $elm$core$Basics$GT : $elm$core$Basics$EQ;
+});
+
+
+// COMMON VALUES
+
+var _Utils_Tuple0 = 0;
+var _Utils_Tuple0_UNUSED = { $: '#0' };
+
+function _Utils_Tuple2(a, b) { return { a: a, b: b }; }
+function _Utils_Tuple2_UNUSED(a, b) { return { $: '#2', a: a, b: b }; }
+
+function _Utils_Tuple3(a, b, c) { return { a: a, b: b, c: c }; }
+function _Utils_Tuple3_UNUSED(a, b, c) { return { $: '#3', a: a, b: b, c: c }; }
+
+function _Utils_chr(c) { return c; }
+function _Utils_chr_UNUSED(c) { return new String(c); }
+
+
+// RECORDS
+
+function _Utils_update(oldRecord, updatedFields)
+{
+	var newRecord = {};
+
+	for (var key in oldRecord)
+	{
+		newRecord[key] = oldRecord[key];
+	}
+
+	for (var key in updatedFields)
+	{
+		newRecord[key] = updatedFields[key];
+	}
+
+	return newRecord;
+}
+
+
+// APPEND
+
+var _Utils_append = F2(_Utils_ap);
+
+function _Utils_ap(xs, ys)
+{
+	// append Strings
+	if (typeof xs === 'string')
+	{
+		return xs + ys;
+	}
+
+	// append Lists
+	if (!xs.b)
+	{
+		return ys;
+	}
+	var root = _List_Cons(xs.a, ys);
+	xs = xs.b
+	for (var curr = root; xs.b; xs = xs.b) // WHILE_CONS
+	{
+		curr = curr.b = _List_Cons(xs.a, ys);
+	}
+	return root;
+}
+
+
+
 var _List_Nil = { $: 0 };
 var _List_Nil_UNUSED = { $: '[]' };
 
@@ -600,195 +784,11 @@ function _Debug_crash_UNUSED(identifier, fact1, fact2, fact3, fact4)
 
 function _Debug_regionToString(region)
 {
-	if (region.aV.ai === region.a6.ai)
+	if (region.aW.aj === region.a7.aj)
 	{
-		return 'on line ' + region.aV.ai;
+		return 'on line ' + region.aW.aj;
 	}
-	return 'on lines ' + region.aV.ai + ' through ' + region.a6.ai;
-}
-
-
-
-// EQUALITY
-
-function _Utils_eq(x, y)
-{
-	for (
-		var pair, stack = [], isEqual = _Utils_eqHelp(x, y, 0, stack);
-		isEqual && (pair = stack.pop());
-		isEqual = _Utils_eqHelp(pair.a, pair.b, 0, stack)
-		)
-	{}
-
-	return isEqual;
-}
-
-function _Utils_eqHelp(x, y, depth, stack)
-{
-	if (depth > 100)
-	{
-		stack.push(_Utils_Tuple2(x,y));
-		return true;
-	}
-
-	if (x === y)
-	{
-		return true;
-	}
-
-	if (typeof x !== 'object' || x === null || y === null)
-	{
-		typeof x === 'function' && _Debug_crash(5);
-		return false;
-	}
-
-	/**_UNUSED/
-	if (x.$ === 'Set_elm_builtin')
-	{
-		x = $elm$core$Set$toList(x);
-		y = $elm$core$Set$toList(y);
-	}
-	if (x.$ === 'RBNode_elm_builtin' || x.$ === 'RBEmpty_elm_builtin')
-	{
-		x = $elm$core$Dict$toList(x);
-		y = $elm$core$Dict$toList(y);
-	}
-	//*/
-
-	/**/
-	if (x.$ < 0)
-	{
-		x = $elm$core$Dict$toList(x);
-		y = $elm$core$Dict$toList(y);
-	}
-	//*/
-
-	for (var key in x)
-	{
-		if (!_Utils_eqHelp(x[key], y[key], depth + 1, stack))
-		{
-			return false;
-		}
-	}
-	return true;
-}
-
-var _Utils_equal = F2(_Utils_eq);
-var _Utils_notEqual = F2(function(a, b) { return !_Utils_eq(a,b); });
-
-
-
-// COMPARISONS
-
-// Code in Generate/JavaScript.hs, Basics.js, and List.js depends on
-// the particular integer values assigned to LT, EQ, and GT.
-
-function _Utils_cmp(x, y, ord)
-{
-	if (typeof x !== 'object')
-	{
-		return x === y ? /*EQ*/ 0 : x < y ? /*LT*/ -1 : /*GT*/ 1;
-	}
-
-	/**_UNUSED/
-	if (x instanceof String)
-	{
-		var a = x.valueOf();
-		var b = y.valueOf();
-		return a === b ? 0 : a < b ? -1 : 1;
-	}
-	//*/
-
-	/**/
-	if (typeof x.$ === 'undefined')
-	//*/
-	/**_UNUSED/
-	if (x.$[0] === '#')
-	//*/
-	{
-		return (ord = _Utils_cmp(x.a, y.a))
-			? ord
-			: (ord = _Utils_cmp(x.b, y.b))
-				? ord
-				: _Utils_cmp(x.c, y.c);
-	}
-
-	// traverse conses until end of a list or a mismatch
-	for (; x.b && y.b && !(ord = _Utils_cmp(x.a, y.a)); x = x.b, y = y.b) {} // WHILE_CONSES
-	return ord || (x.b ? /*GT*/ 1 : y.b ? /*LT*/ -1 : /*EQ*/ 0);
-}
-
-var _Utils_lt = F2(function(a, b) { return _Utils_cmp(a, b) < 0; });
-var _Utils_le = F2(function(a, b) { return _Utils_cmp(a, b) < 1; });
-var _Utils_gt = F2(function(a, b) { return _Utils_cmp(a, b) > 0; });
-var _Utils_ge = F2(function(a, b) { return _Utils_cmp(a, b) >= 0; });
-
-var _Utils_compare = F2(function(x, y)
-{
-	var n = _Utils_cmp(x, y);
-	return n < 0 ? $elm$core$Basics$LT : n ? $elm$core$Basics$GT : $elm$core$Basics$EQ;
-});
-
-
-// COMMON VALUES
-
-var _Utils_Tuple0 = 0;
-var _Utils_Tuple0_UNUSED = { $: '#0' };
-
-function _Utils_Tuple2(a, b) { return { a: a, b: b }; }
-function _Utils_Tuple2_UNUSED(a, b) { return { $: '#2', a: a, b: b }; }
-
-function _Utils_Tuple3(a, b, c) { return { a: a, b: b, c: c }; }
-function _Utils_Tuple3_UNUSED(a, b, c) { return { $: '#3', a: a, b: b, c: c }; }
-
-function _Utils_chr(c) { return c; }
-function _Utils_chr_UNUSED(c) { return new String(c); }
-
-
-// RECORDS
-
-function _Utils_update(oldRecord, updatedFields)
-{
-	var newRecord = {};
-
-	for (var key in oldRecord)
-	{
-		newRecord[key] = oldRecord[key];
-	}
-
-	for (var key in updatedFields)
-	{
-		newRecord[key] = updatedFields[key];
-	}
-
-	return newRecord;
-}
-
-
-// APPEND
-
-var _Utils_append = F2(_Utils_ap);
-
-function _Utils_ap(xs, ys)
-{
-	// append Strings
-	if (typeof xs === 'string')
-	{
-		return xs + ys;
-	}
-
-	// append Lists
-	if (!xs.b)
-	{
-		return ys;
-	}
-	var root = _List_Cons(xs.a, ys);
-	xs = xs.b
-	for (var curr = root; xs.b; xs = xs.b) // WHILE_CONS
-	{
-		curr = curr.b = _List_Cons(xs.a, ys);
-	}
-	return root;
+	return 'on lines ' + region.aW.aj + ' through ' + region.a7.aj;
 }
 
 
@@ -2660,8 +2660,8 @@ var _VirtualDom_mapEventRecord = F2(function(func, record)
 {
 	return {
 		J: func(record.J),
-		aW: record.aW,
-		aR: record.aR
+		aX: record.aX,
+		aS: record.aS
 	}
 });
 
@@ -2930,10 +2930,10 @@ function _VirtualDom_makeCallback(eventNode, initialHandler)
 
 		var value = result.a;
 		var message = !tag ? value : tag < 3 ? value.a : value.J;
-		var stopPropagation = tag == 1 ? value.b : tag == 3 && value.aW;
+		var stopPropagation = tag == 1 ? value.b : tag == 3 && value.aX;
 		var currentEventNode = (
 			stopPropagation && event.stopPropagation(),
-			(tag == 2 ? value.b : tag == 3 && value.aR) && event.preventDefault(),
+			(tag == 2 ? value.b : tag == 3 && value.aS) && event.preventDefault(),
 			eventNode
 		);
 		var tagger;
@@ -3923,7 +3923,7 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 		impl.dJ,
 		impl.$7,
 		function(sendToApp, initialModel) {
-			var divertHrefToApp = impl.aU && impl.aU(sendToApp)
+			var divertHrefToApp = impl.aV && impl.aV(sendToApp)
 			var view = impl.r;
 			var title = _VirtualDom_doc.title;
 			var bodyNode = _VirtualDom_doc.body;
@@ -3998,7 +3998,7 @@ function _Browser_application(impl)
 	var key = function() { key.a(onUrlChange(_Browser_getUrl())); };
 
 	return _Browser_document({
-		aU: function(sendToApp)
+		aV: function(sendToApp)
 		{
 			key.a = sendToApp;
 			_Browser_window.addEventListener('popstate', key);
@@ -4015,7 +4015,7 @@ function _Browser_application(impl)
 					sendToApp(onUrlRequest(
 						(next
 							&& curr.bA === next.bA
-							&& curr.bg === next.bg
+							&& curr.bh === next.bh
 							&& curr.bx.a === next.bx.a
 						)
 							? $elm$browser$Browser$Internal(next)
@@ -4192,7 +4192,7 @@ function _Browser_getViewport()
 			bT: _Browser_window.pageXOffset,
 			bU: _Browser_window.pageYOffset,
 			y: _Browser_doc.documentElement.clientWidth,
-			bd: _Browser_doc.documentElement.clientHeight
+			be: _Browser_doc.documentElement.clientHeight
 		}
 	};
 }
@@ -4203,7 +4203,7 @@ function _Browser_getScene()
 	var elem = _Browser_doc.documentElement;
 	return {
 		y: Math.max(body.scrollWidth, body.offsetWidth, elem.scrollWidth, elem.offsetWidth, elem.clientWidth),
-		bd: Math.max(body.scrollHeight, body.offsetHeight, elem.scrollHeight, elem.offsetHeight, elem.clientHeight)
+		be: Math.max(body.scrollHeight, body.offsetHeight, elem.scrollHeight, elem.offsetHeight, elem.clientHeight)
 	};
 }
 
@@ -4228,13 +4228,13 @@ function _Browser_getViewportOf(id)
 		return {
 			bF: {
 				y: node.scrollWidth,
-				bd: node.scrollHeight
+				be: node.scrollHeight
 			},
 			bP: {
 				bT: node.scrollLeft,
 				bU: node.scrollTop,
 				y: node.clientWidth,
-				bd: node.clientHeight
+				be: node.clientHeight
 			}
 		};
 	});
@@ -4269,13 +4269,13 @@ function _Browser_getElement(id)
 				bT: x,
 				bU: y,
 				y: _Browser_doc.documentElement.clientWidth,
-				bd: _Browser_doc.documentElement.clientHeight
+				be: _Browser_doc.documentElement.clientHeight
 			},
 			cz: {
 				bT: x + rect.left,
 				bU: y + rect.top,
 				y: rect.width,
-				bd: rect.height
+				be: rect.height
 			}
 		};
 	});
@@ -4347,34 +4347,56 @@ var _Bitwise_shiftRightZfBy = F2(function(offset, a)
 {
 	return a >>> offset;
 });
-var $author$project$Euro2020$GroupA = 0;
+
+
+
+function _Time_now(millisToPosix)
+{
+	return _Scheduler_binding(function(callback)
+	{
+		callback(_Scheduler_succeed(millisToPosix(Date.now())));
+	});
+}
+
+var _Time_setInterval = F2(function(interval, task)
+{
+	return _Scheduler_binding(function(callback)
+	{
+		var id = setInterval(function() { _Scheduler_rawSpawn(task); }, interval);
+		return function() { clearInterval(id); };
+	});
+});
+
+function _Time_here()
+{
+	return _Scheduler_binding(function(callback)
+	{
+		callback(_Scheduler_succeed(
+			A2($elm$time$Time$customZone, -(new Date().getTimezoneOffset()), _List_Nil)
+		));
+	});
+}
+
+
+function _Time_getZoneName()
+{
+	return _Scheduler_binding(function(callback)
+	{
+		try
+		{
+			var name = $elm$time$Time$Name(Intl.DateTimeFormat().resolvedOptions().timeZone);
+		}
+		catch (e)
+		{
+			var name = $elm$time$Time$Offset(new Date().getTimezoneOffset());
+		}
+		callback(_Scheduler_succeed(name));
+	});
+}
 var $elm$core$Basics$EQ = 1;
+var $elm$core$Basics$GT = 2;
 var $elm$core$Basics$LT = 0;
 var $elm$core$List$cons = _List_cons;
-var $elm$core$Elm$JsArray$foldr = _JsArray_foldr;
-var $elm$core$Array$foldr = F3(
-	function (func, baseCase, _v0) {
-		var tree = _v0.c;
-		var tail = _v0.d;
-		var helper = F2(
-			function (node, acc) {
-				if (!node.$) {
-					var subTree = node.a;
-					return A3($elm$core$Elm$JsArray$foldr, helper, acc, subTree);
-				} else {
-					var values = node.a;
-					return A3($elm$core$Elm$JsArray$foldr, func, acc, values);
-				}
-			});
-		return A3(
-			$elm$core$Elm$JsArray$foldr,
-			helper,
-			A3($elm$core$Elm$JsArray$foldr, func, baseCase, tail),
-			tree);
-	});
-var $elm$core$Array$toList = function (array) {
-	return A3($elm$core$Array$foldr, $elm$core$List$cons, _List_Nil, array);
-};
 var $elm$core$Dict$foldr = F3(
 	function (func, acc, t) {
 		foldr:
@@ -4427,320 +4449,30 @@ var $elm$core$Set$toList = function (_v0) {
 	var dict = _v0;
 	return $elm$core$Dict$keys(dict);
 };
-var $elm$core$Basics$GT = 2;
-var $elm$core$Basics$append = _Utils_append;
-var $author$project$Euro2020$GroupRow = function (team) {
-	return function (pld) {
-		return function (w) {
-			return function (d) {
-				return function (l) {
-					return function (gf) {
-						return function (ga) {
-							return function (gd) {
-								return function (pts) {
-									return function (group) {
-										return function (tieBreakPoints) {
-											return function (tieBreakGd) {
-												return function (tieBreakGf) {
-													return {cu: d, cF: ga, bb: gd, bc: gf, ay: group, cV: l, bw: pld, bB: pts, aX: team, bJ: tieBreakGd, bK: tieBreakGf, bL: tieBreakPoints, bQ: w};
-												};
-											};
-										};
-									};
-								};
-							};
-						};
-					};
-				};
-			};
-		};
-	};
+var $elm$core$Elm$JsArray$foldr = _JsArray_foldr;
+var $elm$core$Array$foldr = F3(
+	function (func, baseCase, _v0) {
+		var tree = _v0.c;
+		var tail = _v0.d;
+		var helper = F2(
+			function (node, acc) {
+				if (!node.$) {
+					var subTree = node.a;
+					return A3($elm$core$Elm$JsArray$foldr, helper, acc, subTree);
+				} else {
+					var values = node.a;
+					return A3($elm$core$Elm$JsArray$foldr, func, acc, values);
+				}
+			});
+		return A3(
+			$elm$core$Elm$JsArray$foldr,
+			helper,
+			A3($elm$core$Elm$JsArray$foldr, func, baseCase, tail),
+			tree);
+	});
+var $elm$core$Array$toList = function (array) {
+	return A3($elm$core$Array$foldr, $elm$core$List$cons, _List_Nil, array);
 };
-var $author$project$Euro2020$Team = F2(
-	function (name, flag) {
-		return {cC: flag, cY: name};
-	});
-var $author$project$Euro2020$italy = A2($author$project$Euro2020$Team, 'Italy', 'https://www.countryflags.io/it/flat/64.png');
-var $author$project$Euro2020$italyRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$italy)(0)(0)(0)(0)(0)(0)(0)(0)(0)(0)(0)(0);
-var $author$project$Euro2020$switzerland = A2($author$project$Euro2020$Team, 'Switzerland', 'https://www.countryflags.io/ch/flat/64.png');
-var $author$project$Euro2020$switzerlandRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$switzerland)(0)(0)(0)(0)(0)(0)(0)(0)(0)(0)(0)(0);
-var $author$project$Euro2020$turkey = A2($author$project$Euro2020$Team, 'Turkey', 'https://www.countryflags.io/tr/flat/64.png');
-var $author$project$Euro2020$turkeyRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$turkey)(0)(0)(0)(0)(0)(0)(0)(0)(0)(0)(0)(0);
-var $author$project$Euro2020$wales = A2($author$project$Euro2020$Team, 'Wales', 'https://upload.wikimedia.org/wikipedia/commons/a/a9/Flag_of_Wales_%281959%E2%80%93present%29.svg');
-var $author$project$Euro2020$walesRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$wales)(0)(0)(0)(0)(0)(0)(0)(0)(0)(0)(0)(0);
-var $author$project$Euro2020$groupA = _List_fromArray(
-	[$author$project$Euro2020$turkeyRow, $author$project$Euro2020$italyRow, $author$project$Euro2020$walesRow, $author$project$Euro2020$switzerlandRow]);
-var $author$project$Euro2020$GroupB = 1;
-var $author$project$Euro2020$belgium = A2($author$project$Euro2020$Team, 'Belgium', 'https://www.countryflags.io/be/flat/64.png');
-var $author$project$Euro2020$belgiumRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$belgium)(0)(0)(0)(0)(0)(0)(0)(0)(1)(0)(0)(0);
-var $author$project$Euro2020$denmark = A2($author$project$Euro2020$Team, 'Denmark', 'https://www.countryflags.io/dk/flat/64.png');
-var $author$project$Euro2020$denmarkRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$denmark)(0)(0)(0)(0)(0)(0)(0)(0)(1)(0)(0)(0);
-var $author$project$Euro2020$finland = A2($author$project$Euro2020$Team, 'Finland', 'https://www.countryflags.io/fi/flat/64.png');
-var $author$project$Euro2020$finlandRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$finland)(0)(0)(0)(0)(0)(0)(0)(0)(1)(0)(0)(0);
-var $author$project$Euro2020$russia = A2($author$project$Euro2020$Team, 'Russia', 'https://www.countryflags.io/ru/flat/64.png');
-var $author$project$Euro2020$russiaRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$russia)(0)(0)(0)(0)(0)(0)(0)(0)(1)(0)(0)(0);
-var $author$project$Euro2020$groupB = _List_fromArray(
-	[$author$project$Euro2020$belgiumRow, $author$project$Euro2020$russiaRow, $author$project$Euro2020$finlandRow, $author$project$Euro2020$denmarkRow]);
-var $author$project$Euro2020$GroupC = 2;
-var $author$project$Euro2020$austria = A2($author$project$Euro2020$Team, 'Austria', 'https://www.countryflags.io/at/flat/64.png');
-var $author$project$Euro2020$austriaRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$austria)(0)(0)(0)(0)(0)(0)(0)(0)(2)(0)(0)(0);
-var $author$project$Euro2020$netherlands = A2($author$project$Euro2020$Team, 'Netherlands', 'https://www.countryflags.io/nl/flat/64.png');
-var $author$project$Euro2020$netherlandsRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$netherlands)(0)(0)(0)(0)(0)(0)(0)(0)(2)(0)(0)(0);
-var $author$project$Euro2020$romania = A2($author$project$Euro2020$Team, 'Romania', 'https://www.countryflags.io/ro/flat/64.png');
-var $author$project$Euro2020$romaniaRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$romania)(0)(0)(0)(0)(0)(0)(0)(0)(2)(0)(0)(0);
-var $author$project$Euro2020$ukraine = A2($author$project$Euro2020$Team, 'Ukraine', 'https://www.countryflags.io/ua/flat/64.png');
-var $author$project$Euro2020$ukraineRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$ukraine)(0)(0)(0)(0)(0)(0)(0)(0)(2)(0)(0)(0);
-var $author$project$Euro2020$groupC = _List_fromArray(
-	[$author$project$Euro2020$netherlandsRow, $author$project$Euro2020$ukraineRow, $author$project$Euro2020$austriaRow, $author$project$Euro2020$romaniaRow]);
-var $author$project$Euro2020$GroupD = 3;
-var $author$project$Euro2020$crotia = A2($author$project$Euro2020$Team, 'Croatia', 'https://www.countryflags.io/hr/flat/64.png');
-var $author$project$Euro2020$croatiaRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$crotia)(0)(0)(0)(0)(0)(0)(0)(0)(3)(0)(0)(0);
-var $author$project$Euro2020$czech = A2($author$project$Euro2020$Team, 'Czech Republic', 'https://www.countryflags.io/cz/flat/64.png');
-var $author$project$Euro2020$czechRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$czech)(0)(0)(0)(0)(0)(0)(0)(0)(3)(0)(0)(0);
-var $author$project$Euro2020$england = A2($author$project$Euro2020$Team, 'England', 'https://www.countryflags.io/gb/flat/64.png');
-var $author$project$Euro2020$englandRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$england)(0)(0)(0)(0)(0)(0)(0)(0)(3)(0)(0)(0);
-var $author$project$Euro2020$ireland = A2($author$project$Euro2020$Team, 'Ireland', 'https://www.countryflags.io/ie/flat/64.png');
-var $author$project$Euro2020$irelandRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$ireland)(0)(0)(0)(0)(0)(0)(0)(0)(3)(0)(0)(0);
-var $author$project$Euro2020$groupD = _List_fromArray(
-	[$author$project$Euro2020$englandRow, $author$project$Euro2020$croatiaRow, $author$project$Euro2020$irelandRow, $author$project$Euro2020$czechRow]);
-var $author$project$Euro2020$GroupE = 4;
-var $author$project$Euro2020$iceland = A2($author$project$Euro2020$Team, 'Iceland', 'https://www.countryflags.io/is/flat/64.png');
-var $author$project$Euro2020$icelandRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$iceland)(0)(0)(0)(0)(0)(0)(0)(0)(4)(0)(0)(0);
-var $author$project$Euro2020$poland = A2($author$project$Euro2020$Team, 'Poland', 'https://www.countryflags.io/pl/flat/64.png');
-var $author$project$Euro2020$polandRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$poland)(0)(0)(0)(0)(0)(0)(0)(0)(4)(0)(0)(0);
-var $author$project$Euro2020$spain = A2($author$project$Euro2020$Team, 'Spain', 'https://www.countryflags.io/es/flat/64.png');
-var $author$project$Euro2020$spainRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$spain)(0)(0)(0)(0)(0)(0)(0)(0)(4)(0)(0)(0);
-var $author$project$Euro2020$sweden = A2($author$project$Euro2020$Team, 'Sweden', 'https://www.countryflags.io/se/flat/64.png');
-var $author$project$Euro2020$swedenRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$sweden)(0)(0)(0)(0)(0)(0)(0)(0)(4)(0)(0)(0);
-var $author$project$Euro2020$groupE = _List_fromArray(
-	[$author$project$Euro2020$spainRow, $author$project$Euro2020$swedenRow, $author$project$Euro2020$polandRow, $author$project$Euro2020$icelandRow]);
-var $author$project$Euro2020$GroupF = 5;
-var $author$project$Euro2020$france = A2($author$project$Euro2020$Team, 'France', 'https://www.countryflags.io/fr/flat/64.png');
-var $author$project$Euro2020$franceRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$france)(0)(0)(0)(0)(0)(0)(0)(0)(5)(0)(0)(0);
-var $author$project$Euro2020$germany = A2($author$project$Euro2020$Team, 'Germany', 'https://www.countryflags.io/de/flat/64.png');
-var $author$project$Euro2020$germanyRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$germany)(0)(0)(0)(0)(0)(0)(0)(0)(5)(0)(0)(0);
-var $author$project$Euro2020$portugal = A2($author$project$Euro2020$Team, 'Portugal', 'https://www.countryflags.io/pt/flat/64.png');
-var $author$project$Euro2020$portugalRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$portugal)(0)(0)(0)(0)(0)(0)(0)(0)(5)(0)(0)(0);
-var $author$project$Euro2020$serbia = A2($author$project$Euro2020$Team, 'Serbia', 'https://www.countryflags.io/rs/flat/64.png');
-var $author$project$Euro2020$serbiaRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$serbia)(0)(0)(0)(0)(0)(0)(0)(0)(5)(0)(0)(0);
-var $author$project$Euro2020$groupF = _List_fromArray(
-	[$author$project$Euro2020$serbiaRow, $author$project$Euro2020$portugalRow, $author$project$Euro2020$franceRow, $author$project$Euro2020$germanyRow]);
-var $author$project$Euro2020$groupRows = _Utils_ap(
-	$author$project$Euro2020$groupA,
-	_Utils_ap(
-		$author$project$Euro2020$groupB,
-		_Utils_ap(
-			$author$project$Euro2020$groupC,
-			_Utils_ap(
-				$author$project$Euro2020$groupD,
-				_Utils_ap($author$project$Euro2020$groupE, $author$project$Euro2020$groupF)))));
-var $author$project$Euro2020$Match = F9(
-	function (id, homeTeam, homeScore, awayTeam, awayScore, group, date, time, winner) {
-		return {b7: awayScore, z: awayTeam, cw: date, ay: group, cI: homeScore, B: homeTeam, az: id, dE: time, dK: winner};
-	});
-var $elm$core$Maybe$Nothing = {$: 1};
-var $author$project$Euro2020$matchesGroupA = _List_fromArray(
-	[
-		A9($author$project$Euro2020$Match, 1, $author$project$Euro2020$turkey, $elm$core$Maybe$Nothing, $author$project$Euro2020$italy, $elm$core$Maybe$Nothing, 0, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 2, $author$project$Euro2020$wales, $elm$core$Maybe$Nothing, $author$project$Euro2020$switzerland, $elm$core$Maybe$Nothing, 0, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 3, $author$project$Euro2020$turkey, $elm$core$Maybe$Nothing, $author$project$Euro2020$wales, $elm$core$Maybe$Nothing, 0, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 4, $author$project$Euro2020$italy, $elm$core$Maybe$Nothing, $author$project$Euro2020$switzerland, $elm$core$Maybe$Nothing, 0, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 5, $author$project$Euro2020$switzerland, $elm$core$Maybe$Nothing, $author$project$Euro2020$turkey, $elm$core$Maybe$Nothing, 0, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 6, $author$project$Euro2020$italy, $elm$core$Maybe$Nothing, $author$project$Euro2020$wales, $elm$core$Maybe$Nothing, 0, '16 June 2020', '18:00', $elm$core$Maybe$Nothing)
-	]);
-var $author$project$Euro2020$matchesGroupB = _List_fromArray(
-	[
-		A9($author$project$Euro2020$Match, 7, $author$project$Euro2020$denmark, $elm$core$Maybe$Nothing, $author$project$Euro2020$finland, $elm$core$Maybe$Nothing, 1, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 8, $author$project$Euro2020$belgium, $elm$core$Maybe$Nothing, $author$project$Euro2020$russia, $elm$core$Maybe$Nothing, 1, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 9, $author$project$Euro2020$finland, $elm$core$Maybe$Nothing, $author$project$Euro2020$russia, $elm$core$Maybe$Nothing, 1, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 10, $author$project$Euro2020$denmark, $elm$core$Maybe$Nothing, $author$project$Euro2020$belgium, $elm$core$Maybe$Nothing, 1, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 11, $author$project$Euro2020$russia, $elm$core$Maybe$Nothing, $author$project$Euro2020$denmark, $elm$core$Maybe$Nothing, 1, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 12, $author$project$Euro2020$finland, $elm$core$Maybe$Nothing, $author$project$Euro2020$belgium, $elm$core$Maybe$Nothing, 1, '16 June 2020', '18:00', $elm$core$Maybe$Nothing)
-	]);
-var $author$project$Euro2020$matchesGroupC = _List_fromArray(
-	[
-		A9($author$project$Euro2020$Match, 13, $author$project$Euro2020$austria, $elm$core$Maybe$Nothing, $author$project$Euro2020$romania, $elm$core$Maybe$Nothing, 2, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 14, $author$project$Euro2020$netherlands, $elm$core$Maybe$Nothing, $author$project$Euro2020$ukraine, $elm$core$Maybe$Nothing, 2, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 15, $author$project$Euro2020$ukraine, $elm$core$Maybe$Nothing, $author$project$Euro2020$romania, $elm$core$Maybe$Nothing, 2, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 16, $author$project$Euro2020$netherlands, $elm$core$Maybe$Nothing, $author$project$Euro2020$austria, $elm$core$Maybe$Nothing, 2, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 17, $author$project$Euro2020$romania, $elm$core$Maybe$Nothing, $author$project$Euro2020$netherlands, $elm$core$Maybe$Nothing, 2, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 18, $author$project$Euro2020$ukraine, $elm$core$Maybe$Nothing, $author$project$Euro2020$austria, $elm$core$Maybe$Nothing, 2, '16 June 2020', '18:00', $elm$core$Maybe$Nothing)
-	]);
-var $author$project$Euro2020$matchesGroupD = _List_fromArray(
-	[
-		A9($author$project$Euro2020$Match, 19, $author$project$Euro2020$england, $elm$core$Maybe$Nothing, $author$project$Euro2020$crotia, $elm$core$Maybe$Nothing, 3, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 20, $author$project$Euro2020$ireland, $elm$core$Maybe$Nothing, $author$project$Euro2020$czech, $elm$core$Maybe$Nothing, 3, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 21, $author$project$Euro2020$crotia, $elm$core$Maybe$Nothing, $author$project$Euro2020$czech, $elm$core$Maybe$Nothing, 3, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 22, $author$project$Euro2020$england, $elm$core$Maybe$Nothing, $author$project$Euro2020$ireland, $elm$core$Maybe$Nothing, 3, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 23, $author$project$Euro2020$crotia, $elm$core$Maybe$Nothing, $author$project$Euro2020$ireland, $elm$core$Maybe$Nothing, 3, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 24, $author$project$Euro2020$czech, $elm$core$Maybe$Nothing, $author$project$Euro2020$england, $elm$core$Maybe$Nothing, 3, '16 June 2020', '18:00', $elm$core$Maybe$Nothing)
-	]);
-var $author$project$Euro2020$matchesGroupE = _List_fromArray(
-	[
-		A9($author$project$Euro2020$Match, 25, $author$project$Euro2020$poland, $elm$core$Maybe$Nothing, $author$project$Euro2020$iceland, $elm$core$Maybe$Nothing, 4, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 26, $author$project$Euro2020$spain, $elm$core$Maybe$Nothing, $author$project$Euro2020$sweden, $elm$core$Maybe$Nothing, 4, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 27, $author$project$Euro2020$sweden, $elm$core$Maybe$Nothing, $author$project$Euro2020$iceland, $elm$core$Maybe$Nothing, 4, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 28, $author$project$Euro2020$spain, $elm$core$Maybe$Nothing, $author$project$Euro2020$poland, $elm$core$Maybe$Nothing, 4, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 29, $author$project$Euro2020$iceland, $elm$core$Maybe$Nothing, $author$project$Euro2020$spain, $elm$core$Maybe$Nothing, 4, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 30, $author$project$Euro2020$sweden, $elm$core$Maybe$Nothing, $author$project$Euro2020$poland, $elm$core$Maybe$Nothing, 4, '16 June 2020', '18:00', $elm$core$Maybe$Nothing)
-	]);
-var $author$project$Euro2020$matchesGroupF = _List_fromArray(
-	[
-		A9($author$project$Euro2020$Match, 31, $author$project$Euro2020$serbia, $elm$core$Maybe$Nothing, $author$project$Euro2020$portugal, $elm$core$Maybe$Nothing, 5, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 32, $author$project$Euro2020$france, $elm$core$Maybe$Nothing, $author$project$Euro2020$germany, $elm$core$Maybe$Nothing, 5, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 33, $author$project$Euro2020$serbia, $elm$core$Maybe$Nothing, $author$project$Euro2020$france, $elm$core$Maybe$Nothing, 5, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 34, $author$project$Euro2020$portugal, $elm$core$Maybe$Nothing, $author$project$Euro2020$germany, $elm$core$Maybe$Nothing, 5, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 35, $author$project$Euro2020$portugal, $elm$core$Maybe$Nothing, $author$project$Euro2020$france, $elm$core$Maybe$Nothing, 5, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 36, $author$project$Euro2020$germany, $elm$core$Maybe$Nothing, $author$project$Euro2020$serbia, $elm$core$Maybe$Nothing, 5, '16 June 2020', '18:00', $elm$core$Maybe$Nothing)
-	]);
-var $author$project$Euro2020$matches = _Utils_ap(
-	$author$project$Euro2020$matchesGroupA,
-	_Utils_ap(
-		$author$project$Euro2020$matchesGroupB,
-		_Utils_ap(
-			$author$project$Euro2020$matchesGroupC,
-			_Utils_ap(
-				$author$project$Euro2020$matchesGroupD,
-				_Utils_ap($author$project$Euro2020$matchesGroupE, $author$project$Euro2020$matchesGroupF)))));
-var $author$project$Euro2020$QuarterFinals = 7;
-var $author$project$Euro2020$RoundOf16 = 6;
-var $author$project$Euro2020$defaultFlag = 'https://upload.wikimedia.org/wikipedia/en/9/96/UEFA_Euro_2020_Logo.svg';
-var $author$project$Euro2020$playOffMatches = _List_fromArray(
-	[
-		A9(
-		$author$project$Euro2020$Match,
-		39,
-		A2($author$project$Euro2020$Team, 'Winner Group B', $author$project$Euro2020$defaultFlag),
-		$elm$core$Maybe$Nothing,
-		A2($author$project$Euro2020$Team, '3rd Group A/D/E/F', $author$project$Euro2020$defaultFlag),
-		$elm$core$Maybe$Nothing,
-		6,
-		'16 June 2020',
-		'18:00',
-		$elm$core$Maybe$Nothing),
-		A9(
-		$author$project$Euro2020$Match,
-		37,
-		A2($author$project$Euro2020$Team, 'Winner Group A', $author$project$Euro2020$defaultFlag),
-		$elm$core$Maybe$Nothing,
-		A2($author$project$Euro2020$Team, 'Runner-up Group C', $author$project$Euro2020$defaultFlag),
-		$elm$core$Maybe$Nothing,
-		6,
-		'16 June 2020',
-		'18:00',
-		$elm$core$Maybe$Nothing),
-		A9(
-		$author$project$Euro2020$Match,
-		41,
-		A2($author$project$Euro2020$Team, 'Winner Group F', $author$project$Euro2020$defaultFlag),
-		$elm$core$Maybe$Nothing,
-		A2($author$project$Euro2020$Team, '3rd Group A/B/C', $author$project$Euro2020$defaultFlag),
-		$elm$core$Maybe$Nothing,
-		6,
-		'16 June 2020',
-		'18:00',
-		$elm$core$Maybe$Nothing),
-		A9(
-		$author$project$Euro2020$Match,
-		42,
-		A2($author$project$Euro2020$Team, 'Runner-up Group D', $author$project$Euro2020$defaultFlag),
-		$elm$core$Maybe$Nothing,
-		A2($author$project$Euro2020$Team, 'Runner-up Group E', $author$project$Euro2020$defaultFlag),
-		$elm$core$Maybe$Nothing,
-		6,
-		'16 June 2020',
-		'18:00',
-		$elm$core$Maybe$Nothing),
-		A9(
-		$author$project$Euro2020$Match,
-		43,
-		A2($author$project$Euro2020$Team, 'Winner Group E', $author$project$Euro2020$defaultFlag),
-		$elm$core$Maybe$Nothing,
-		A2($author$project$Euro2020$Team, '3rd Group A/B/C/D', $author$project$Euro2020$defaultFlag),
-		$elm$core$Maybe$Nothing,
-		6,
-		'16 June 2020',
-		'18:00',
-		$elm$core$Maybe$Nothing),
-		A9(
-		$author$project$Euro2020$Match,
-		44,
-		A2($author$project$Euro2020$Team, 'Winner Group D', $author$project$Euro2020$defaultFlag),
-		$elm$core$Maybe$Nothing,
-		A2($author$project$Euro2020$Team, 'Runner-up Group F', $author$project$Euro2020$defaultFlag),
-		$elm$core$Maybe$Nothing,
-		6,
-		'16 June 2020',
-		'18:00',
-		$elm$core$Maybe$Nothing),
-		A9(
-		$author$project$Euro2020$Match,
-		40,
-		A2($author$project$Euro2020$Team, 'Winner Group C', $author$project$Euro2020$defaultFlag),
-		$elm$core$Maybe$Nothing,
-		A2($author$project$Euro2020$Team, '3rd Group D/E/F', $author$project$Euro2020$defaultFlag),
-		$elm$core$Maybe$Nothing,
-		6,
-		'16 June 2020',
-		'18:00',
-		$elm$core$Maybe$Nothing),
-		A9(
-		$author$project$Euro2020$Match,
-		38,
-		A2($author$project$Euro2020$Team, 'Runner-up Group A', $author$project$Euro2020$defaultFlag),
-		$elm$core$Maybe$Nothing,
-		A2($author$project$Euro2020$Team, 'Runner-up Group B', $author$project$Euro2020$defaultFlag),
-		$elm$core$Maybe$Nothing,
-		6,
-		'16 June 2020',
-		'18:00',
-		$elm$core$Maybe$Nothing),
-		A9(
-		$author$project$Euro2020$Match,
-		46,
-		A2($author$project$Euro2020$Team, 'Winner Match 39', $author$project$Euro2020$defaultFlag),
-		$elm$core$Maybe$Nothing,
-		A2($author$project$Euro2020$Team, 'Winner Match 37', $author$project$Euro2020$defaultFlag),
-		$elm$core$Maybe$Nothing,
-		7,
-		'16 June 2020',
-		'18:00',
-		$elm$core$Maybe$Nothing),
-		A9(
-		$author$project$Euro2020$Match,
-		45,
-		A2($author$project$Euro2020$Team, 'Winner Match 41', $author$project$Euro2020$defaultFlag),
-		$elm$core$Maybe$Nothing,
-		A2($author$project$Euro2020$Team, 'Winner Match 42', $author$project$Euro2020$defaultFlag),
-		$elm$core$Maybe$Nothing,
-		7,
-		'16 June 2020',
-		'18:00',
-		$elm$core$Maybe$Nothing),
-		A9(
-		$author$project$Euro2020$Match,
-		48,
-		A2($author$project$Euro2020$Team, 'Winner Match 43', $author$project$Euro2020$defaultFlag),
-		$elm$core$Maybe$Nothing,
-		A2($author$project$Euro2020$Team, 'Winner Match 44', $author$project$Euro2020$defaultFlag),
-		$elm$core$Maybe$Nothing,
-		7,
-		'16 June 2020',
-		'18:00',
-		$elm$core$Maybe$Nothing),
-		A9(
-		$author$project$Euro2020$Match,
-		47,
-		A2($author$project$Euro2020$Team, 'Winner Match 40', $author$project$Euro2020$defaultFlag),
-		$elm$core$Maybe$Nothing,
-		A2($author$project$Euro2020$Team, 'Winner Match 38', $author$project$Euro2020$defaultFlag),
-		$elm$core$Maybe$Nothing,
-		7,
-		'16 June 2020',
-		'18:00',
-		$elm$core$Maybe$Nothing)
-	]);
-var $author$project$Main$init = {ah: $author$project$Euro2020$groupRows, aj: $author$project$Euro2020$matches, D: $author$project$Euro2020$playOffMatches, aa: 0};
 var $elm$core$Result$Err = function (a) {
 	return {$: 1, a: a};
 };
@@ -4767,8 +4499,10 @@ var $elm$core$Basics$add = _Basics_add;
 var $elm$core$Maybe$Just = function (a) {
 	return {$: 0, a: a};
 };
+var $elm$core$Maybe$Nothing = {$: 1};
 var $elm$core$String$all = _String_all;
 var $elm$core$Basics$and = _Basics_and;
+var $elm$core$Basics$append = _Utils_append;
 var $elm$json$Json$Encode$encode = _Json_encode;
 var $elm$core$String$fromInt = _String_fromNumber;
 var $elm$core$String$join = F2(
@@ -5163,7 +4897,7 @@ var $elm$url$Url$Http = 0;
 var $elm$url$Url$Https = 1;
 var $elm$url$Url$Url = F6(
 	function (protocol, host, port_, path, query, fragment) {
-		return {a9: fragment, bg: host, bu: path, bx: port_, bA: protocol, bC: query};
+		return {ba: fragment, bh: host, bu: path, bx: port_, bA: protocol, bC: query};
 	});
 var $elm$core$String$contains = _String_contains;
 var $elm$core$String$length = _String_length;
@@ -5441,28 +5175,434 @@ var $elm$core$Task$perform = F2(
 		return $elm$core$Task$command(
 			A2($elm$core$Task$map, toMessage, task));
 	});
+var $elm$browser$Browser$element = _Browser_element;
+var $author$project$Euro2020$GroupA = 0;
+var $author$project$Euro2020$GroupRow = function (team) {
+	return function (pld) {
+		return function (w) {
+			return function (d) {
+				return function (l) {
+					return function (gf) {
+						return function (ga) {
+							return function (gd) {
+								return function (pts) {
+									return function (group) {
+										return function (tieBreakPoints) {
+											return function (tieBreakGd) {
+												return function (tieBreakGf) {
+													return {cu: d, cF: ga, bc: gd, bd: gf, ay: group, cV: l, bw: pld, bB: pts, aY: team, bJ: tieBreakGd, bK: tieBreakGf, bL: tieBreakPoints, bQ: w};
+												};
+											};
+										};
+									};
+								};
+							};
+						};
+					};
+				};
+			};
+		};
+	};
+};
+var $author$project$Euro2020$Team = F2(
+	function (name, flag) {
+		return {cC: flag, cY: name};
+	});
+var $author$project$Euro2020$italy = A2($author$project$Euro2020$Team, 'Italy', 'https://www.countryflags.io/it/flat/64.png');
+var $author$project$Euro2020$italyRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$italy)(0)(0)(0)(0)(0)(0)(0)(0)(0)(0)(0)(0);
+var $author$project$Euro2020$switzerland = A2($author$project$Euro2020$Team, 'Switzerland', 'https://www.countryflags.io/ch/flat/64.png');
+var $author$project$Euro2020$switzerlandRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$switzerland)(0)(0)(0)(0)(0)(0)(0)(0)(0)(0)(0)(0);
+var $author$project$Euro2020$turkey = A2($author$project$Euro2020$Team, 'Turkey', 'https://www.countryflags.io/tr/flat/64.png');
+var $author$project$Euro2020$turkeyRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$turkey)(0)(0)(0)(0)(0)(0)(0)(0)(0)(0)(0)(0);
+var $author$project$Euro2020$wales = A2($author$project$Euro2020$Team, 'Wales', 'https://upload.wikimedia.org/wikipedia/commons/a/a9/Flag_of_Wales_%281959%E2%80%93present%29.svg');
+var $author$project$Euro2020$walesRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$wales)(0)(0)(0)(0)(0)(0)(0)(0)(0)(0)(0)(0);
+var $author$project$Euro2020$groupA = _List_fromArray(
+	[$author$project$Euro2020$turkeyRow, $author$project$Euro2020$italyRow, $author$project$Euro2020$walesRow, $author$project$Euro2020$switzerlandRow]);
+var $author$project$Euro2020$GroupB = 1;
+var $author$project$Euro2020$belgium = A2($author$project$Euro2020$Team, 'Belgium', 'https://www.countryflags.io/be/flat/64.png');
+var $author$project$Euro2020$belgiumRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$belgium)(0)(0)(0)(0)(0)(0)(0)(0)(1)(0)(0)(0);
+var $author$project$Euro2020$denmark = A2($author$project$Euro2020$Team, 'Denmark', 'https://www.countryflags.io/dk/flat/64.png');
+var $author$project$Euro2020$denmarkRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$denmark)(0)(0)(0)(0)(0)(0)(0)(0)(1)(0)(0)(0);
+var $author$project$Euro2020$finland = A2($author$project$Euro2020$Team, 'Finland', 'https://www.countryflags.io/fi/flat/64.png');
+var $author$project$Euro2020$finlandRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$finland)(0)(0)(0)(0)(0)(0)(0)(0)(1)(0)(0)(0);
+var $author$project$Euro2020$russia = A2($author$project$Euro2020$Team, 'Russia', 'https://www.countryflags.io/ru/flat/64.png');
+var $author$project$Euro2020$russiaRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$russia)(0)(0)(0)(0)(0)(0)(0)(0)(1)(0)(0)(0);
+var $author$project$Euro2020$groupB = _List_fromArray(
+	[$author$project$Euro2020$belgiumRow, $author$project$Euro2020$russiaRow, $author$project$Euro2020$finlandRow, $author$project$Euro2020$denmarkRow]);
+var $author$project$Euro2020$GroupC = 2;
+var $author$project$Euro2020$austria = A2($author$project$Euro2020$Team, 'Austria', 'https://www.countryflags.io/at/flat/64.png');
+var $author$project$Euro2020$austriaRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$austria)(0)(0)(0)(0)(0)(0)(0)(0)(2)(0)(0)(0);
+var $author$project$Euro2020$netherlands = A2($author$project$Euro2020$Team, 'Netherlands', 'https://www.countryflags.io/nl/flat/64.png');
+var $author$project$Euro2020$netherlandsRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$netherlands)(0)(0)(0)(0)(0)(0)(0)(0)(2)(0)(0)(0);
+var $author$project$Euro2020$romania = A2($author$project$Euro2020$Team, 'Romania', 'https://www.countryflags.io/ro/flat/64.png');
+var $author$project$Euro2020$romaniaRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$romania)(0)(0)(0)(0)(0)(0)(0)(0)(2)(0)(0)(0);
+var $author$project$Euro2020$ukraine = A2($author$project$Euro2020$Team, 'Ukraine', 'https://www.countryflags.io/ua/flat/64.png');
+var $author$project$Euro2020$ukraineRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$ukraine)(0)(0)(0)(0)(0)(0)(0)(0)(2)(0)(0)(0);
+var $author$project$Euro2020$groupC = _List_fromArray(
+	[$author$project$Euro2020$netherlandsRow, $author$project$Euro2020$ukraineRow, $author$project$Euro2020$austriaRow, $author$project$Euro2020$romaniaRow]);
+var $author$project$Euro2020$GroupD = 3;
+var $author$project$Euro2020$crotia = A2($author$project$Euro2020$Team, 'Croatia', 'https://www.countryflags.io/hr/flat/64.png');
+var $author$project$Euro2020$croatiaRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$crotia)(0)(0)(0)(0)(0)(0)(0)(0)(3)(0)(0)(0);
+var $author$project$Euro2020$czech = A2($author$project$Euro2020$Team, 'Czech Republic', 'https://www.countryflags.io/cz/flat/64.png');
+var $author$project$Euro2020$czechRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$czech)(0)(0)(0)(0)(0)(0)(0)(0)(3)(0)(0)(0);
+var $author$project$Euro2020$england = A2($author$project$Euro2020$Team, 'England', 'https://www.countryflags.io/gb/flat/64.png');
+var $author$project$Euro2020$englandRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$england)(0)(0)(0)(0)(0)(0)(0)(0)(3)(0)(0)(0);
+var $author$project$Euro2020$ireland = A2($author$project$Euro2020$Team, 'Ireland', 'https://www.countryflags.io/ie/flat/64.png');
+var $author$project$Euro2020$irelandRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$ireland)(0)(0)(0)(0)(0)(0)(0)(0)(3)(0)(0)(0);
+var $author$project$Euro2020$groupD = _List_fromArray(
+	[$author$project$Euro2020$englandRow, $author$project$Euro2020$croatiaRow, $author$project$Euro2020$irelandRow, $author$project$Euro2020$czechRow]);
+var $author$project$Euro2020$GroupE = 4;
+var $author$project$Euro2020$iceland = A2($author$project$Euro2020$Team, 'Iceland', 'https://www.countryflags.io/is/flat/64.png');
+var $author$project$Euro2020$icelandRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$iceland)(0)(0)(0)(0)(0)(0)(0)(0)(4)(0)(0)(0);
+var $author$project$Euro2020$poland = A2($author$project$Euro2020$Team, 'Poland', 'https://www.countryflags.io/pl/flat/64.png');
+var $author$project$Euro2020$polandRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$poland)(0)(0)(0)(0)(0)(0)(0)(0)(4)(0)(0)(0);
+var $author$project$Euro2020$spain = A2($author$project$Euro2020$Team, 'Spain', 'https://www.countryflags.io/es/flat/64.png');
+var $author$project$Euro2020$spainRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$spain)(0)(0)(0)(0)(0)(0)(0)(0)(4)(0)(0)(0);
+var $author$project$Euro2020$sweden = A2($author$project$Euro2020$Team, 'Sweden', 'https://www.countryflags.io/se/flat/64.png');
+var $author$project$Euro2020$swedenRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$sweden)(0)(0)(0)(0)(0)(0)(0)(0)(4)(0)(0)(0);
+var $author$project$Euro2020$groupE = _List_fromArray(
+	[$author$project$Euro2020$spainRow, $author$project$Euro2020$swedenRow, $author$project$Euro2020$polandRow, $author$project$Euro2020$icelandRow]);
+var $author$project$Euro2020$GroupF = 5;
+var $author$project$Euro2020$france = A2($author$project$Euro2020$Team, 'France', 'https://www.countryflags.io/fr/flat/64.png');
+var $author$project$Euro2020$franceRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$france)(0)(0)(0)(0)(0)(0)(0)(0)(5)(0)(0)(0);
+var $author$project$Euro2020$germany = A2($author$project$Euro2020$Team, 'Germany', 'https://www.countryflags.io/de/flat/64.png');
+var $author$project$Euro2020$germanyRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$germany)(0)(0)(0)(0)(0)(0)(0)(0)(5)(0)(0)(0);
+var $author$project$Euro2020$portugal = A2($author$project$Euro2020$Team, 'Portugal', 'https://www.countryflags.io/pt/flat/64.png');
+var $author$project$Euro2020$portugalRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$portugal)(0)(0)(0)(0)(0)(0)(0)(0)(5)(0)(0)(0);
+var $author$project$Euro2020$serbia = A2($author$project$Euro2020$Team, 'Serbia', 'https://www.countryflags.io/rs/flat/64.png');
+var $author$project$Euro2020$serbiaRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$serbia)(0)(0)(0)(0)(0)(0)(0)(0)(5)(0)(0)(0);
+var $author$project$Euro2020$groupF = _List_fromArray(
+	[$author$project$Euro2020$serbiaRow, $author$project$Euro2020$portugalRow, $author$project$Euro2020$franceRow, $author$project$Euro2020$germanyRow]);
+var $author$project$Euro2020$groupRows = _Utils_ap(
+	$author$project$Euro2020$groupA,
+	_Utils_ap(
+		$author$project$Euro2020$groupB,
+		_Utils_ap(
+			$author$project$Euro2020$groupC,
+			_Utils_ap(
+				$author$project$Euro2020$groupD,
+				_Utils_ap($author$project$Euro2020$groupE, $author$project$Euro2020$groupF)))));
+var $author$project$Euro2020$Match = F9(
+	function (id, homeTeam, homeScore, awayTeam, awayScore, group, date, time, winner) {
+		return {b7: awayScore, z: awayTeam, cw: date, ay: group, cI: homeScore, B: homeTeam, az: id, dE: time, dK: winner};
+	});
+var $author$project$Euro2020$matchesGroupA = _List_fromArray(
+	[
+		A9($author$project$Euro2020$Match, 1, $author$project$Euro2020$turkey, $elm$core$Maybe$Nothing, $author$project$Euro2020$italy, $elm$core$Maybe$Nothing, 0, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 2, $author$project$Euro2020$wales, $elm$core$Maybe$Nothing, $author$project$Euro2020$switzerland, $elm$core$Maybe$Nothing, 0, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 3, $author$project$Euro2020$turkey, $elm$core$Maybe$Nothing, $author$project$Euro2020$wales, $elm$core$Maybe$Nothing, 0, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 4, $author$project$Euro2020$italy, $elm$core$Maybe$Nothing, $author$project$Euro2020$switzerland, $elm$core$Maybe$Nothing, 0, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 5, $author$project$Euro2020$switzerland, $elm$core$Maybe$Nothing, $author$project$Euro2020$turkey, $elm$core$Maybe$Nothing, 0, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 6, $author$project$Euro2020$italy, $elm$core$Maybe$Nothing, $author$project$Euro2020$wales, $elm$core$Maybe$Nothing, 0, '16 June 2020', '18:00', $elm$core$Maybe$Nothing)
+	]);
+var $author$project$Euro2020$matchesGroupB = _List_fromArray(
+	[
+		A9($author$project$Euro2020$Match, 7, $author$project$Euro2020$denmark, $elm$core$Maybe$Nothing, $author$project$Euro2020$finland, $elm$core$Maybe$Nothing, 1, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 8, $author$project$Euro2020$belgium, $elm$core$Maybe$Nothing, $author$project$Euro2020$russia, $elm$core$Maybe$Nothing, 1, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 9, $author$project$Euro2020$finland, $elm$core$Maybe$Nothing, $author$project$Euro2020$russia, $elm$core$Maybe$Nothing, 1, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 10, $author$project$Euro2020$denmark, $elm$core$Maybe$Nothing, $author$project$Euro2020$belgium, $elm$core$Maybe$Nothing, 1, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 11, $author$project$Euro2020$russia, $elm$core$Maybe$Nothing, $author$project$Euro2020$denmark, $elm$core$Maybe$Nothing, 1, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 12, $author$project$Euro2020$finland, $elm$core$Maybe$Nothing, $author$project$Euro2020$belgium, $elm$core$Maybe$Nothing, 1, '16 June 2020', '18:00', $elm$core$Maybe$Nothing)
+	]);
+var $author$project$Euro2020$matchesGroupC = _List_fromArray(
+	[
+		A9($author$project$Euro2020$Match, 13, $author$project$Euro2020$austria, $elm$core$Maybe$Nothing, $author$project$Euro2020$romania, $elm$core$Maybe$Nothing, 2, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 14, $author$project$Euro2020$netherlands, $elm$core$Maybe$Nothing, $author$project$Euro2020$ukraine, $elm$core$Maybe$Nothing, 2, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 15, $author$project$Euro2020$ukraine, $elm$core$Maybe$Nothing, $author$project$Euro2020$romania, $elm$core$Maybe$Nothing, 2, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 16, $author$project$Euro2020$netherlands, $elm$core$Maybe$Nothing, $author$project$Euro2020$austria, $elm$core$Maybe$Nothing, 2, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 17, $author$project$Euro2020$romania, $elm$core$Maybe$Nothing, $author$project$Euro2020$netherlands, $elm$core$Maybe$Nothing, 2, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 18, $author$project$Euro2020$ukraine, $elm$core$Maybe$Nothing, $author$project$Euro2020$austria, $elm$core$Maybe$Nothing, 2, '16 June 2020', '18:00', $elm$core$Maybe$Nothing)
+	]);
+var $author$project$Euro2020$matchesGroupD = _List_fromArray(
+	[
+		A9($author$project$Euro2020$Match, 19, $author$project$Euro2020$england, $elm$core$Maybe$Nothing, $author$project$Euro2020$crotia, $elm$core$Maybe$Nothing, 3, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 20, $author$project$Euro2020$ireland, $elm$core$Maybe$Nothing, $author$project$Euro2020$czech, $elm$core$Maybe$Nothing, 3, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 21, $author$project$Euro2020$crotia, $elm$core$Maybe$Nothing, $author$project$Euro2020$czech, $elm$core$Maybe$Nothing, 3, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 22, $author$project$Euro2020$england, $elm$core$Maybe$Nothing, $author$project$Euro2020$ireland, $elm$core$Maybe$Nothing, 3, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 23, $author$project$Euro2020$crotia, $elm$core$Maybe$Nothing, $author$project$Euro2020$ireland, $elm$core$Maybe$Nothing, 3, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 24, $author$project$Euro2020$czech, $elm$core$Maybe$Nothing, $author$project$Euro2020$england, $elm$core$Maybe$Nothing, 3, '16 June 2020', '18:00', $elm$core$Maybe$Nothing)
+	]);
+var $author$project$Euro2020$matchesGroupE = _List_fromArray(
+	[
+		A9($author$project$Euro2020$Match, 25, $author$project$Euro2020$poland, $elm$core$Maybe$Nothing, $author$project$Euro2020$iceland, $elm$core$Maybe$Nothing, 4, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 26, $author$project$Euro2020$spain, $elm$core$Maybe$Nothing, $author$project$Euro2020$sweden, $elm$core$Maybe$Nothing, 4, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 27, $author$project$Euro2020$sweden, $elm$core$Maybe$Nothing, $author$project$Euro2020$iceland, $elm$core$Maybe$Nothing, 4, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 28, $author$project$Euro2020$spain, $elm$core$Maybe$Nothing, $author$project$Euro2020$poland, $elm$core$Maybe$Nothing, 4, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 29, $author$project$Euro2020$iceland, $elm$core$Maybe$Nothing, $author$project$Euro2020$spain, $elm$core$Maybe$Nothing, 4, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 30, $author$project$Euro2020$sweden, $elm$core$Maybe$Nothing, $author$project$Euro2020$poland, $elm$core$Maybe$Nothing, 4, '16 June 2020', '18:00', $elm$core$Maybe$Nothing)
+	]);
+var $author$project$Euro2020$matchesGroupF = _List_fromArray(
+	[
+		A9($author$project$Euro2020$Match, 31, $author$project$Euro2020$serbia, $elm$core$Maybe$Nothing, $author$project$Euro2020$portugal, $elm$core$Maybe$Nothing, 5, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 32, $author$project$Euro2020$france, $elm$core$Maybe$Nothing, $author$project$Euro2020$germany, $elm$core$Maybe$Nothing, 5, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 33, $author$project$Euro2020$serbia, $elm$core$Maybe$Nothing, $author$project$Euro2020$france, $elm$core$Maybe$Nothing, 5, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 34, $author$project$Euro2020$portugal, $elm$core$Maybe$Nothing, $author$project$Euro2020$germany, $elm$core$Maybe$Nothing, 5, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 35, $author$project$Euro2020$portugal, $elm$core$Maybe$Nothing, $author$project$Euro2020$france, $elm$core$Maybe$Nothing, 5, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 36, $author$project$Euro2020$germany, $elm$core$Maybe$Nothing, $author$project$Euro2020$serbia, $elm$core$Maybe$Nothing, 5, '16 June 2020', '18:00', $elm$core$Maybe$Nothing)
+	]);
+var $author$project$Euro2020$matches = _Utils_ap(
+	$author$project$Euro2020$matchesGroupA,
+	_Utils_ap(
+		$author$project$Euro2020$matchesGroupB,
+		_Utils_ap(
+			$author$project$Euro2020$matchesGroupC,
+			_Utils_ap(
+				$author$project$Euro2020$matchesGroupD,
+				_Utils_ap($author$project$Euro2020$matchesGroupE, $author$project$Euro2020$matchesGroupF)))));
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
+var $author$project$Euro2020$QuarterFinals = 7;
+var $author$project$Euro2020$RoundOf16 = 6;
+var $author$project$Euro2020$defaultFlag = 'https://upload.wikimedia.org/wikipedia/en/9/96/UEFA_Euro_2020_Logo.svg';
+var $author$project$Euro2020$playOffMatches = _List_fromArray(
+	[
+		A9(
+		$author$project$Euro2020$Match,
+		39,
+		A2($author$project$Euro2020$Team, 'Winner Group B', $author$project$Euro2020$defaultFlag),
+		$elm$core$Maybe$Nothing,
+		A2($author$project$Euro2020$Team, '3rd Group A/D/E/F', $author$project$Euro2020$defaultFlag),
+		$elm$core$Maybe$Nothing,
+		6,
+		'16 June 2020',
+		'18:00',
+		$elm$core$Maybe$Nothing),
+		A9(
+		$author$project$Euro2020$Match,
+		37,
+		A2($author$project$Euro2020$Team, 'Winner Group A', $author$project$Euro2020$defaultFlag),
+		$elm$core$Maybe$Nothing,
+		A2($author$project$Euro2020$Team, 'Runner-up Group C', $author$project$Euro2020$defaultFlag),
+		$elm$core$Maybe$Nothing,
+		6,
+		'16 June 2020',
+		'18:00',
+		$elm$core$Maybe$Nothing),
+		A9(
+		$author$project$Euro2020$Match,
+		41,
+		A2($author$project$Euro2020$Team, 'Winner Group F', $author$project$Euro2020$defaultFlag),
+		$elm$core$Maybe$Nothing,
+		A2($author$project$Euro2020$Team, '3rd Group A/B/C', $author$project$Euro2020$defaultFlag),
+		$elm$core$Maybe$Nothing,
+		6,
+		'16 June 2020',
+		'18:00',
+		$elm$core$Maybe$Nothing),
+		A9(
+		$author$project$Euro2020$Match,
+		42,
+		A2($author$project$Euro2020$Team, 'Runner-up Group D', $author$project$Euro2020$defaultFlag),
+		$elm$core$Maybe$Nothing,
+		A2($author$project$Euro2020$Team, 'Runner-up Group E', $author$project$Euro2020$defaultFlag),
+		$elm$core$Maybe$Nothing,
+		6,
+		'16 June 2020',
+		'18:00',
+		$elm$core$Maybe$Nothing),
+		A9(
+		$author$project$Euro2020$Match,
+		43,
+		A2($author$project$Euro2020$Team, 'Winner Group E', $author$project$Euro2020$defaultFlag),
+		$elm$core$Maybe$Nothing,
+		A2($author$project$Euro2020$Team, '3rd Group A/B/C/D', $author$project$Euro2020$defaultFlag),
+		$elm$core$Maybe$Nothing,
+		6,
+		'16 June 2020',
+		'18:00',
+		$elm$core$Maybe$Nothing),
+		A9(
+		$author$project$Euro2020$Match,
+		44,
+		A2($author$project$Euro2020$Team, 'Winner Group D', $author$project$Euro2020$defaultFlag),
+		$elm$core$Maybe$Nothing,
+		A2($author$project$Euro2020$Team, 'Runner-up Group F', $author$project$Euro2020$defaultFlag),
+		$elm$core$Maybe$Nothing,
+		6,
+		'16 June 2020',
+		'18:00',
+		$elm$core$Maybe$Nothing),
+		A9(
+		$author$project$Euro2020$Match,
+		40,
+		A2($author$project$Euro2020$Team, 'Winner Group C', $author$project$Euro2020$defaultFlag),
+		$elm$core$Maybe$Nothing,
+		A2($author$project$Euro2020$Team, '3rd Group D/E/F', $author$project$Euro2020$defaultFlag),
+		$elm$core$Maybe$Nothing,
+		6,
+		'16 June 2020',
+		'18:00',
+		$elm$core$Maybe$Nothing),
+		A9(
+		$author$project$Euro2020$Match,
+		38,
+		A2($author$project$Euro2020$Team, 'Runner-up Group A', $author$project$Euro2020$defaultFlag),
+		$elm$core$Maybe$Nothing,
+		A2($author$project$Euro2020$Team, 'Runner-up Group B', $author$project$Euro2020$defaultFlag),
+		$elm$core$Maybe$Nothing,
+		6,
+		'16 June 2020',
+		'18:00',
+		$elm$core$Maybe$Nothing),
+		A9(
+		$author$project$Euro2020$Match,
+		46,
+		A2($author$project$Euro2020$Team, 'Winner Match 39', $author$project$Euro2020$defaultFlag),
+		$elm$core$Maybe$Nothing,
+		A2($author$project$Euro2020$Team, 'Winner Match 37', $author$project$Euro2020$defaultFlag),
+		$elm$core$Maybe$Nothing,
+		7,
+		'16 June 2020',
+		'18:00',
+		$elm$core$Maybe$Nothing),
+		A9(
+		$author$project$Euro2020$Match,
+		45,
+		A2($author$project$Euro2020$Team, 'Winner Match 41', $author$project$Euro2020$defaultFlag),
+		$elm$core$Maybe$Nothing,
+		A2($author$project$Euro2020$Team, 'Winner Match 42', $author$project$Euro2020$defaultFlag),
+		$elm$core$Maybe$Nothing,
+		7,
+		'16 June 2020',
+		'18:00',
+		$elm$core$Maybe$Nothing),
+		A9(
+		$author$project$Euro2020$Match,
+		48,
+		A2($author$project$Euro2020$Team, 'Winner Match 43', $author$project$Euro2020$defaultFlag),
+		$elm$core$Maybe$Nothing,
+		A2($author$project$Euro2020$Team, 'Winner Match 44', $author$project$Euro2020$defaultFlag),
+		$elm$core$Maybe$Nothing,
+		7,
+		'16 June 2020',
+		'18:00',
+		$elm$core$Maybe$Nothing),
+		A9(
+		$author$project$Euro2020$Match,
+		47,
+		A2($author$project$Euro2020$Team, 'Winner Match 40', $author$project$Euro2020$defaultFlag),
+		$elm$core$Maybe$Nothing,
+		A2($author$project$Euro2020$Team, 'Winner Match 38', $author$project$Euro2020$defaultFlag),
+		$elm$core$Maybe$Nothing,
+		7,
+		'16 June 2020',
+		'18:00',
+		$elm$core$Maybe$Nothing)
+	]);
+var $author$project$Main$init = function (_v0) {
+	return _Utils_Tuple2(
+		{_: $author$project$Euro2020$groupRows, aa: $author$project$Euro2020$matches, D: $author$project$Euro2020$playOffMatches, ac: 0},
+		$elm$core$Platform$Cmd$none);
+};
 var $elm$core$Platform$Sub$batch = _Platform_batch;
 var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
-var $elm$browser$Browser$sandbox = function (impl) {
-	return _Browser_element(
-		{
-			cO: function (_v0) {
-				return _Utils_Tuple2(impl.cO, $elm$core$Platform$Cmd$none);
-			},
-			$7: function (_v1) {
-				return $elm$core$Platform$Sub$none;
-			},
-			dJ: F2(
-				function (msg, model) {
-					return _Utils_Tuple2(
-						A2(impl.dJ, msg, model),
-						$elm$core$Platform$Cmd$none);
-				}),
-			r: impl.r
-		});
+var $author$project$Main$subscriptions = function (model) {
+	return $elm$core$Platform$Sub$none;
 };
+var $author$project$Main$GotRandomScores = function (a) {
+	return {$: 5, a: a};
+};
+var $author$project$Main$UpdateGroups = function (a) {
+	return {$: 6, a: a};
+};
+var $elm$random$Random$Generate = $elm$core$Basics$identity;
+var $elm$random$Random$Seed = F2(
+	function (a, b) {
+		return {$: 0, a: a, b: b};
+	});
+var $elm$core$Bitwise$shiftRightZfBy = _Bitwise_shiftRightZfBy;
+var $elm$random$Random$next = function (_v0) {
+	var state0 = _v0.a;
+	var incr = _v0.b;
+	return A2($elm$random$Random$Seed, ((state0 * 1664525) + incr) >>> 0, incr);
+};
+var $elm$random$Random$initialSeed = function (x) {
+	var _v0 = $elm$random$Random$next(
+		A2($elm$random$Random$Seed, 0, 1013904223));
+	var state1 = _v0.a;
+	var incr = _v0.b;
+	var state2 = (state1 + x) >>> 0;
+	return $elm$random$Random$next(
+		A2($elm$random$Random$Seed, state2, incr));
+};
+var $elm$time$Time$Name = function (a) {
+	return {$: 0, a: a};
+};
+var $elm$time$Time$Offset = function (a) {
+	return {$: 1, a: a};
+};
+var $elm$time$Time$Zone = F2(
+	function (a, b) {
+		return {$: 0, a: a, b: b};
+	});
+var $elm$time$Time$customZone = $elm$time$Time$Zone;
+var $elm$time$Time$Posix = $elm$core$Basics$identity;
+var $elm$time$Time$millisToPosix = $elm$core$Basics$identity;
+var $elm$time$Time$now = _Time_now($elm$time$Time$millisToPosix);
+var $elm$time$Time$posixToMillis = function (_v0) {
+	var millis = _v0;
+	return millis;
+};
+var $elm$random$Random$init = A2(
+	$elm$core$Task$andThen,
+	function (time) {
+		return $elm$core$Task$succeed(
+			$elm$random$Random$initialSeed(
+				$elm$time$Time$posixToMillis(time)));
+	},
+	$elm$time$Time$now);
+var $elm$random$Random$step = F2(
+	function (_v0, seed) {
+		var generator = _v0;
+		return generator(seed);
+	});
+var $elm$random$Random$onEffects = F3(
+	function (router, commands, seed) {
+		if (!commands.b) {
+			return $elm$core$Task$succeed(seed);
+		} else {
+			var generator = commands.a;
+			var rest = commands.b;
+			var _v1 = A2($elm$random$Random$step, generator, seed);
+			var value = _v1.a;
+			var newSeed = _v1.b;
+			return A2(
+				$elm$core$Task$andThen,
+				function (_v2) {
+					return A3($elm$random$Random$onEffects, router, rest, newSeed);
+				},
+				A2($elm$core$Platform$sendToApp, router, value));
+		}
+	});
+var $elm$random$Random$onSelfMsg = F3(
+	function (_v0, _v1, seed) {
+		return $elm$core$Task$succeed(seed);
+	});
+var $elm$random$Random$Generator = $elm$core$Basics$identity;
+var $elm$random$Random$map = F2(
+	function (func, _v0) {
+		var genA = _v0;
+		return function (seed0) {
+			var _v1 = genA(seed0);
+			var a = _v1.a;
+			var seed1 = _v1.b;
+			return _Utils_Tuple2(
+				func(a),
+				seed1);
+		};
+	});
+var $elm$random$Random$cmdMap = F2(
+	function (func, _v0) {
+		var generator = _v0;
+		return A2($elm$random$Random$map, func, generator);
+	});
+_Platform_effectManagers['Random'] = _Platform_createManager($elm$random$Random$init, $elm$random$Random$onEffects, $elm$random$Random$onSelfMsg, $elm$random$Random$cmdMap);
+var $elm$random$Random$command = _Platform_leaf('Random');
+var $elm$random$Random$generate = F2(
+	function (tagger, generator) {
+		return $elm$random$Random$command(
+			A2($elm$random$Random$map, tagger, generator));
+	});
 var $elm$core$List$drop = F2(
 	function (n, list) {
 		drop:
@@ -5530,7 +5670,7 @@ var $author$project$Euro2020$filterByGroup = F2(
 	});
 var $author$project$Euro2020$getScore = function (gr) {
 	return _List_fromArray(
-		[gr.bB, gr.bL, gr.bJ, gr.bK, gr.bb, gr.bc, gr.bQ]);
+		[gr.bB, gr.bL, gr.bJ, gr.bK, gr.bc, gr.bd, gr.bQ]);
 };
 var $elm$core$List$sortBy = _List_sortBy;
 var $author$project$Euro2020$getGroupRows = F2(
@@ -5561,6 +5701,226 @@ var $author$project$Main$get3rdTeamTable = function (groupRows) {
 			_List_fromArray(
 				[thirdPlaceA, thirdPlaceB, thirdPlaceC, thirdPlaceD, thirdPlaceE, thirdPlaceF])));
 };
+var $elm$core$List$takeReverse = F3(
+	function (n, list, kept) {
+		takeReverse:
+		while (true) {
+			if (n <= 0) {
+				return kept;
+			} else {
+				if (!list.b) {
+					return kept;
+				} else {
+					var x = list.a;
+					var xs = list.b;
+					var $temp$n = n - 1,
+						$temp$list = xs,
+						$temp$kept = A2($elm$core$List$cons, x, kept);
+					n = $temp$n;
+					list = $temp$list;
+					kept = $temp$kept;
+					continue takeReverse;
+				}
+			}
+		}
+	});
+var $elm$core$List$takeTailRec = F2(
+	function (n, list) {
+		return $elm$core$List$reverse(
+			A3($elm$core$List$takeReverse, n, list, _List_Nil));
+	});
+var $elm$core$List$takeFast = F3(
+	function (ctr, n, list) {
+		if (n <= 0) {
+			return _List_Nil;
+		} else {
+			var _v0 = _Utils_Tuple2(n, list);
+			_v0$1:
+			while (true) {
+				_v0$5:
+				while (true) {
+					if (!_v0.b.b) {
+						return list;
+					} else {
+						if (_v0.b.b.b) {
+							switch (_v0.a) {
+								case 1:
+									break _v0$1;
+								case 2:
+									var _v2 = _v0.b;
+									var x = _v2.a;
+									var _v3 = _v2.b;
+									var y = _v3.a;
+									return _List_fromArray(
+										[x, y]);
+								case 3:
+									if (_v0.b.b.b.b) {
+										var _v4 = _v0.b;
+										var x = _v4.a;
+										var _v5 = _v4.b;
+										var y = _v5.a;
+										var _v6 = _v5.b;
+										var z = _v6.a;
+										return _List_fromArray(
+											[x, y, z]);
+									} else {
+										break _v0$5;
+									}
+								default:
+									if (_v0.b.b.b.b && _v0.b.b.b.b.b) {
+										var _v7 = _v0.b;
+										var x = _v7.a;
+										var _v8 = _v7.b;
+										var y = _v8.a;
+										var _v9 = _v8.b;
+										var z = _v9.a;
+										var _v10 = _v9.b;
+										var w = _v10.a;
+										var tl = _v10.b;
+										return (ctr > 1000) ? A2(
+											$elm$core$List$cons,
+											x,
+											A2(
+												$elm$core$List$cons,
+												y,
+												A2(
+													$elm$core$List$cons,
+													z,
+													A2(
+														$elm$core$List$cons,
+														w,
+														A2($elm$core$List$takeTailRec, n - 4, tl))))) : A2(
+											$elm$core$List$cons,
+											x,
+											A2(
+												$elm$core$List$cons,
+												y,
+												A2(
+													$elm$core$List$cons,
+													z,
+													A2(
+														$elm$core$List$cons,
+														w,
+														A3($elm$core$List$takeFast, ctr + 1, n - 4, tl)))));
+									} else {
+										break _v0$5;
+									}
+							}
+						} else {
+							if (_v0.a === 1) {
+								break _v0$1;
+							} else {
+								break _v0$5;
+							}
+						}
+					}
+				}
+				return list;
+			}
+			var _v1 = _v0.b;
+			var x = _v1.a;
+			return _List_fromArray(
+				[x]);
+		}
+	});
+var $elm$core$List$take = F2(
+	function (n, list) {
+		return A3($elm$core$List$takeFast, 0, n, list);
+	});
+var $elm_community$list_extra$List$Extra$groupsOfWithStep = F3(
+	function (size, step, xs) {
+		var xs_ = A2($elm$core$List$drop, step, xs);
+		var thisGroup = A2($elm$core$List$take, size, xs);
+		var okayLength = _Utils_eq(
+			size,
+			$elm$core$List$length(thisGroup));
+		var okayArgs = (size > 0) && (step > 0);
+		return (okayArgs && okayLength) ? A2(
+			$elm$core$List$cons,
+			thisGroup,
+			A3($elm_community$list_extra$List$Extra$groupsOfWithStep, size, step, xs_)) : _List_Nil;
+	});
+var $elm_community$list_extra$List$Extra$groupsOf = F2(
+	function (size, xs) {
+		return A3($elm_community$list_extra$List$Extra$groupsOfWithStep, size, size, xs);
+	});
+var $elm$core$Bitwise$and = _Bitwise_and;
+var $elm$core$Basics$negate = function (n) {
+	return -n;
+};
+var $elm$core$Bitwise$xor = _Bitwise_xor;
+var $elm$random$Random$peel = function (_v0) {
+	var state = _v0.a;
+	var word = (state ^ (state >>> ((state >>> 28) + 4))) * 277803737;
+	return ((word >>> 22) ^ word) >>> 0;
+};
+var $elm$random$Random$int = F2(
+	function (a, b) {
+		return function (seed0) {
+			var _v0 = (_Utils_cmp(a, b) < 0) ? _Utils_Tuple2(a, b) : _Utils_Tuple2(b, a);
+			var lo = _v0.a;
+			var hi = _v0.b;
+			var range = (hi - lo) + 1;
+			if (!((range - 1) & range)) {
+				return _Utils_Tuple2(
+					(((range - 1) & $elm$random$Random$peel(seed0)) >>> 0) + lo,
+					$elm$random$Random$next(seed0));
+			} else {
+				var threshhold = (((-range) >>> 0) % range) >>> 0;
+				var accountForBias = function (seed) {
+					accountForBias:
+					while (true) {
+						var x = $elm$random$Random$peel(seed);
+						var seedN = $elm$random$Random$next(seed);
+						if (_Utils_cmp(x, threshhold) < 0) {
+							var $temp$seed = seedN;
+							seed = $temp$seed;
+							continue accountForBias;
+						} else {
+							return _Utils_Tuple2((x % range) + lo, seedN);
+						}
+					}
+				};
+				return accountForBias(seed0);
+			}
+		};
+	});
+var $elm$random$Random$listHelp = F4(
+	function (revList, n, gen, seed) {
+		listHelp:
+		while (true) {
+			if (n < 1) {
+				return _Utils_Tuple2(revList, seed);
+			} else {
+				var _v0 = gen(seed);
+				var value = _v0.a;
+				var newSeed = _v0.b;
+				var $temp$revList = A2($elm$core$List$cons, value, revList),
+					$temp$n = n - 1,
+					$temp$gen = gen,
+					$temp$seed = newSeed;
+				revList = $temp$revList;
+				n = $temp$n;
+				gen = $temp$gen;
+				seed = $temp$seed;
+				continue listHelp;
+			}
+		}
+	});
+var $elm$random$Random$list = F2(
+	function (n, _v0) {
+		var gen = _v0;
+		return function (seed) {
+			return A4($elm$random$Random$listHelp, _List_Nil, n, gen, seed);
+		};
+	});
+var $author$project$Main$randomScoresGen = function () {
+	var numberOfMatches = 36 * 2;
+	return A2(
+		$elm$random$Random$list,
+		numberOfMatches,
+		A2($elm$random$Random$int, 0, 3));
+}();
 var $author$project$Main$getGdFromMatch = F2(
 	function (t, m) {
 		var _v0 = _Utils_Tuple2(m.cI, m.b7);
@@ -5637,7 +5997,7 @@ var $author$project$Main$resolveTieBreak = F3(
 		var teamsWithSamePoints = A2(
 			$elm$core$List$map,
 			function ($) {
-				return $.aX;
+				return $.aY;
 			},
 			A2(
 				$elm$core$List$filter,
@@ -5658,17 +6018,17 @@ var $author$project$Main$resolveTieBreak = F3(
 		var tieBreakGd = $elm$core$List$sum(
 			A2(
 				$elm$core$List$map,
-				$author$project$Main$getGdFromMatch(gr.aX),
+				$author$project$Main$getGdFromMatch(gr.aY),
 				matchesBetweenTeamWithSamePoints));
 		var tieBreakGf = $elm$core$List$sum(
 			A2(
 				$elm$core$List$map,
-				$author$project$Main$getGfFromMatch(gr.aX),
+				$author$project$Main$getGfFromMatch(gr.aY),
 				matchesBetweenTeamWithSamePoints));
 		var tieBreakPoints = $elm$core$List$sum(
 			A2(
 				$elm$core$List$map,
-				$author$project$Main$getPointsFromMatch(gr.aX),
+				$author$project$Main$getPointsFromMatch(gr.aY),
 				matchesBetweenTeamWithSamePoints));
 		return _Utils_update(
 			gr,
@@ -5677,7 +6037,7 @@ var $author$project$Main$resolveTieBreak = F3(
 var $author$project$Main$updateGroupRow2 = F3(
 	function (groupRow, gf, ga) {
 		var newPld = groupRow.bw + 1;
-		var newGf = groupRow.bc + gf;
+		var newGf = groupRow.bd + gf;
 		var newGa = groupRow.cF + ga;
 		var newGd = newGf - newGa;
 		if (_Utils_cmp(gf, ga) > 0) {
@@ -5685,19 +6045,19 @@ var $author$project$Main$updateGroupRow2 = F3(
 			var newPts = (3 * newW) + groupRow.cu;
 			return _Utils_update(
 				groupRow,
-				{cF: newGa, bb: newGd, bc: newGf, bw: newPld, bB: newPts, bQ: newW});
+				{cF: newGa, bc: newGd, bd: newGf, bw: newPld, bB: newPts, bQ: newW});
 		} else {
 			if (_Utils_eq(gf, ga)) {
 				var newD = groupRow.cu + 1;
 				var newPts = (3 * groupRow.bQ) + newD;
 				return _Utils_update(
 					groupRow,
-					{cu: newD, cF: newGa, bb: newGd, bc: newGf, bw: newPld, bB: newPts});
+					{cu: newD, cF: newGa, bc: newGd, bd: newGf, bw: newPld, bB: newPts});
 			} else {
 				var newL = groupRow.cV + 1;
 				return _Utils_update(
 					groupRow,
-					{cF: newGa, bb: newGd, bc: newGf, cV: newL, bw: newPld});
+					{cF: newGa, bc: newGd, bd: newGf, cV: newL, bw: newPld});
 			}
 		}
 	});
@@ -5707,7 +6067,7 @@ var $author$project$Main$updateGroupRow = F2(
 		if ((!_v0.a.$) && (!_v0.b.$)) {
 			var homeScore = _v0.a.a;
 			var awayScore = _v0.b.a;
-			return _Utils_eq(groupRow.aX.cY, match.B.cY) ? A3($author$project$Main$updateGroupRow2, groupRow, homeScore, awayScore) : (_Utils_eq(groupRow.aX.cY, match.z.cY) ? A3($author$project$Main$updateGroupRow2, groupRow, awayScore, homeScore) : groupRow);
+			return _Utils_eq(groupRow.aY.cY, match.B.cY) ? A3($author$project$Main$updateGroupRow2, groupRow, homeScore, awayScore) : (_Utils_eq(groupRow.aY.cY, match.z.cY) ? A3($author$project$Main$updateGroupRow2, groupRow, awayScore, homeScore) : groupRow);
 		} else {
 			return groupRow;
 		}
@@ -5847,6 +6207,32 @@ var $author$project$Main$updatePlayoffMatches = F2(
 				return m;
 		}
 	});
+var $elm_community$list_extra$List$Extra$last = function (items) {
+	last:
+	while (true) {
+		if (!items.b) {
+			return $elm$core$Maybe$Nothing;
+		} else {
+			if (!items.b.b) {
+				var x = items.a;
+				return $elm$core$Maybe$Just(x);
+			} else {
+				var rest = items.b;
+				var $temp$items = rest;
+				items = $temp$items;
+				continue last;
+			}
+		}
+	}
+};
+var $author$project$Main$updateRandomScore = F2(
+	function (scores, m) {
+		var homeScore = $elm$core$List$head(scores);
+		var awayScore = $elm_community$list_extra$List$Extra$last(scores);
+		return _Utils_update(
+			m,
+			{b7: awayScore, cI: homeScore});
+	});
 var $author$project$Euro2020$B1 = 0;
 var $author$project$Euro2020$C1 = 1;
 var $author$project$Euro2020$E1 = 2;
@@ -5902,8 +6288,6 @@ var $elm$core$Array$fromList = function (list) {
 		return A3($elm$core$Array$fromListHelp, list, _List_Nil, 0);
 	}
 };
-var $elm$core$Bitwise$and = _Bitwise_and;
-var $elm$core$Bitwise$shiftRightZfBy = _Bitwise_shiftRightZfBy;
 var $elm$core$Array$bitMask = 4294967295 >>> (32 - $elm$core$Array$shiftStep);
 var $elm$core$Basics$ge = _Utils_ge;
 var $elm$core$Elm$JsArray$unsafeGet = _JsArray_unsafeGet;
@@ -5947,7 +6331,7 @@ var $elm$core$Array$get = F2(
 var $author$project$Euro2020$teamFromMaybeGroupRow = function (gr) {
 	if (!gr.$) {
 		var row = gr.a;
-		return row.aX;
+		return row.aY;
 	} else {
 		return A2($author$project$Euro2020$Team, 'Wow14', '');
 	}
@@ -6025,132 +6409,6 @@ var $author$project$Euro2020$applyCrazyUefaLogic = F2(
 var $author$project$Euro2020$playedAllGames = function (gr) {
 	return gr.bw === 3;
 };
-var $elm$core$List$takeReverse = F3(
-	function (n, list, kept) {
-		takeReverse:
-		while (true) {
-			if (n <= 0) {
-				return kept;
-			} else {
-				if (!list.b) {
-					return kept;
-				} else {
-					var x = list.a;
-					var xs = list.b;
-					var $temp$n = n - 1,
-						$temp$list = xs,
-						$temp$kept = A2($elm$core$List$cons, x, kept);
-					n = $temp$n;
-					list = $temp$list;
-					kept = $temp$kept;
-					continue takeReverse;
-				}
-			}
-		}
-	});
-var $elm$core$List$takeTailRec = F2(
-	function (n, list) {
-		return $elm$core$List$reverse(
-			A3($elm$core$List$takeReverse, n, list, _List_Nil));
-	});
-var $elm$core$List$takeFast = F3(
-	function (ctr, n, list) {
-		if (n <= 0) {
-			return _List_Nil;
-		} else {
-			var _v0 = _Utils_Tuple2(n, list);
-			_v0$1:
-			while (true) {
-				_v0$5:
-				while (true) {
-					if (!_v0.b.b) {
-						return list;
-					} else {
-						if (_v0.b.b.b) {
-							switch (_v0.a) {
-								case 1:
-									break _v0$1;
-								case 2:
-									var _v2 = _v0.b;
-									var x = _v2.a;
-									var _v3 = _v2.b;
-									var y = _v3.a;
-									return _List_fromArray(
-										[x, y]);
-								case 3:
-									if (_v0.b.b.b.b) {
-										var _v4 = _v0.b;
-										var x = _v4.a;
-										var _v5 = _v4.b;
-										var y = _v5.a;
-										var _v6 = _v5.b;
-										var z = _v6.a;
-										return _List_fromArray(
-											[x, y, z]);
-									} else {
-										break _v0$5;
-									}
-								default:
-									if (_v0.b.b.b.b && _v0.b.b.b.b.b) {
-										var _v7 = _v0.b;
-										var x = _v7.a;
-										var _v8 = _v7.b;
-										var y = _v8.a;
-										var _v9 = _v8.b;
-										var z = _v9.a;
-										var _v10 = _v9.b;
-										var w = _v10.a;
-										var tl = _v10.b;
-										return (ctr > 1000) ? A2(
-											$elm$core$List$cons,
-											x,
-											A2(
-												$elm$core$List$cons,
-												y,
-												A2(
-													$elm$core$List$cons,
-													z,
-													A2(
-														$elm$core$List$cons,
-														w,
-														A2($elm$core$List$takeTailRec, n - 4, tl))))) : A2(
-											$elm$core$List$cons,
-											x,
-											A2(
-												$elm$core$List$cons,
-												y,
-												A2(
-													$elm$core$List$cons,
-													z,
-													A2(
-														$elm$core$List$cons,
-														w,
-														A3($elm$core$List$takeFast, ctr + 1, n - 4, tl)))));
-									} else {
-										break _v0$5;
-									}
-							}
-						} else {
-							if (_v0.a === 1) {
-								break _v0$1;
-							} else {
-								break _v0$5;
-							}
-						}
-					}
-				}
-				return list;
-			}
-			var _v1 = _v0.b;
-			var x = _v1.a;
-			return _List_fromArray(
-				[x]);
-		}
-	});
-var $elm$core$List$take = F2(
-	function (n, list) {
-		return A3($elm$core$List$takeFast, 0, n, list);
-	});
 var $author$project$Euro2020$get3rdTeam = F4(
 	function (defaultTeam, tp, grs, allGroupRows) {
 		var topFour = A2($elm$core$List$take, 4, grs);
@@ -6328,7 +6586,7 @@ var $author$project$Euro2020$maybeOrDefaultTeam = F2(
 	function (defaultTeam, maybeGroupRow) {
 		if (!maybeGroupRow.$) {
 			var gr = maybeGroupRow.a;
-			return gr.aX;
+			return gr.aY;
 		} else {
 			return defaultTeam;
 		}
@@ -6539,64 +6797,95 @@ var $author$project$Main$updateWinners = function (m) {
 };
 var $author$project$Main$update = F2(
 	function (msg, model) {
-		switch (msg.$) {
-			case 3:
-				var matchId = msg.a;
-				var homeOrAway = msg.b;
-				var updatedWinners = A2(
-					$elm$core$List$map,
-					A2($author$project$Main$updateWinner, matchId, homeOrAway),
-					model.D);
-				var newPlayOffMatches = A2(
-					$elm$core$List$map,
-					$author$project$Main$updatePlayoffMatches(updatedWinners),
-					updatedWinners);
-				return _Utils_update(
-					model,
-					{D: newPlayOffMatches});
-			case 2:
-				var group = msg.a;
-				return _Utils_update(
-					model,
-					{aa: group});
-			case 1:
-				var matchId = msg.a;
-				var homeOrAway = msg.b;
-				var score = msg.c;
-				var newPlayOffMatches = A2(
-					$elm$core$List$map,
-					A3($author$project$Main$updateMatchScoreByID, matchId, homeOrAway, score),
-					model.D);
-				var newPlayoffWinners = A2($elm$core$List$map, $author$project$Main$updateWinners, newPlayOffMatches);
-				var newPlayOffMatches2 = A2(
-					$elm$core$List$map,
-					$author$project$Main$updatePlayoffMatches(newPlayoffWinners),
-					newPlayoffWinners);
-				return _Utils_update(
-					model,
-					{D: newPlayOffMatches2});
-			default:
-				var matchId = msg.a;
-				var homeOrAway = msg.b;
-				var score = msg.c;
-				var newMatches = A2(
-					$elm$core$List$map,
-					A3($author$project$Main$updateMatchScoreByID, matchId, homeOrAway, score),
-					model.aj);
-				var newGroupRows = A3($elm$core$List$foldl, $author$project$Main$updateGroup, $author$project$Euro2020$groupRows, newMatches);
-				var groupRowsAfterTieBreaks = A2(
-					$elm$core$List$map,
-					A2($author$project$Main$resolveTieBreak, newMatches, newGroupRows),
-					newGroupRows);
-				var thirdPlaces = $author$project$Main$get3rdTeamTable(groupRowsAfterTieBreaks);
-				var newPlayOffMatches = A2(
-					$elm$core$List$map,
-					A2($author$project$Euro2020$updateTeams, groupRowsAfterTieBreaks, thirdPlaces),
-					model.D);
-				var newPlayOffMatchesScores = A2($elm$core$List$map, $author$project$Main$updateMatchScore, newPlayOffMatches);
-				return _Utils_update(
-					model,
-					{ah: groupRowsAfterTieBreaks, aj: newMatches, D: newPlayOffMatchesScores});
+		update:
+		while (true) {
+			switch (msg.$) {
+				case 4:
+					return _Utils_Tuple2(
+						model,
+						A2($elm$random$Random$generate, $author$project$Main$GotRandomScores, $author$project$Main$randomScoresGen));
+				case 5:
+					var randomScores = msg.a;
+					var randomScoresGrouped = A2($elm_community$list_extra$List$Extra$groupsOf, 2, randomScores);
+					var newMatches = A3($elm$core$List$map2, $author$project$Main$updateRandomScore, randomScoresGrouped, model.aa);
+					var $temp$msg = $author$project$Main$UpdateGroups(newMatches),
+						$temp$model = model;
+					msg = $temp$msg;
+					model = $temp$model;
+					continue update;
+				case 3:
+					var matchId = msg.a;
+					var homeOrAway = msg.b;
+					var updatedWinners = A2(
+						$elm$core$List$map,
+						A2($author$project$Main$updateWinner, matchId, homeOrAway),
+						model.D);
+					var newPlayOffMatches = A2(
+						$elm$core$List$map,
+						$author$project$Main$updatePlayoffMatches(updatedWinners),
+						updatedWinners);
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{D: newPlayOffMatches}),
+						$elm$core$Platform$Cmd$none);
+				case 2:
+					var group = msg.a;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{ac: group}),
+						$elm$core$Platform$Cmd$none);
+				case 1:
+					var matchId = msg.a;
+					var homeOrAway = msg.b;
+					var score = msg.c;
+					var newPlayOffMatches = A2(
+						$elm$core$List$map,
+						A3($author$project$Main$updateMatchScoreByID, matchId, homeOrAway, score),
+						model.D);
+					var newPlayoffWinners = A2($elm$core$List$map, $author$project$Main$updateWinners, newPlayOffMatches);
+					var newPlayOffMatches2 = A2(
+						$elm$core$List$map,
+						$author$project$Main$updatePlayoffMatches(newPlayoffWinners),
+						newPlayoffWinners);
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{D: newPlayOffMatches2}),
+						$elm$core$Platform$Cmd$none);
+				case 0:
+					var matchId = msg.a;
+					var homeOrAway = msg.b;
+					var score = msg.c;
+					var newMatches = A2(
+						$elm$core$List$map,
+						A3($author$project$Main$updateMatchScoreByID, matchId, homeOrAway, score),
+						model.aa);
+					var $temp$msg = $author$project$Main$UpdateGroups(newMatches),
+						$temp$model = model;
+					msg = $temp$msg;
+					model = $temp$model;
+					continue update;
+				default:
+					var matches = msg.a;
+					var newGroupRows = A3($elm$core$List$foldl, $author$project$Main$updateGroup, $author$project$Euro2020$groupRows, matches);
+					var groupRowsAfterTieBreaks = A2(
+						$elm$core$List$map,
+						A2($author$project$Main$resolveTieBreak, matches, newGroupRows),
+						newGroupRows);
+					var thirdPlaces = $author$project$Main$get3rdTeamTable(groupRowsAfterTieBreaks);
+					var newPlayOffMatches = A2(
+						$elm$core$List$map,
+						A2($author$project$Euro2020$updateTeams, groupRowsAfterTieBreaks, thirdPlaces),
+						model.D);
+					var newPlayOffMatchesScores = A2($elm$core$List$map, $author$project$Main$updateMatchScore, newPlayOffMatches);
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{_: groupRowsAfterTieBreaks, aa: matches, D: newPlayOffMatchesScores}),
+						$elm$core$Platform$Cmd$none);
+			}
 		}
 	});
 var $author$project$Euro2020$Final = 9;
@@ -6662,7 +6951,7 @@ var $mdgriffith$elm_ui$Internal$Model$Unkeyed = function (a) {
 };
 var $mdgriffith$elm_ui$Internal$Model$AsColumn = 1;
 var $mdgriffith$elm_ui$Internal$Model$asColumn = 1;
-var $mdgriffith$elm_ui$Internal$Style$classes = {bW: 'a', aE: 'atv', bY: 'ab', bZ: 'cx', b_: 'cy', b$: 'acb', b0: 'accx', b1: 'accy', b2: 'acr', a0: 'al', a1: 'ar', b3: 'at', aF: 'ah', aG: 'av', b5: 's', ca: 'bh', cb: 'b', cd: 'w7', cf: 'bd', cg: 'bdt', ap: 'bn', ch: 'bs', ar: 'cpe', cm: 'cp', cn: 'cpx', co: 'cpy', H: 'c', at: 'ctr', au: 'cb', av: 'ccx', I: 'ccy', ag: 'cl', aw: 'cr', cr: 'ct', cs: 'cptr', ct: 'ctxt', cD: 'fcs', a8: 'focus-within', cE: 'fs', cG: 'g', aK: 'hbh', aL: 'hc', be: 'he', aM: 'hf', bf: 'hfp', cJ: 'hv', cL: 'ic', cN: 'fr', cP: 'iml', cQ: 'imlf', cR: 'imlp', cS: 'implw', cT: 'it', cU: 'i', bk: 'lnk', _: 'nb', bn: 'notxt', c_: 'ol', c$: 'or', S: 'oq', c3: 'oh', bs: 'pg', bt: 'p', c4: 'ppe', c8: 'ui', w: 'r', da: 'sb', db: 'sbx', dc: 'sby', dd: 'sbt', df: 'e', dg: 'cap', dh: 'sev', dm: 'sk', dp: 't', dq: 'tc', dr: 'w8', ds: 'w2', dt: 'w9', du: 'tj', aC: 'tja', dv: 'tl', dw: 'w3', dx: 'w5', dy: 'w4', dz: 'tr', dA: 'w6', dB: 'w1', dC: 'tun', bM: 'ts', V: 'clr', dI: 'u', aY: 'wc', bR: 'we', aZ: 'wf', bS: 'wfp', a_: 'wrp'};
+var $mdgriffith$elm_ui$Internal$Style$classes = {bW: 'a', aF: 'atv', bY: 'ab', bZ: 'cx', b_: 'cy', b$: 'acb', b0: 'accx', b1: 'accy', b2: 'acr', a1: 'al', a2: 'ar', b3: 'at', aG: 'ah', aH: 'av', b5: 's', ca: 'bh', cb: 'b', cd: 'w7', cf: 'bd', cg: 'bdt', ap: 'bn', ch: 'bs', ar: 'cpe', cm: 'cp', cn: 'cpx', co: 'cpy', H: 'c', at: 'ctr', au: 'cb', av: 'ccx', I: 'ccy', ai: 'cl', aw: 'cr', cr: 'ct', cs: 'cptr', ct: 'ctxt', cD: 'fcs', a9: 'focus-within', cE: 'fs', cG: 'g', aL: 'hbh', aM: 'hc', bf: 'he', aN: 'hf', bg: 'hfp', cJ: 'hv', cL: 'ic', cN: 'fr', cP: 'iml', cQ: 'imlf', cR: 'imlp', cS: 'implw', cT: 'it', cU: 'i', bl: 'lnk', ab: 'nb', bo: 'notxt', c_: 'ol', c$: 'or', S: 'oq', c3: 'oh', bs: 'pg', bt: 'p', c4: 'ppe', c8: 'ui', w: 'r', da: 'sb', db: 'sbx', dc: 'sby', dd: 'sbt', df: 'e', dg: 'cap', dh: 'sev', dm: 'sk', dp: 't', dq: 'tc', dr: 'w8', ds: 'w2', dt: 'w9', du: 'tj', aD: 'tja', dv: 'tl', dw: 'w3', dx: 'w5', dy: 'w4', dz: 'tr', dA: 'w6', dB: 'w1', dC: 'tun', bM: 'ts', V: 'clr', dI: 'u', aZ: 'wc', bR: 'we', a_: 'wf', bS: 'wfp', a$: 'wrp'};
 var $mdgriffith$elm_ui$Internal$Model$Generic = {$: 0};
 var $mdgriffith$elm_ui$Internal$Model$div = $mdgriffith$elm_ui$Internal$Model$Generic;
 var $mdgriffith$elm_ui$Internal$Model$NoNearbyChildren = {$: 0};
@@ -6896,7 +7185,7 @@ var $mdgriffith$elm_ui$Internal$Model$getStyleName = function (style) {
 				A2($elm$core$List$map, $mdgriffith$elm_ui$Internal$Model$lengthClassName, template.cq)) + ('-space-x-' + ($mdgriffith$elm_ui$Internal$Model$lengthClassName(template.di.a) + ('-space-y-' + $mdgriffith$elm_ui$Internal$Model$lengthClassName(template.di.b)))))));
 		case 9:
 			var pos = style.a;
-			return 'gp grid-pos-' + ($elm$core$String$fromInt(pos.w) + ('-' + ($elm$core$String$fromInt(pos.cp) + ('-' + ($elm$core$String$fromInt(pos.y) + ('-' + $elm$core$String$fromInt(pos.bd)))))));
+			return 'gp grid-pos-' + ($elm$core$String$fromInt(pos.w) + ('-' + ($elm$core$String$fromInt(pos.cp) + ('-' + ($elm$core$String$fromInt(pos.y) + ('-' + $elm$core$String$fromInt(pos.be)))))));
 		case 11:
 			var selector = style.a;
 			var subStyle = style.b;
@@ -7036,15 +7325,15 @@ var $mdgriffith$elm_ui$Internal$Model$formatBoxShadow = function (shadow) {
 			$elm$core$Basics$identity,
 			_List_fromArray(
 				[
-					shadow.bi ? $elm$core$Maybe$Just('inset') : $elm$core$Maybe$Nothing,
+					shadow.bj ? $elm$core$Maybe$Just('inset') : $elm$core$Maybe$Nothing,
 					$elm$core$Maybe$Just(
-					$elm$core$String$fromFloat(shadow.bo.a) + 'px'),
+					$elm$core$String$fromFloat(shadow.bp.a) + 'px'),
 					$elm$core$Maybe$Just(
-					$elm$core$String$fromFloat(shadow.bo.b) + 'px'),
+					$elm$core$String$fromFloat(shadow.bp.b) + 'px'),
 					$elm$core$Maybe$Just(
 					$elm$core$String$fromFloat(shadow.X) + 'px'),
 					$elm$core$Maybe$Just(
-					$elm$core$String$fromFloat(shadow.ab) + 'px'),
+					$elm$core$String$fromFloat(shadow.ad) + 'px'),
 					$elm$core$Maybe$Just(
 					$mdgriffith$elm_ui$Internal$Model$formatColor(shadow.Y))
 				])));
@@ -7080,7 +7369,7 @@ var $mdgriffith$elm_ui$Internal$Model$renderFocusStyle = function (focus) {
 		[
 			A2(
 			$mdgriffith$elm_ui$Internal$Model$Style,
-			$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.a8) + ':focus-within',
+			$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.a9) + ':focus-within',
 			A2(
 				$elm$core$List$filterMap,
 				$elm$core$Basics$identity,
@@ -7114,12 +7403,12 @@ var $mdgriffith$elm_ui$Internal$Model$renderFocusStyle = function (focus) {
 									{
 										X: shadow.X,
 										Y: shadow.Y,
-										bi: false,
-										bo: A2(
+										bj: false,
+										bp: A2(
 											$elm$core$Tuple$mapSecond,
 											$elm$core$Basics$toFloat,
-											A2($elm$core$Tuple$mapFirst, $elm$core$Basics$toFloat, shadow.bo)),
-										ab: shadow.ab
+											A2($elm$core$Tuple$mapFirst, $elm$core$Basics$toFloat, shadow.bp)),
+										ad: shadow.ad
 									}));
 						},
 						focus.de),
@@ -7162,12 +7451,12 @@ var $mdgriffith$elm_ui$Internal$Model$renderFocusStyle = function (focus) {
 									{
 										X: shadow.X,
 										Y: shadow.Y,
-										bi: false,
-										bo: A2(
+										bj: false,
+										bp: A2(
 											$elm$core$Tuple$mapSecond,
 											$elm$core$Basics$toFloat,
-											A2($elm$core$Tuple$mapFirst, $elm$core$Basics$toFloat, shadow.bo)),
-										ab: shadow.ab
+											A2($elm$core$Tuple$mapFirst, $elm$core$Basics$toFloat, shadow.bp)),
+										ad: shadow.ad
 									}));
 						},
 						focus.de),
@@ -7249,7 +7538,7 @@ var $mdgriffith$elm_ui$Internal$Style$contentName = function (desc) {
 			return $mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.aw);
 		case 3:
 			var _v4 = desc;
-			return $mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.ag);
+			return $mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.ai);
 		case 4:
 			var _v5 = desc;
 			return $mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.av);
@@ -7268,10 +7557,10 @@ var $mdgriffith$elm_ui$Internal$Style$selfName = function (desc) {
 			return $mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.bY);
 		case 2:
 			var _v3 = desc;
-			return $mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.a1);
+			return $mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.a2);
 		case 3:
 			var _v4 = desc;
-			return $mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.a0);
+			return $mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.a1);
 		case 4:
 			var _v5 = desc;
 			return $mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.bZ);
@@ -7313,7 +7602,7 @@ var $mdgriffith$elm_ui$Internal$Style$elDescription = _List_fromArray(
 		A2($mdgriffith$elm_ui$Internal$Style$Prop, 'white-space', 'pre'),
 		A2(
 		$mdgriffith$elm_ui$Internal$Style$Descriptor,
-		$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.aK),
+		$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.aL),
 		_List_fromArray(
 			[
 				A2($mdgriffith$elm_ui$Internal$Style$Prop, 'z-index', '0'),
@@ -7337,14 +7626,14 @@ var $mdgriffith$elm_ui$Internal$Style$elDescription = _List_fromArray(
 					[
 						A2(
 						$mdgriffith$elm_ui$Internal$Style$Descriptor,
-						$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.aM),
+						$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.aN),
 						_List_fromArray(
 							[
 								A2($mdgriffith$elm_ui$Internal$Style$Prop, 'flex-grow', '0')
 							])),
 						A2(
 						$mdgriffith$elm_ui$Internal$Style$Descriptor,
-						$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.aZ),
+						$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.a_),
 						_List_fromArray(
 							[
 								A2($mdgriffith$elm_ui$Internal$Style$Prop, 'align-self', 'auto !important')
@@ -7353,21 +7642,21 @@ var $mdgriffith$elm_ui$Internal$Style$elDescription = _List_fromArray(
 			])),
 		A2(
 		$mdgriffith$elm_ui$Internal$Style$Child,
-		$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.aL),
+		$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.aM),
 		_List_fromArray(
 			[
 				A2($mdgriffith$elm_ui$Internal$Style$Prop, 'height', 'auto')
 			])),
 		A2(
 		$mdgriffith$elm_ui$Internal$Style$Child,
-		$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.aM),
+		$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.aN),
 		_List_fromArray(
 			[
 				A2($mdgriffith$elm_ui$Internal$Style$Prop, 'flex-grow', '100000')
 			])),
 		A2(
 		$mdgriffith$elm_ui$Internal$Style$Child,
-		$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.aZ),
+		$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.a_),
 		_List_fromArray(
 			[
 				A2($mdgriffith$elm_ui$Internal$Style$Prop, 'width', '100%')
@@ -7381,7 +7670,7 @@ var $mdgriffith$elm_ui$Internal$Style$elDescription = _List_fromArray(
 			])),
 		A2(
 		$mdgriffith$elm_ui$Internal$Style$Child,
-		$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.aY),
+		$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.aZ),
 		_List_fromArray(
 			[
 				A2($mdgriffith$elm_ui$Internal$Style$Prop, 'align-self', 'flex-start')
@@ -7550,13 +7839,13 @@ var $mdgriffith$elm_ui$Internal$Style$baseSheet = _List_fromArray(
 				$mdgriffith$elm_ui$Internal$Style$Descriptor,
 				_Utils_ap(
 					$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.b5),
-					$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.aM)),
+					$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.aN)),
 				_List_fromArray(
 					[
 						A2($mdgriffith$elm_ui$Internal$Style$Prop, 'height', '100%'),
 						A2(
 						$mdgriffith$elm_ui$Internal$Style$Child,
-						$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.aM),
+						$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.aN),
 						_List_fromArray(
 							[
 								A2($mdgriffith$elm_ui$Internal$Style$Prop, 'height', '100%')
@@ -7569,7 +7858,7 @@ var $mdgriffith$elm_ui$Internal$Style$baseSheet = _List_fromArray(
 					[
 						A2(
 						$mdgriffith$elm_ui$Internal$Style$Descriptor,
-						$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes._),
+						$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.ab),
 						_List_fromArray(
 							[
 								A2($mdgriffith$elm_ui$Internal$Style$Prop, 'position', 'fixed')
@@ -7578,7 +7867,7 @@ var $mdgriffith$elm_ui$Internal$Style$baseSheet = _List_fromArray(
 			])),
 		A2(
 		$mdgriffith$elm_ui$Internal$Style$Class,
-		$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes._),
+		$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.ab),
 		_List_fromArray(
 			[
 				A2($mdgriffith$elm_ui$Internal$Style$Prop, 'position', 'relative'),
@@ -7610,14 +7899,14 @@ var $mdgriffith$elm_ui$Internal$Style$baseSheet = _List_fromArray(
 											A2($mdgriffith$elm_ui$Internal$Style$Prop, 'margin', '0 !important'),
 											A2(
 											$mdgriffith$elm_ui$Internal$Style$Child,
-											$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.aM),
+											$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.aN),
 											_List_fromArray(
 												[
 													A2($mdgriffith$elm_ui$Internal$Style$Prop, 'height', 'auto')
 												])),
 											A2(
 											$mdgriffith$elm_ui$Internal$Style$Child,
-											$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.aZ),
+											$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.a_),
 											_List_fromArray(
 												[
 													A2($mdgriffith$elm_ui$Internal$Style$Prop, 'width', '100%')
@@ -7654,7 +7943,7 @@ var $mdgriffith$elm_ui$Internal$Style$baseSheet = _List_fromArray(
 												])),
 											A2(
 											$mdgriffith$elm_ui$Internal$Style$Child,
-											$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.aM),
+											$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.aN),
 											_List_fromArray(
 												[
 													A2($mdgriffith$elm_ui$Internal$Style$Prop, 'height', 'auto')
@@ -7775,14 +8064,14 @@ var $mdgriffith$elm_ui$Internal$Style$baseSheet = _List_fromArray(
 				A2($mdgriffith$elm_ui$Internal$Style$Prop, 'font-style', 'inherit'),
 				A2(
 				$mdgriffith$elm_ui$Internal$Style$Descriptor,
-				$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.a_),
+				$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.a$),
 				_List_fromArray(
 					[
 						A2($mdgriffith$elm_ui$Internal$Style$Prop, 'flex-wrap', 'wrap')
 					])),
 				A2(
 				$mdgriffith$elm_ui$Internal$Style$Descriptor,
-				$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.bn),
+				$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.bo),
 				_List_fromArray(
 					[
 						A2($mdgriffith$elm_ui$Internal$Style$Prop, '-moz-user-select', 'none'),
@@ -7867,7 +8156,7 @@ var $mdgriffith$elm_ui$Internal$Style$baseSheet = _List_fromArray(
 				A2(
 				$mdgriffith$elm_ui$Internal$Style$Descriptor,
 				$mdgriffith$elm_ui$Internal$Style$dot(
-					_Utils_ap($mdgriffith$elm_ui$Internal$Style$classes.aE, $mdgriffith$elm_ui$Internal$Style$classes.V)) + ':active',
+					_Utils_ap($mdgriffith$elm_ui$Internal$Style$classes.aF, $mdgriffith$elm_ui$Internal$Style$classes.V)) + ':active',
 				_List_fromArray(
 					[
 						A2($mdgriffith$elm_ui$Internal$Style$Prop, 'opacity', '0')
@@ -7875,7 +8164,7 @@ var $mdgriffith$elm_ui$Internal$Style$baseSheet = _List_fromArray(
 				A2(
 				$mdgriffith$elm_ui$Internal$Style$Descriptor,
 				$mdgriffith$elm_ui$Internal$Style$dot(
-					_Utils_ap($mdgriffith$elm_ui$Internal$Style$classes.aE, $mdgriffith$elm_ui$Internal$Style$classes.S)) + ':active',
+					_Utils_ap($mdgriffith$elm_ui$Internal$Style$classes.aF, $mdgriffith$elm_ui$Internal$Style$classes.S)) + ':active',
 				_List_fromArray(
 					[
 						A2($mdgriffith$elm_ui$Internal$Style$Prop, 'opacity', '1')
@@ -7965,7 +8254,7 @@ var $mdgriffith$elm_ui$Internal$Style$baseSheet = _List_fromArray(
 					])),
 				A2(
 				$mdgriffith$elm_ui$Internal$Style$Descriptor,
-				$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.aY),
+				$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.aZ),
 				_List_fromArray(
 					[
 						A2($mdgriffith$elm_ui$Internal$Style$Prop, 'width', 'auto')
@@ -8040,7 +8329,7 @@ var $mdgriffith$elm_ui$Internal$Style$baseSheet = _List_fromArray(
 									])),
 								A2(
 								$mdgriffith$elm_ui$Internal$Style$Descriptor,
-								$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.bk),
+								$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.bl),
 								_List_fromArray(
 									[
 										A2($mdgriffith$elm_ui$Internal$Style$Prop, 'flex-basis', 'auto')
@@ -8048,21 +8337,21 @@ var $mdgriffith$elm_ui$Internal$Style$baseSheet = _List_fromArray(
 							])),
 						A2(
 						$mdgriffith$elm_ui$Internal$Style$Child,
-						$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.aM),
+						$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.aN),
 						_List_fromArray(
 							[
 								A2($mdgriffith$elm_ui$Internal$Style$Prop, 'align-self', 'stretch !important')
 							])),
 						A2(
 						$mdgriffith$elm_ui$Internal$Style$Child,
-						$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.bf),
+						$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.bg),
 						_List_fromArray(
 							[
 								A2($mdgriffith$elm_ui$Internal$Style$Prop, 'align-self', 'stretch !important')
 							])),
 						A2(
 						$mdgriffith$elm_ui$Internal$Style$Child,
-						$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.aZ),
+						$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.a_),
 						_List_fromArray(
 							[
 								A2($mdgriffith$elm_ui$Internal$Style$Prop, 'flex-grow', '100000')
@@ -8219,7 +8508,7 @@ var $mdgriffith$elm_ui$Internal$Style$baseSheet = _List_fromArray(
 								A2($mdgriffith$elm_ui$Internal$Style$Prop, 'flex-basis', '0%'),
 								A2(
 								$mdgriffith$elm_ui$Internal$Style$Descriptor,
-								$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.be),
+								$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.bf),
 								_List_fromArray(
 									[
 										A2($mdgriffith$elm_ui$Internal$Style$Prop, 'flex-basis', 'auto')
@@ -8234,14 +8523,14 @@ var $mdgriffith$elm_ui$Internal$Style$baseSheet = _List_fromArray(
 							])),
 						A2(
 						$mdgriffith$elm_ui$Internal$Style$Child,
-						$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.aM),
+						$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.aN),
 						_List_fromArray(
 							[
 								A2($mdgriffith$elm_ui$Internal$Style$Prop, 'flex-grow', '100000')
 							])),
 						A2(
 						$mdgriffith$elm_ui$Internal$Style$Child,
-						$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.aZ),
+						$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.a_),
 						_List_fromArray(
 							[
 								A2($mdgriffith$elm_ui$Internal$Style$Prop, 'width', '100%')
@@ -8255,7 +8544,7 @@ var $mdgriffith$elm_ui$Internal$Style$baseSheet = _List_fromArray(
 							])),
 						A2(
 						$mdgriffith$elm_ui$Internal$Style$Child,
-						$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.aY),
+						$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.aZ),
 						_List_fromArray(
 							[
 								A2($mdgriffith$elm_ui$Internal$Style$Prop, 'align-self', 'flex-start')
@@ -8591,7 +8880,7 @@ var $mdgriffith$elm_ui$Internal$Style$baseSheet = _List_fromArray(
 						A2($mdgriffith$elm_ui$Internal$Style$Prop, 'white-space', 'normal'),
 						A2(
 						$mdgriffith$elm_ui$Internal$Style$Descriptor,
-						$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.aK),
+						$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.aL),
 						_List_fromArray(
 							[
 								A2($mdgriffith$elm_ui$Internal$Style$Prop, 'z-index', '0'),
@@ -8852,7 +9141,7 @@ var $mdgriffith$elm_ui$Internal$Style$baseSheet = _List_fromArray(
 					])),
 				A2(
 				$mdgriffith$elm_ui$Internal$Style$Descriptor,
-				$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.aC),
+				$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.aD),
 				_List_fromArray(
 					[
 						A2($mdgriffith$elm_ui$Internal$Style$Prop, 'text-align', 'justify-all')
@@ -9244,9 +9533,6 @@ var $elm$core$Basics$min = F2(
 	function (x, y) {
 		return (_Utils_cmp(x, y) < 0) ? x : y;
 	});
-var $elm$core$Basics$negate = function (n) {
-	return -n;
-};
 var $mdgriffith$elm_ui$Internal$Model$renderProps = F3(
 	function (force, _v0, existing) {
 		var key = _v0.a;
@@ -9480,11 +9766,11 @@ var $mdgriffith$elm_ui$Internal$Model$renderStyleRule = F3(
 				var xPx = $elm$core$String$fromInt(x) + 'px';
 				var single = '.' + $mdgriffith$elm_ui$Internal$Style$classes.df;
 				var row = '.' + $mdgriffith$elm_ui$Internal$Style$classes.w;
-				var wrappedRow = '.' + ($mdgriffith$elm_ui$Internal$Style$classes.a_ + row);
-				var right = '.' + $mdgriffith$elm_ui$Internal$Style$classes.a1;
+				var wrappedRow = '.' + ($mdgriffith$elm_ui$Internal$Style$classes.a$ + row);
+				var right = '.' + $mdgriffith$elm_ui$Internal$Style$classes.a2;
 				var paragraph = '.' + $mdgriffith$elm_ui$Internal$Style$classes.bt;
 				var page = '.' + $mdgriffith$elm_ui$Internal$Style$classes.bs;
-				var left = '.' + $mdgriffith$elm_ui$Internal$Style$classes.a0;
+				var left = '.' + $mdgriffith$elm_ui$Internal$Style$classes.a1;
 				var halfY = $elm$core$String$fromFloat(y / 2) + 'px';
 				var halfX = $elm$core$String$fromFloat(x / 2) + 'px';
 				var column = '.' + $mdgriffith$elm_ui$Internal$Style$classes.H;
@@ -9799,7 +10085,7 @@ var $mdgriffith$elm_ui$Internal$Model$renderStyleRule = F3(
 					_List_fromArray(
 						[
 							'-ms-grid-row: ' + ($elm$core$String$fromInt(position.w) + ';'),
-							'-ms-grid-row-span: ' + ($elm$core$String$fromInt(position.bd) + ';'),
+							'-ms-grid-row-span: ' + ($elm$core$String$fromInt(position.be) + ';'),
 							'-ms-grid-column: ' + ($elm$core$String$fromInt(position.cp) + ';'),
 							'-ms-grid-column-span: ' + ($elm$core$String$fromInt(position.y) + ';')
 						]));
@@ -9808,10 +10094,10 @@ var $mdgriffith$elm_ui$Internal$Model$renderStyleRule = F3(
 					' ',
 					_List_fromArray(
 						[
-							'grid-row: ' + ($elm$core$String$fromInt(position.w) + (' / ' + ($elm$core$String$fromInt(position.w + position.bd) + ';'))),
+							'grid-row: ' + ($elm$core$String$fromInt(position.w) + (' / ' + ($elm$core$String$fromInt(position.w + position.be) + ';'))),
 							'grid-column: ' + ($elm$core$String$fromInt(position.cp) + (' / ' + ($elm$core$String$fromInt(position.cp + position.y) + ';')))
 						]));
-				var _class = '.grid-pos-' + ($elm$core$String$fromInt(position.w) + ('-' + ($elm$core$String$fromInt(position.cp) + ('-' + ($elm$core$String$fromInt(position.y) + ('-' + $elm$core$String$fromInt(position.bd)))))));
+				var _class = '.grid-pos-' + ($elm$core$String$fromInt(position.w) + ('-' + ($elm$core$String$fromInt(position.cp) + ('-' + ($elm$core$String$fromInt(position.y) + ('-' + $elm$core$String$fromInt(position.be)))))));
 				var modernGrid = _class + ('{' + (modernPosition + '}'));
 				var supports = '@supports (display:grid) {' + (modernGrid + '}');
 				var base = _class + ('{' + (msPosition + '}'));
@@ -9924,7 +10210,7 @@ var $mdgriffith$elm_ui$Internal$Model$renderNullAdjustmentRule = F2(
 	});
 var $mdgriffith$elm_ui$Internal$Model$adjust = F3(
 	function (size, height, vertical) {
-		return {bd: height / size, ab: size, bO: vertical};
+		return {be: height / size, ad: size, bO: vertical};
 	});
 var $elm$core$List$maximum = function (list) {
 	if (list.b) {
@@ -9980,7 +10266,7 @@ var $mdgriffith$elm_ui$Internal$Model$convertAdjustment = function (adjustment) 
 	var newFullMiddle = ((ascender - descender) / 2) + descender;
 	return {
 		ck: A3($mdgriffith$elm_ui$Internal$Model$adjust, capitalSize, ascender - newBaseline, capitalVertical),
-		ba: A3($mdgriffith$elm_ui$Internal$Model$adjust, fullSize, ascender - descender, fullVertical)
+		bb: A3($mdgriffith$elm_ui$Internal$Model$adjust, fullSize, ascender - descender, fullVertical)
 	};
 };
 var $mdgriffith$elm_ui$Internal$Model$fontAdjustmentRules = function (converted) {
@@ -9994,13 +10280,13 @@ var $mdgriffith$elm_ui$Internal$Model$fontAdjustmentRules = function (converted)
 				_Utils_Tuple2('display', 'inline-block'),
 				_Utils_Tuple2(
 				'line-height',
-				$elm$core$String$fromFloat(converted.bd)),
+				$elm$core$String$fromFloat(converted.be)),
 				_Utils_Tuple2(
 				'vertical-align',
 				$elm$core$String$fromFloat(converted.bO) + 'em'),
 				_Utils_Tuple2(
 				'font-size',
-				$elm$core$String$fromFloat(converted.ab) + 'em')
+				$elm$core$String$fromFloat(converted.ad) + 'em')
 			]));
 };
 var $mdgriffith$elm_ui$Internal$Model$typefaceAdjustment = function (typefaces) {
@@ -10020,7 +10306,7 @@ var $mdgriffith$elm_ui$Internal$Model$typefaceAdjustment = function (typefaces) 
 								_Utils_Tuple2(
 									$mdgriffith$elm_ui$Internal$Model$fontAdjustmentRules(
 										function ($) {
-											return $.ba;
+											return $.bb;
 										}(
 											$mdgriffith$elm_ui$Internal$Model$convertAdjustment(adjustment))),
 									$mdgriffith$elm_ui$Internal$Model$fontAdjustmentRules(
@@ -10106,8 +10392,8 @@ var $mdgriffith$elm_ui$Internal$Model$toStyleSheetString = F2(
 		var combine = F2(
 			function (style, rendered) {
 				return {
-					aA: _Utils_ap(
-						rendered.aA,
+					aB: _Utils_ap(
+						rendered.aB,
 						A3($mdgriffith$elm_ui$Internal$Model$renderStyleRule, options, style, $elm$core$Maybe$Nothing)),
 					am: function () {
 						var _v1 = $mdgriffith$elm_ui$Internal$Model$topLevelValue(style);
@@ -10123,10 +10409,10 @@ var $mdgriffith$elm_ui$Internal$Model$toStyleSheetString = F2(
 		var _v0 = A3(
 			$elm$core$List$foldl,
 			combine,
-			{aA: _List_Nil, am: _List_Nil},
+			{aB: _List_Nil, am: _List_Nil},
 			stylesheet);
 		var topLevel = _v0.am;
-		var rules = _v0.aA;
+		var rules = _v0.aB;
 		return _Utils_ap(
 			$mdgriffith$elm_ui$Internal$Model$renderTopLevelValues(topLevel),
 			$elm$core$String$concat(rules));
@@ -10393,7 +10679,7 @@ var $elm$core$List$isEmpty = function (xs) {
 	}
 };
 var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
-var $mdgriffith$elm_ui$Internal$Model$textElementClasses = $mdgriffith$elm_ui$Internal$Style$classes.b5 + (' ' + ($mdgriffith$elm_ui$Internal$Style$classes.dp + (' ' + ($mdgriffith$elm_ui$Internal$Style$classes.aY + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.aL)))));
+var $mdgriffith$elm_ui$Internal$Model$textElementClasses = $mdgriffith$elm_ui$Internal$Style$classes.b5 + (' ' + ($mdgriffith$elm_ui$Internal$Style$classes.dp + (' ' + ($mdgriffith$elm_ui$Internal$Style$classes.aZ + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.aM)))));
 var $mdgriffith$elm_ui$Internal$Model$textElement = function (str) {
 	return A2(
 		$elm$html$Html$div,
@@ -10406,7 +10692,7 @@ var $mdgriffith$elm_ui$Internal$Model$textElement = function (str) {
 				$elm$html$Html$text(str)
 			]));
 };
-var $mdgriffith$elm_ui$Internal$Model$textElementFillClasses = $mdgriffith$elm_ui$Internal$Style$classes.b5 + (' ' + ($mdgriffith$elm_ui$Internal$Style$classes.dp + (' ' + ($mdgriffith$elm_ui$Internal$Style$classes.aZ + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.aM)))));
+var $mdgriffith$elm_ui$Internal$Model$textElementFillClasses = $mdgriffith$elm_ui$Internal$Style$classes.b5 + (' ' + ($mdgriffith$elm_ui$Internal$Style$classes.dp + (' ' + ($mdgriffith$elm_ui$Internal$Style$classes.a_ + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.aN)))));
 var $mdgriffith$elm_ui$Internal$Model$textElementFill = function (str) {
 	return A2(
 		$elm$html$Html$div,
@@ -10637,37 +10923,37 @@ var $mdgriffith$elm_ui$Internal$Model$nearbyElement = F2(
 									$elm$core$String$join,
 									' ',
 									_List_fromArray(
-										[$mdgriffith$elm_ui$Internal$Style$classes._, $mdgriffith$elm_ui$Internal$Style$classes.df, $mdgriffith$elm_ui$Internal$Style$classes.bW]));
+										[$mdgriffith$elm_ui$Internal$Style$classes.ab, $mdgriffith$elm_ui$Internal$Style$classes.df, $mdgriffith$elm_ui$Internal$Style$classes.bW]));
 							case 1:
 								return A2(
 									$elm$core$String$join,
 									' ',
 									_List_fromArray(
-										[$mdgriffith$elm_ui$Internal$Style$classes._, $mdgriffith$elm_ui$Internal$Style$classes.df, $mdgriffith$elm_ui$Internal$Style$classes.cb]));
+										[$mdgriffith$elm_ui$Internal$Style$classes.ab, $mdgriffith$elm_ui$Internal$Style$classes.df, $mdgriffith$elm_ui$Internal$Style$classes.cb]));
 							case 2:
 								return A2(
 									$elm$core$String$join,
 									' ',
 									_List_fromArray(
-										[$mdgriffith$elm_ui$Internal$Style$classes._, $mdgriffith$elm_ui$Internal$Style$classes.df, $mdgriffith$elm_ui$Internal$Style$classes.c$]));
+										[$mdgriffith$elm_ui$Internal$Style$classes.ab, $mdgriffith$elm_ui$Internal$Style$classes.df, $mdgriffith$elm_ui$Internal$Style$classes.c$]));
 							case 3:
 								return A2(
 									$elm$core$String$join,
 									' ',
 									_List_fromArray(
-										[$mdgriffith$elm_ui$Internal$Style$classes._, $mdgriffith$elm_ui$Internal$Style$classes.df, $mdgriffith$elm_ui$Internal$Style$classes.c_]));
+										[$mdgriffith$elm_ui$Internal$Style$classes.ab, $mdgriffith$elm_ui$Internal$Style$classes.df, $mdgriffith$elm_ui$Internal$Style$classes.c_]));
 							case 4:
 								return A2(
 									$elm$core$String$join,
 									' ',
 									_List_fromArray(
-										[$mdgriffith$elm_ui$Internal$Style$classes._, $mdgriffith$elm_ui$Internal$Style$classes.df, $mdgriffith$elm_ui$Internal$Style$classes.cN]));
+										[$mdgriffith$elm_ui$Internal$Style$classes.ab, $mdgriffith$elm_ui$Internal$Style$classes.df, $mdgriffith$elm_ui$Internal$Style$classes.cN]));
 							default:
 								return A2(
 									$elm$core$String$join,
 									' ',
 									_List_fromArray(
-										[$mdgriffith$elm_ui$Internal$Style$classes._, $mdgriffith$elm_ui$Internal$Style$classes.df, $mdgriffith$elm_ui$Internal$Style$classes.ca]));
+										[$mdgriffith$elm_ui$Internal$Style$classes.ab, $mdgriffith$elm_ui$Internal$Style$classes.df, $mdgriffith$elm_ui$Internal$Style$classes.ca]));
 						}
 					}())
 				]),
@@ -10768,21 +11054,21 @@ var $mdgriffith$elm_ui$Internal$Model$addNodeName = F2(
 var $mdgriffith$elm_ui$Internal$Model$alignXName = function (align) {
 	switch (align) {
 		case 0:
-			return $mdgriffith$elm_ui$Internal$Style$classes.aF + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.a0);
+			return $mdgriffith$elm_ui$Internal$Style$classes.aG + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.a1);
 		case 2:
-			return $mdgriffith$elm_ui$Internal$Style$classes.aF + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.a1);
+			return $mdgriffith$elm_ui$Internal$Style$classes.aG + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.a2);
 		default:
-			return $mdgriffith$elm_ui$Internal$Style$classes.aF + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.bZ);
+			return $mdgriffith$elm_ui$Internal$Style$classes.aG + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.bZ);
 	}
 };
 var $mdgriffith$elm_ui$Internal$Model$alignYName = function (align) {
 	switch (align) {
 		case 0:
-			return $mdgriffith$elm_ui$Internal$Style$classes.aG + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.b3);
+			return $mdgriffith$elm_ui$Internal$Style$classes.aH + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.b3);
 		case 2:
-			return $mdgriffith$elm_ui$Internal$Style$classes.aG + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.bY);
+			return $mdgriffith$elm_ui$Internal$Style$classes.aH + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.bY);
 		default:
-			return $mdgriffith$elm_ui$Internal$Style$classes.aG + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.b_);
+			return $mdgriffith$elm_ui$Internal$Style$classes.aH + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.b_);
 	}
 };
 var $elm$virtual_dom$VirtualDom$attribute = F2(
@@ -10941,7 +11227,7 @@ var $mdgriffith$elm_ui$Internal$Model$renderHeight = function (h) {
 			var name = 'height-px-' + val;
 			return _Utils_Tuple3(
 				$mdgriffith$elm_ui$Internal$Flag$none,
-				$mdgriffith$elm_ui$Internal$Style$classes.be + (' ' + name),
+				$mdgriffith$elm_ui$Internal$Style$classes.bf + (' ' + name),
 				_List_fromArray(
 					[
 						A3($mdgriffith$elm_ui$Internal$Model$Single, name, 'height', val + 'px')
@@ -10949,16 +11235,16 @@ var $mdgriffith$elm_ui$Internal$Model$renderHeight = function (h) {
 		case 1:
 			return _Utils_Tuple3(
 				A2($mdgriffith$elm_ui$Internal$Flag$add, $mdgriffith$elm_ui$Internal$Flag$heightContent, $mdgriffith$elm_ui$Internal$Flag$none),
-				$mdgriffith$elm_ui$Internal$Style$classes.aL,
+				$mdgriffith$elm_ui$Internal$Style$classes.aM,
 				_List_Nil);
 		case 2:
 			var portion = h.a;
 			return (portion === 1) ? _Utils_Tuple3(
 				A2($mdgriffith$elm_ui$Internal$Flag$add, $mdgriffith$elm_ui$Internal$Flag$heightFill, $mdgriffith$elm_ui$Internal$Flag$none),
-				$mdgriffith$elm_ui$Internal$Style$classes.aM,
+				$mdgriffith$elm_ui$Internal$Style$classes.aN,
 				_List_Nil) : _Utils_Tuple3(
 				A2($mdgriffith$elm_ui$Internal$Flag$add, $mdgriffith$elm_ui$Internal$Flag$heightFill, $mdgriffith$elm_ui$Internal$Flag$none),
-				$mdgriffith$elm_ui$Internal$Style$classes.bf + (' height-fill-' + $elm$core$String$fromInt(portion)),
+				$mdgriffith$elm_ui$Internal$Style$classes.bg + (' height-fill-' + $elm$core$String$fromInt(portion)),
 				_List_fromArray(
 					[
 						A3(
@@ -11023,13 +11309,13 @@ var $mdgriffith$elm_ui$Internal$Model$renderWidth = function (w) {
 		case 1:
 			return _Utils_Tuple3(
 				A2($mdgriffith$elm_ui$Internal$Flag$add, $mdgriffith$elm_ui$Internal$Flag$widthContent, $mdgriffith$elm_ui$Internal$Flag$none),
-				$mdgriffith$elm_ui$Internal$Style$classes.aY,
+				$mdgriffith$elm_ui$Internal$Style$classes.aZ,
 				_List_Nil);
 		case 2:
 			var portion = w.a;
 			return (portion === 1) ? _Utils_Tuple3(
 				A2($mdgriffith$elm_ui$Internal$Flag$add, $mdgriffith$elm_ui$Internal$Flag$widthFill, $mdgriffith$elm_ui$Internal$Flag$none),
-				$mdgriffith$elm_ui$Internal$Style$classes.aZ,
+				$mdgriffith$elm_ui$Internal$Style$classes.a_,
 				_List_Nil) : _Utils_Tuple3(
 				A2($mdgriffith$elm_ui$Internal$Flag$add, $mdgriffith$elm_ui$Internal$Flag$widthFill, $mdgriffith$elm_ui$Internal$Flag$none),
 				$mdgriffith$elm_ui$Internal$Style$classes.bS + (' width-fill-' + $elm$core$String$fromInt(portion)),
@@ -11368,7 +11654,7 @@ var $mdgriffith$elm_ui$Internal$Model$gatherAttrRecursive = F8(
 									elementAttrs = $temp$elementAttrs;
 									continue gatherAttrRecursive;
 								case 1:
-									var $temp$classes = classes + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.aY),
+									var $temp$classes = classes + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.aZ),
 										$temp$node = node,
 										$temp$has = A2(
 										$mdgriffith$elm_ui$Internal$Flag$add,
@@ -11391,7 +11677,7 @@ var $mdgriffith$elm_ui$Internal$Model$gatherAttrRecursive = F8(
 								case 2:
 									var portion = width.a;
 									if (portion === 1) {
-										var $temp$classes = classes + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.aZ),
+										var $temp$classes = classes + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.a_),
 											$temp$node = node,
 											$temp$has = A2(
 											$mdgriffith$elm_ui$Internal$Flag$add,
@@ -11494,7 +11780,7 @@ var $mdgriffith$elm_ui$Internal$Model$gatherAttrRecursive = F8(
 									var px = height.a;
 									var val = $elm$core$String$fromInt(px) + 'px';
 									var name = 'height-px-' + val;
-									var $temp$classes = $mdgriffith$elm_ui$Internal$Style$classes.be + (' ' + (name + (' ' + classes))),
+									var $temp$classes = $mdgriffith$elm_ui$Internal$Style$classes.bf + (' ' + (name + (' ' + classes))),
 										$temp$node = node,
 										$temp$has = A2($mdgriffith$elm_ui$Internal$Flag$add, $mdgriffith$elm_ui$Internal$Flag$height, has),
 										$temp$transform = transform,
@@ -11515,7 +11801,7 @@ var $mdgriffith$elm_ui$Internal$Model$gatherAttrRecursive = F8(
 									elementAttrs = $temp$elementAttrs;
 									continue gatherAttrRecursive;
 								case 1:
-									var $temp$classes = $mdgriffith$elm_ui$Internal$Style$classes.aL + (' ' + classes),
+									var $temp$classes = $mdgriffith$elm_ui$Internal$Style$classes.aM + (' ' + classes),
 										$temp$node = node,
 										$temp$has = A2(
 										$mdgriffith$elm_ui$Internal$Flag$add,
@@ -11538,7 +11824,7 @@ var $mdgriffith$elm_ui$Internal$Model$gatherAttrRecursive = F8(
 								case 2:
 									var portion = height.a;
 									if (portion === 1) {
-										var $temp$classes = $mdgriffith$elm_ui$Internal$Style$classes.aM + (' ' + classes),
+										var $temp$classes = $mdgriffith$elm_ui$Internal$Style$classes.aN + (' ' + classes),
 											$temp$node = node,
 											$temp$has = A2(
 											$mdgriffith$elm_ui$Internal$Flag$add,
@@ -11559,7 +11845,7 @@ var $mdgriffith$elm_ui$Internal$Model$gatherAttrRecursive = F8(
 										elementAttrs = $temp$elementAttrs;
 										continue gatherAttrRecursive;
 									} else {
-										var $temp$classes = classes + (' ' + ($mdgriffith$elm_ui$Internal$Style$classes.bf + (' height-fill-' + $elm$core$String$fromInt(portion)))),
+										var $temp$classes = classes + (' ' + ($mdgriffith$elm_ui$Internal$Style$classes.bg + (' height-fill-' + $elm$core$String$fromInt(portion)))),
 											$temp$node = node,
 											$temp$has = A2(
 											$mdgriffith$elm_ui$Internal$Flag$add,
@@ -12037,7 +12323,7 @@ var $mdgriffith$elm_ui$Element$column = F2(
 			$mdgriffith$elm_ui$Internal$Model$div,
 			A2(
 				$elm$core$List$cons,
-				$mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.cr + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.ag)),
+				$mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.cr + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.ai)),
 				A2(
 					$elm$core$List$cons,
 					$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$shrink),
@@ -12131,7 +12417,7 @@ var $mdgriffith$elm_ui$Element$row = F2(
 			$mdgriffith$elm_ui$Internal$Model$div,
 			A2(
 				$elm$core$List$cons,
-				$mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.ag + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.I)),
+				$mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.ai + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.I)),
 				A2(
 					$elm$core$List$cons,
 					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$shrink),
@@ -12227,8 +12513,8 @@ var $mdgriffith$elm_ui$Internal$Model$focusDefaultStyle = {
 		{
 			X: 0,
 			Y: A4($mdgriffith$elm_ui$Internal$Model$Rgba, 155 / 255, 203 / 255, 1, 1),
-			bo: _Utils_Tuple2(0, 0),
-			ab: 3
+			bp: _Utils_Tuple2(0, 0),
+			ad: 3
 		})
 };
 var $mdgriffith$elm_ui$Internal$Model$optionsToRecord = function (options) {
@@ -12571,7 +12857,7 @@ var $mdgriffith$elm_ui$Element$tableHelper = F2(
 							$mdgriffith$elm_ui$Internal$Model$StyleClass,
 							$mdgriffith$elm_ui$Internal$Flag$gridPosition,
 							$mdgriffith$elm_ui$Internal$Model$GridPosition(
-								{cp: columnLevel, bd: 1, w: rowLevel, y: 1}))
+								{cp: columnLevel, be: 1, w: rowLevel, y: 1}))
 						]),
 					$mdgriffith$elm_ui$Internal$Model$Unkeyed(
 						_List_fromArray(
@@ -12760,7 +13046,7 @@ var $author$project$Main$viewGroup = F2(
 						t: $mdgriffith$elm_ui$Element$text('Team'),
 						r: F2(
 							function (n, groupRow) {
-								return $mdgriffith$elm_ui$Element$text(groupRow.aX.cY);
+								return $mdgriffith$elm_ui$Element$text(groupRow.aY.cY);
 							}),
 						y: $mdgriffith$elm_ui$Element$fillPortion(2)
 					},
@@ -12805,7 +13091,7 @@ var $author$project$Main$viewGroup = F2(
 						r: F2(
 							function (n, groupRow) {
 								return $mdgriffith$elm_ui$Element$text(
-									$elm$core$String$fromInt(groupRow.bc));
+									$elm$core$String$fromInt(groupRow.bd));
 							}),
 						y: $mdgriffith$elm_ui$Element$fill
 					},
@@ -12823,7 +13109,7 @@ var $author$project$Main$viewGroup = F2(
 						r: F2(
 							function (n, groupRow) {
 								return $mdgriffith$elm_ui$Element$text(
-									$elm$core$String$fromInt(groupRow.bb));
+									$elm$core$String$fromInt(groupRow.bc));
 							}),
 						y: $mdgriffith$elm_ui$Element$fill
 					},
@@ -12934,8 +13220,8 @@ var $elm$html$Html$Attributes$tabindex = function (n) {
 };
 var $mdgriffith$elm_ui$Element$Input$button = F2(
 	function (attrs, _v0) {
-		var onPress = _v0.bp;
-		var label = _v0.aN;
+		var onPress = _v0.aR;
+		var label = _v0.aA;
 		return A4(
 			$mdgriffith$elm_ui$Internal$Model$element,
 			$mdgriffith$elm_ui$Internal$Model$asEl,
@@ -12948,7 +13234,7 @@ var $mdgriffith$elm_ui$Element$Input$button = F2(
 					$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$shrink),
 					A2(
 						$elm$core$List$cons,
-						$mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.av + (' ' + ($mdgriffith$elm_ui$Internal$Style$classes.I + (' ' + ($mdgriffith$elm_ui$Internal$Style$classes.dd + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.bn)))))),
+						$mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.av + (' ' + ($mdgriffith$elm_ui$Internal$Style$classes.I + (' ' + ($mdgriffith$elm_ui$Internal$Style$classes.dd + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.bo)))))),
 						A2(
 							$elm$core$List$cons,
 							$mdgriffith$elm_ui$Element$pointer,
@@ -12998,9 +13284,9 @@ var $author$project$Main$viewGroupButton = F2(
 					$mdgriffith$elm_ui$Element$padding(20)
 				]),
 			{
-				aN: $mdgriffith$elm_ui$Element$text(
+				aA: $mdgriffith$elm_ui$Element$text(
 					$author$project$Euro2020$groupToString(gr)),
-				bp: $elm$core$Maybe$Just(
+				aR: $elm$core$Maybe$Just(
 					$author$project$Main$ClickedGroup(gr))
 			});
 	});
@@ -13023,23 +13309,6 @@ var $author$project$Main$viewGroupTitle = function (group) {
 				$author$project$Euro2020$groupToString(group))
 			]));
 };
-var $elm_community$list_extra$List$Extra$groupsOfWithStep = F3(
-	function (size, step, xs) {
-		var xs_ = A2($elm$core$List$drop, step, xs);
-		var thisGroup = A2($elm$core$List$take, size, xs);
-		var okayLength = _Utils_eq(
-			size,
-			$elm$core$List$length(thisGroup));
-		var okayArgs = (size > 0) && (step > 0);
-		return (okayArgs && okayLength) ? A2(
-			$elm$core$List$cons,
-			thisGroup,
-			A3($elm_community$list_extra$List$Extra$groupsOfWithStep, size, step, xs_)) : _List_Nil;
-	});
-var $elm_community$list_extra$List$Extra$groupsOf = F2(
-	function (size, xs) {
-		return A3($elm_community$list_extra$List$Extra$groupsOfWithStep, size, size, xs);
-	});
 var $mdgriffith$elm_ui$Internal$Model$Left = 0;
 var $mdgriffith$elm_ui$Element$alignLeft = $mdgriffith$elm_ui$Internal$Model$AlignX(0);
 var $mdgriffith$elm_ui$Internal$Model$Right = 2;
@@ -13053,7 +13322,7 @@ var $elm$html$Html$Attributes$src = function (url) {
 };
 var $mdgriffith$elm_ui$Element$image = F2(
 	function (attrs, _v0) {
-		var src = _v0.aB;
+		var src = _v0.aC;
 		var description = _v0.ax;
 		var imageAttributes = A2(
 			$elm$core$List$filter,
@@ -13527,7 +13796,7 @@ var $mdgriffith$elm_ui$Element$Input$redistributeOver = F4(
 								b: A2($elm$core$List$cons, attr, els.b),
 								g: A2($elm$core$List$cons, attr, els.g),
 								a: A2($elm$core$List$cons, attr, els.a),
-								ae: A2($elm$core$List$cons, attr, els.ae)
+								ag: A2($elm$core$List$cons, attr, els.ag)
 							});
 					case 7:
 						var cls = attr.a;
@@ -13649,13 +13918,13 @@ var $mdgriffith$elm_ui$Element$Input$redistribute = F3(
 				b: $elm$core$List$reverse(redist.b),
 				g: $elm$core$List$reverse(redist.g),
 				a: $elm$core$List$reverse(redist.a),
-				ae: $elm$core$List$reverse(redist.ae)
+				ag: $elm$core$List$reverse(redist.ag)
 			};
 		}(
 			A3(
 				$elm$core$List$foldl,
 				A2($mdgriffith$elm_ui$Element$Input$redistributeOver, isMultiline, stacked),
-				{l: _List_Nil, b: _List_Nil, g: _List_Nil, a: _List_Nil, ae: _List_Nil},
+				{l: _List_Nil, b: _List_Nil, g: _List_Nil, a: _List_Nil, ag: _List_Nil},
 				attrs));
 	});
 var $mdgriffith$elm_ui$Element$Input$renderBox = function (_v0) {
@@ -13699,7 +13968,7 @@ var $mdgriffith$elm_ui$Element$Input$renderPlaceholder = F3(
 					_List_fromArray(
 						[
 							$mdgriffith$elm_ui$Element$Font$color($mdgriffith$elm_ui$Element$Input$charcoal),
-							$mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.bn + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.c4)),
+							$mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.bo + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.c4)),
 							$mdgriffith$elm_ui$Element$clip,
 							$mdgriffith$elm_ui$Element$Border$color(
 							A4($mdgriffith$elm_ui$Element$rgba, 0, 0, 0, 0)),
@@ -13731,7 +14000,7 @@ var $mdgriffith$elm_ui$Element$Input$textHelper = F3(
 		var redistributed = A3(
 			$mdgriffith$elm_ui$Element$Input$redistribute,
 			_Utils_eq(textInput.j, $mdgriffith$elm_ui$Element$Input$TextArea),
-			$mdgriffith$elm_ui$Element$Input$isStacked(textOptions.aN),
+			$mdgriffith$elm_ui$Element$Input$isStacked(textOptions.aA),
 			withDefaults);
 		var onlySpacing = function (attr) {
 			if ((attr.$ === 4) && (attr.b.$ === 5)) {
@@ -13844,7 +14113,7 @@ var $mdgriffith$elm_ui$Element$Input$textHelper = F3(
 							$mdgriffith$elm_ui$Element$Input$value(textOptions.dp),
 							$mdgriffith$elm_ui$Internal$Model$Attr(
 							$elm$html$Html$Events$onInput(textOptions.cZ)),
-							$mdgriffith$elm_ui$Element$Input$hiddenLabelAttribute(textOptions.aN),
+							$mdgriffith$elm_ui$Element$Input$hiddenLabelAttribute(textOptions.aA),
 							$mdgriffith$elm_ui$Element$Input$spellcheck(textInput.x),
 							A2(
 							$elm$core$Maybe$withDefault,
@@ -13865,7 +14134,7 @@ var $mdgriffith$elm_ui$Element$Input$textHelper = F3(
 							_List_fromArray(
 								[
 									$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
-									A2($elm$core$List$any, $mdgriffith$elm_ui$Element$Input$hasFocusStyle, withDefaults) ? $mdgriffith$elm_ui$Internal$Model$NoAttribute : $mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.a8),
+									A2($elm$core$List$any, $mdgriffith$elm_ui$Element$Input$hasFocusStyle, withDefaults) ? $mdgriffith$elm_ui$Internal$Model$NoAttribute : $mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.a9),
 									$mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.cS)
 								])),
 						redistributed.a),
@@ -13888,7 +14157,7 @@ var $mdgriffith$elm_ui$Element$Input$textHelper = F3(
 											A2(
 												$elm$core$List$cons,
 												$mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.cR),
-												redistributed.ae)))),
+												redistributed.ag)))),
 								$mdgriffith$elm_ui$Internal$Model$Unkeyed(
 									function () {
 										if (textOptions.dp === '') {
@@ -13934,7 +14203,7 @@ var $mdgriffith$elm_ui$Element$Input$textHelper = F3(
 						$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
 						A2(
 							$elm$core$List$cons,
-							A2($elm$core$List$any, $mdgriffith$elm_ui$Element$Input$hasFocusStyle, withDefaults) ? $mdgriffith$elm_ui$Internal$Model$NoAttribute : $mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.a8),
+							A2($elm$core$List$any, $mdgriffith$elm_ui$Element$Input$hasFocusStyle, withDefaults) ? $mdgriffith$elm_ui$Internal$Model$NoAttribute : $mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.a9),
 							$elm$core$List$concat(
 								_List_fromArray(
 									[
@@ -13965,9 +14234,9 @@ var $mdgriffith$elm_ui$Element$Input$textHelper = F3(
 				A2($mdgriffith$elm_ui$Internal$Model$Class, $mdgriffith$elm_ui$Internal$Flag$cursor, $mdgriffith$elm_ui$Internal$Style$classes.ct),
 				A2(
 					$elm$core$List$cons,
-					$mdgriffith$elm_ui$Element$Input$isHiddenLabel(textOptions.aN) ? $mdgriffith$elm_ui$Internal$Model$NoAttribute : $mdgriffith$elm_ui$Element$spacing(5),
+					$mdgriffith$elm_ui$Element$Input$isHiddenLabel(textOptions.aA) ? $mdgriffith$elm_ui$Internal$Model$NoAttribute : $mdgriffith$elm_ui$Element$spacing(5),
 					A2($elm$core$List$cons, $mdgriffith$elm_ui$Element$Region$announce, redistributed.b))),
-			textOptions.aN,
+			textOptions.aA,
 			wrappedInput);
 	});
 var $mdgriffith$elm_ui$Element$Input$text = $mdgriffith$elm_ui$Element$Input$textHelper(
@@ -14024,7 +14293,7 @@ var $author$project$Main$viewMatchInput = F2(
 					]),
 				disableSettings),
 			{
-				aN: $mdgriffith$elm_ui$Element$Input$labelHidden(''),
+				aA: $mdgriffith$elm_ui$Element$Input$labelHidden(''),
 				cZ: $author$project$Euro2020$isPlayoffMatch(match) ? A2($author$project$Main$UpdatedPlayoffScore, match.az, homeOrAway) : A2($author$project$Main$UpdatedGroupScore, match.az, homeOrAway),
 				c5: $elm$core$Maybe$Nothing,
 				dp: function () {
@@ -14071,7 +14340,7 @@ var $author$project$Main$viewMatch = function (m) {
 								$mdgriffith$elm_ui$Element$width(
 								$mdgriffith$elm_ui$Element$fillPortion(1))
 							]),
-						{ax: '', aB: m.B.cC}),
+						{ax: '', aC: m.B.cC}),
 						A2(
 						$mdgriffith$elm_ui$Element$el,
 						_List_fromArray(
@@ -14113,7 +14382,7 @@ var $author$project$Main$viewMatch = function (m) {
 								$mdgriffith$elm_ui$Element$width(
 								$mdgriffith$elm_ui$Element$fillPortion(1))
 							]),
-						{ax: '', aB: m.z.cC}),
+						{ax: '', aC: m.z.cC}),
 						A2(
 						$mdgriffith$elm_ui$Element$el,
 						_List_fromArray(
@@ -14202,8 +14471,8 @@ var $author$project$Main$playoffWinnerButton = F2(
 						{q: 10, o: 0}))
 				]),
 			{
-				aN: $mdgriffith$elm_ui$Element$text(labelText),
-				bp: $elm$core$Maybe$Just(
+				aA: $mdgriffith$elm_ui$Element$text(labelText),
+				aR: $elm$core$Maybe$Just(
 					A2($author$project$Main$PickedWinner, m.az, homeOrAway))
 			});
 	});
@@ -14260,7 +14529,7 @@ var $author$project$Main$viewPlayoffMatch = function (m) {
 								$mdgriffith$elm_ui$Element$width(
 								$mdgriffith$elm_ui$Element$fillPortion(1))
 							]),
-						{ax: m.B.cY + ' flag', aB: m.B.cC}),
+						{ax: m.B.cY + ' flag', aC: m.B.cC}),
 						draw ? A2($author$project$Main$playoffWinnerButton, m, 0) : A2(
 						$mdgriffith$elm_ui$Element$el,
 						_List_fromArray(
@@ -14302,7 +14571,7 @@ var $author$project$Main$viewPlayoffMatch = function (m) {
 								$mdgriffith$elm_ui$Element$width(
 								$mdgriffith$elm_ui$Element$fillPortion(1))
 							]),
-						{ax: m.z.cY + ' flag', aB: m.z.cC}),
+						{ax: m.z.cY + ' flag', aC: m.z.cC}),
 						draw ? A2($author$project$Main$playoffWinnerButton, m, 1) : A2(
 						$mdgriffith$elm_ui$Element$el,
 						_List_fromArray(
@@ -14339,6 +14608,23 @@ var $author$project$Main$viewPlayoffMatches = F2(
 					A2($mdgriffith$elm_ui$Element$spacingXY, 0, 5)
 				]),
 			A2($elm$core$List$map, $author$project$Main$viewPlayoffMatch, playOffMatches));
+	});
+var $author$project$Main$ClickedRandom = {$: 4};
+var $author$project$Main$viewRandomButton = F2(
+	function (allGroupRows, gr) {
+		var groupRows = A2($author$project$Euro2020$getGroupRows, gr, allGroupRows);
+		return A2(
+			$mdgriffith$elm_ui$Element$Input$button,
+			_List_fromArray(
+				[
+					$mdgriffith$elm_ui$Element$Background$color($author$project$Main$blue),
+					$mdgriffith$elm_ui$Element$Font$color($author$project$Main$white),
+					$mdgriffith$elm_ui$Element$padding(20)
+				]),
+			{
+				aA: $mdgriffith$elm_ui$Element$text('Random'),
+				aR: $elm$core$Maybe$Just($author$project$Main$ClickedRandom)
+			});
 	});
 var $author$project$Main$viewSpacer = function (p) {
 	return A2(
@@ -14403,14 +14689,14 @@ var $author$project$Main$view = function (model) {
 								]),
 							A2(
 								$elm$core$List$map,
-								$author$project$Main$viewGroupButton(model.ah),
+								$author$project$Main$viewGroupButton(model._),
 								$author$project$Main$groupStageGroups)),
 							$author$project$Main$viewSpacer(16),
-							$author$project$Main$viewGroupTitle(model.aa),
+							$author$project$Main$viewGroupTitle(model.ac),
 							$author$project$Main$viewSpacer(16),
-							A2($author$project$Main$viewGroup, model.ah, model.aa),
+							A2($author$project$Main$viewGroup, model._, model.ac),
 							$author$project$Main$viewSpacer(8),
-							A2($author$project$Main$viewMatches, model.aj, model.aa),
+							A2($author$project$Main$viewMatches, model.aa, model.ac),
 							$author$project$Main$viewSpacer(16),
 							A2(
 							$mdgriffith$elm_ui$Element$row,
@@ -14435,7 +14721,14 @@ var $author$project$Main$view = function (model) {
 								$author$project$Main$viewPlayoffMatches(model.D),
 								_List_fromArray(
 									[6, 7, 8, 9]))),
-							$author$project$Main$viewSpacer(48)
+							$author$project$Main$viewSpacer(48),
+							A2(
+							$mdgriffith$elm_ui$Element$row,
+							_List_Nil,
+							_List_fromArray(
+								[
+									A2($author$project$Main$viewRandomButton, model._, 7)
+								]))
 						])),
 					A2(
 					$mdgriffith$elm_ui$Element$column,
@@ -14447,7 +14740,7 @@ var $author$project$Main$view = function (model) {
 					_List_Nil)
 				])));
 };
-var $author$project$Main$main = $elm$browser$Browser$sandbox(
-	{cO: $author$project$Main$init, dJ: $author$project$Main$update, r: $author$project$Main$view});
+var $author$project$Main$main = $elm$browser$Browser$element(
+	{cO: $author$project$Main$init, $7: $author$project$Main$subscriptions, dJ: $author$project$Main$update, r: $author$project$Main$view});
 _Platform_export({'Main':{'init':$author$project$Main$main(
 	$elm$json$Json$Decode$succeed(0))(0)}});}(this));
