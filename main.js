@@ -5505,6 +5505,10 @@ var $author$project$Main$GotRandomScores = function (a) {
 var $author$project$Main$UpdateGroups = function (a) {
 	return {$: 6, a: a};
 };
+var $author$project$Main$UpdatePlayoff = F2(
+	function (a, b) {
+		return {$: 7, a: a, b: b};
+	});
 var $elm$random$Random$Generate = $elm$core$Basics$identity;
 var $elm$random$Random$Seed = F2(
 	function (a, b) {
@@ -6757,44 +6761,49 @@ var $author$project$Main$updateWinner = F3(
 	});
 var $author$project$Euro2020$Away = 1;
 var $author$project$Euro2020$Home = 0;
-var $author$project$Main$updateWinners = function (m) {
-	var _v0 = _Utils_Tuple2(m.cI, m.b7);
-	_v0$1:
-	while (true) {
-		if (!_v0.a.$) {
-			if (!_v0.b.$) {
-				var homeScore = _v0.a.a;
-				var awayScore = _v0.b.a;
-				return (_Utils_cmp(homeScore, awayScore) > 0) ? _Utils_update(
-					m,
-					{
-						dK: $elm$core$Maybe$Just(0)
-					}) : ((_Utils_cmp(awayScore, homeScore) > 0) ? _Utils_update(
-					m,
-					{
-						dK: $elm$core$Maybe$Just(1)
-					}) : _Utils_update(
-					m,
-					{dK: $elm$core$Maybe$Nothing}));
-			} else {
-				break _v0$1;
+var $author$project$Main$updateWinnerByScore = F2(
+	function (matchId, m) {
+		if (_Utils_eq(m.az, matchId)) {
+			var _v0 = _Utils_Tuple2(m.cI, m.b7);
+			_v0$1:
+			while (true) {
+				if (!_v0.a.$) {
+					if (!_v0.b.$) {
+						var homeScore = _v0.a.a;
+						var awayScore = _v0.b.a;
+						return (_Utils_cmp(homeScore, awayScore) > 0) ? _Utils_update(
+							m,
+							{
+								dK: $elm$core$Maybe$Just(0)
+							}) : ((_Utils_cmp(awayScore, homeScore) > 0) ? _Utils_update(
+							m,
+							{
+								dK: $elm$core$Maybe$Just(1)
+							}) : _Utils_update(
+							m,
+							{dK: $elm$core$Maybe$Nothing}));
+					} else {
+						break _v0$1;
+					}
+				} else {
+					if (_v0.b.$ === 1) {
+						break _v0$1;
+					} else {
+						var _v2 = _v0.a;
+						return _Utils_update(
+							m,
+							{dK: $elm$core$Maybe$Nothing});
+					}
+				}
 			}
+			var _v1 = _v0.b;
+			return _Utils_update(
+				m,
+				{dK: $elm$core$Maybe$Nothing});
 		} else {
-			if (_v0.b.$ === 1) {
-				break _v0$1;
-			} else {
-				var _v2 = _v0.a;
-				return _Utils_update(
-					m,
-					{dK: $elm$core$Maybe$Nothing});
-			}
+			return m;
 		}
-	}
-	var _v1 = _v0.b;
-	return _Utils_update(
-		m,
-		{dK: $elm$core$Maybe$Nothing});
-};
+	});
 var $author$project$Main$update = F2(
 	function (msg, model) {
 		update:
@@ -6844,7 +6853,18 @@ var $author$project$Main$update = F2(
 						$elm$core$List$map,
 						A3($author$project$Main$updateMatchScoreByID, matchId, homeOrAway, score),
 						model.D);
-					var newPlayoffWinners = A2($elm$core$List$map, $author$project$Main$updateWinners, newPlayOffMatches);
+					var $temp$msg = A2($author$project$Main$UpdatePlayoff, newPlayOffMatches, matchId),
+						$temp$model = model;
+					msg = $temp$msg;
+					model = $temp$model;
+					continue update;
+				case 7:
+					var newPlayOffMatches = msg.a;
+					var matchId = msg.b;
+					var newPlayoffWinners = A2(
+						$elm$core$List$map,
+						$author$project$Main$updateWinnerByScore(matchId),
+						newPlayOffMatches);
 					var newPlayOffMatches2 = A2(
 						$elm$core$List$map,
 						$author$project$Main$updatePlayoffMatches(newPlayoffWinners),

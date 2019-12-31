@@ -75,6 +75,7 @@ type Msg
     | ClickedRandom
     | GotRandomScores (List Int)
     | UpdateGroups (List Match)
+    | UpdatePlayoff (List Match) Int
 
 
 updateMatchScoreByID : Int -> HomeOrAway -> String -> Match -> Match
@@ -181,24 +182,28 @@ updateWinner matchId homeOrAway m =
         m
 
 
-updateWinners : Match -> Match
-updateWinners m =
-    case ( m.homeScore, m.awayScore ) of
-        ( Just homeScore, Just awayScore ) ->
-            if homeScore > awayScore then
-                { m | winner = Just Home }
+updateWinnerByScore : Int -> Match -> Match
+updateWinnerByScore matchId m =
+    if m.id == matchId then
+        case ( m.homeScore, m.awayScore ) of
+            ( Just homeScore, Just awayScore ) ->
+                if homeScore > awayScore then
+                    { m | winner = Just Home }
 
-            else if awayScore > homeScore then
-                { m | winner = Just Away }
+                else if awayScore > homeScore then
+                    { m | winner = Just Away }
 
-            else
+                else
+                    { m | winner = Nothing }
+
+            ( _, Nothing ) ->
                 { m | winner = Nothing }
 
-        ( _, Nothing ) ->
-            { m | winner = Nothing }
+            ( Nothing, _ ) ->
+                { m | winner = Nothing }
 
-        ( Nothing, _ ) ->
-            { m | winner = Nothing }
+    else
+        m
 
 
 randomScoresGen : Random.Generator (List Int)
@@ -256,16 +261,18 @@ update msg model =
             let
                 newPlayOffMatches =
                     List.map (updateMatchScoreByID matchId homeOrAway score) model.playOffMatches
+            in
+            update (UpdatePlayoff newPlayOffMatches matchId) model
 
+        UpdatePlayoff newPlayOffMatches matchId ->
+            let
                 newPlayoffWinners =
-                    List.map updateWinners newPlayOffMatches
+                    List.map (updateWinnerByScore matchId) newPlayOffMatches
 
                 newPlayOffMatches2 =
                     List.map (updatePlayoffMatches newPlayoffWinners) newPlayoffWinners
             in
-            ( { model
-                | playOffMatches = newPlayOffMatches2
-              }
+            ( { model | playOffMatches = newPlayOffMatches2 }
             , Cmd.none
             )
 
