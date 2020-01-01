@@ -112,6 +112,15 @@ updateMatchScore m =
     { m | homeScore = homeScore, awayScore = awayScore }
 
 
+resetGame : Match -> Match
+resetGame m =
+    if isPlayoffMatch m then
+        { m | homeScore = Nothing, awayScore = Nothing, winner = Nothing }
+
+    else
+        m
+
+
 getWinner : Team -> Int -> List Match -> Team
 getWinner team matchId ms =
     let
@@ -314,10 +323,10 @@ update msg model =
                     get3rdTeamTable groupRowsAfterTieBreaks
 
                 newPlayOffMatches =
-                    List.map (updateTeams groupRowsAfterTieBreaks thirdPlaces) model.playOffMatches
+                    List.map (updateTeams groupRowsAfterTieBreaks thirdPlaces) playOffMatches
 
                 newPlayOffMatchesScores =
-                    List.map updateMatchScore newPlayOffMatches
+                    List.map resetGame newPlayOffMatches
             in
             ( { model
                 | matches = matches
