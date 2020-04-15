@@ -77,6 +77,7 @@ type Msg
     | UpdateGroups (List Match)
     | UpdatePlayoff (List Match) Int
     | UpdateToken String
+    | UpdateTopScorer String
 
 
 updateMatchScoreByID : Int -> HomeOrAway -> String -> Match -> Match
@@ -261,6 +262,9 @@ update msg model =
     case msg of
         UpdateToken token ->
             ( { model | token = token }, Cmd.none )
+
+        UpdateTopScorer topScorer ->
+            ( { model | topScorer = topScorer }, Cmd.none )
 
         ClickedRandom ->
             ( model, Random.generate GotRandomScores randomScoresGen )
@@ -569,6 +573,7 @@ type alias Model =
     , groups : List GroupRow
     , selectedGroup : Group
     , token : String
+    , topScorer : String
     }
 
 
@@ -579,6 +584,7 @@ init _ =
       , playOffMatches = playOffMatches
       , selectedGroup = GroupA
       , token = ""
+      , topScorer = ""
       }
     , Cmd.none
     )
@@ -623,10 +629,13 @@ view model =
                     ]
                 , viewSpacer 16
                 , row [] (List.map (viewPlayoffMatches model.playOffMatches) [ RoundOf16, QuarterFinals, SemiFinals, Final ])
-                , viewSpacer 48
+                , viewSpacer 16
+                , row [] [ viewTopScorerInput model.topScorer ]
+                , viewSpacer 16
                 , row [] [ viewTokenInput model.token ]
                 , viewSpacer 16
-                , row [] [ viewRandomButton model.groups QuarterFinals ]
+
+                --, row [] [ viewRandomButton model.groups QuarterFinals ]
                 ]
             , column [ width (fillPortion 1) ] []
             ]
@@ -988,4 +997,15 @@ viewTokenInput token =
         , placeholder = Nothing
         , label = Element.Input.labelAbove [] (text "Token")
         , text = token
+        }
+
+
+viewTopScorerInput : String -> Element Msg
+viewTopScorerInput topScorer =
+    Element.Input.text
+        []
+        { onChange = UpdateTopScorer
+        , placeholder = Nothing
+        , label = Element.Input.labelAbove [] (text "Top Scorer")
+        , text = topScorer
         }
