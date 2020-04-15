@@ -76,6 +76,7 @@ type Msg
     | GotRandomScores (List Int)
     | UpdateGroups (List Match)
     | UpdatePlayoff (List Match) Int
+    | UpdateToken String
 
 
 updateMatchScoreByID : Int -> HomeOrAway -> String -> Match -> Match
@@ -258,6 +259,9 @@ updateRandomScore scores m =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        UpdateToken token ->
+            ( { model | token = token }, Cmd.none )
+
         ClickedRandom ->
             ( model, Random.generate GotRandomScores randomScoresGen )
 
@@ -564,6 +568,7 @@ type alias Model =
     , playOffMatches : List Match
     , groups : List GroupRow
     , selectedGroup : Group
+    , token : String
     }
 
 
@@ -573,6 +578,7 @@ init _ =
       , groups = groupRows
       , playOffMatches = playOffMatches
       , selectedGroup = GroupA
+      , token = ""
       }
     , Cmd.none
     )
@@ -618,6 +624,8 @@ view model =
                 , viewSpacer 16
                 , row [] (List.map (viewPlayoffMatches model.playOffMatches) [ RoundOf16, QuarterFinals, SemiFinals, Final ])
                 , viewSpacer 48
+                , row [] [ viewTokenInput model.token ]
+                , viewSpacer 16
                 , row [] [ viewRandomButton model.groups QuarterFinals ]
                 ]
             , column [ width (fillPortion 1) ] []
@@ -969,4 +977,15 @@ viewRandomButton allGroupRows gr =
         ]
         { onPress = Just ClickedRandom
         , label = text "Random"
+        }
+
+
+viewTokenInput : String -> Element Msg
+viewTokenInput token =
+    Element.Input.text
+        []
+        { onChange = UpdateToken
+        , placeholder = Nothing
+        , label = Element.Input.labelAbove [] (text "Token")
+        , text = token
         }
