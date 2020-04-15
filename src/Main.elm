@@ -10,6 +10,8 @@ import Element.Region as Region
 import Euro2020 exposing (Group(..), GroupRow, GroupState(..), HomeOrAway(..), Match, Team, TeamPosition, defaultFlag, filterByMatchId, getGroupRows, getGroupState, getScore, groupRows, groupToString, isPlayoffMatch, matches, playOffMatches, updateTeams)
 import Html exposing (Html)
 import Html.Attributes
+import Http
+import Json.Decode exposing (list, string)
 import List.Extra
 import Random
 
@@ -78,6 +80,8 @@ type Msg
     | UpdatePlayoff (List Match) Int
     | UpdateToken String
     | UpdateTopScorer String
+    | PredictionsSaved (Result Http.Error (List String))
+    | ClickedSubmit
 
 
 updateMatchScoreByID : Int -> HomeOrAway -> String -> Match -> Match
@@ -260,6 +264,17 @@ updateRandomScore scores m =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        ClickedSubmit ->
+            ( model, postPredictions model )
+
+        PredictionsSaved result ->
+            case result of
+                Ok _ ->
+                    ( { model | message = "Sent!" }, Cmd.none )
+
+                Err _ ->
+                    ( { model | message = "Failed!" }, Cmd.none )
+
         UpdateToken token ->
             ( { model | token = token }, Cmd.none )
 
@@ -574,6 +589,7 @@ type alias Model =
     , selectedGroup : Group
     , token : String
     , topScorer : String
+    , message : String
     }
 
 
@@ -585,6 +601,7 @@ init _ =
       , selectedGroup = GroupA
       , token = ""
       , topScorer = ""
+      , message = "Submit"
       }
     , Cmd.none
     )
@@ -633,6 +650,8 @@ view model =
                 , row [] [ viewTopScorerInput model.topScorer ]
                 , viewSpacer 16
                 , row [] [ viewTokenInput model.token ]
+                , viewSpacer 16
+                , row [] [ viewSubmitButton model.message ]
                 , viewSpacer 16
 
                 --, row [] [ viewRandomButton model.groups QuarterFinals ]
@@ -1008,4 +1027,25 @@ viewTopScorerInput topScorer =
         , placeholder = Nothing
         , label = Element.Input.labelAbove [] (text "Top Scorer")
         , text = topScorer
+        }
+
+
+postPredictions : Model -> Cmd Msg
+postPredictions model =
+    Http.post
+        { url = "http://localhost:8000/tournaments/2/predictions?token=vibrant-modrid"
+        , body = Http.emptyBody
+        , expect = Http.expectJson PredictionsSaved (list string)
+        }
+
+
+viewSubmitButton : String -> Element Msg
+viewSubmitButton message =
+    Element.Input.button
+        [ Background.color blue
+        , Font.color white
+        , padding 20
+        ]
+        { onPress = Just ClickedSubmit
+        , label = text message
         }
