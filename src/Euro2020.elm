@@ -1,6 +1,7 @@
 module Euro2020 exposing (Group(..), GroupRow, GroupState(..), HomeOrAway(..), Match, Team, TeamPosition, defaultFlag, filterByMatchId, getGroupRows, getGroupState, getScore, groupRows, groupToString, isPlayoffMatch, matches, maybeOrDefaultTeam, playOffMatches, updateTeams)
 
 import Array
+import Json.Encode as Encode
 import Set
 
 
@@ -10,15 +11,36 @@ type alias Team =
     }
 
 
-type MatchState
-    = Undeclared
-    | Declared
-    | Finished
-
-
 type HomeOrAway
     = Home
     | Away
+
+
+
+--type alias KoMatch =
+--    { id : Int
+--    , homeTeam : Team
+--    , homeScore : Maybe Int
+--    , awayTeam : Team
+--    , awayScore : Maybe Int
+--    , group : Group
+--    , date : String
+--    , time : String
+--    , home_win : Maybe Bool
+--    }
+--
+--
+--type alias FinishedKoMatch =
+--    { id : Int
+--    , homeTeam : Team
+--    , homeScore : Int
+--    , awayTeam : Team
+--    , awayScore : Int
+--    , group : Group
+--    , date : String
+--    , time : String
+--    , home_win : Bool
+--    }
 
 
 type alias Match =
@@ -30,8 +52,41 @@ type alias Match =
     , group : Group
     , date : String
     , time : String
-    , winner : Maybe HomeOrAway
+    , homeWin : Maybe Bool
     }
+
+
+
+--type alias FinishedGroupMatch =
+--    { id : Int
+--    , homeTeam : Team
+--    , homeScore : Int
+--    , awayTeam : Team
+--    , awayScore : Int
+--    , group : Group
+--    , date : String
+--    , time : String
+--    }
+--
+--
+--jsonGroupMatch : FinishedGroupMatch -> Encode.Value
+--jsonGroupMatch match =
+--    Encode.object
+--        [ ( "match_number", Encode.int match.id )
+--        , ( "home_score", Encode.int match.homeScore )
+--        , ( "away_score", Encode.int match.awayScore )
+--        ]
+--
+--
+--
+--jsonKoMatch : FinishedGroupMatch -> Encode.Value
+--jsonKoMatch match =
+--    Encode.object
+--        [ ( "match_number", Encode.int match.id )
+--        , ( "home_score", Encode.int match.homeScore )
+--        , ( "away_score", Encode.int match.awayScore )
+--        , ( "home_win", Encode.bool match.home_win )
+--        ]
 
 
 type Group

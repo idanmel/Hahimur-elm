@@ -73,7 +73,7 @@ type Msg
     = UpdatedGroupScore Int HomeOrAway String
     | UpdatedPlayoffScore Int HomeOrAway String
     | ClickedGroup Group
-    | PickedWinner Int HomeOrAway
+    | PickedWinner Int Bool
     | ClickedRandom
     | GotRandomScores (List Int)
     | UpdateGroups (List Match)
@@ -121,7 +121,7 @@ updateMatchScore m =
 resetGame : Match -> Match
 resetGame m =
     if isPlayoffMatch m then
-        { m | homeScore = Nothing, awayScore = Nothing, winner = Nothing }
+        { m | homeScore = Nothing, awayScore = Nothing, homeWin = Nothing }
 
     else
         m
@@ -138,11 +138,11 @@ getWinner team matchId ms =
     in
     case match of
         Just m ->
-            case m.winner of
-                Just Home ->
+            case m.homeWin of
+                Just True ->
                     m.homeTeam
 
-                Just Away ->
+                Just False ->
                     m.awayTeam
 
                 Nothing ->
@@ -206,10 +206,10 @@ updatePlayoffMatches ms m =
             m
 
 
-updateWinner : Int -> HomeOrAway -> Match -> Match
-updateWinner matchId homeOrAway m =
+updateWinner : Int -> Bool -> Match -> Match
+updateWinner matchId homeWin m =
     if m.id == matchId then
-        { m | winner = Just homeOrAway }
+        { m | homeWin = Just homeWin }
 
     else
         m
@@ -221,19 +221,19 @@ updateWinnerByScore matchId m =
         case ( m.homeScore, m.awayScore ) of
             ( Just homeScore, Just awayScore ) ->
                 if homeScore > awayScore then
-                    { m | winner = Just Home }
+                    { m | homeWin = Just True }
 
                 else if awayScore > homeScore then
-                    { m | winner = Just Away }
+                    { m | homeWin = Just False }
 
                 else
-                    { m | winner = Nothing }
+                    { m | homeWin = Nothing }
 
             ( _, Nothing ) ->
-                { m | winner = Nothing }
+                { m | homeWin = Nothing }
 
             ( Nothing, _ ) ->
-                { m | winner = Nothing }
+                { m | homeWin = Nothing }
 
     else
         m
@@ -734,35 +734,35 @@ viewMatch m =
         ]
 
 
-getPlayoffText : Match -> HomeOrAway -> String
-getPlayoffText m homeOrAway =
-    case homeOrAway of
-        Home ->
-            if m.winner == Just Home then
+getPlayoffText : Match -> Bool -> String
+getPlayoffText m homeWin =
+    case homeWin of
+        True ->
+            if m.homeWin == Just True then
                 m.homeTeam.name ++ "   ✓"
 
             else
                 m.homeTeam.name
 
-        Away ->
-            if m.winner == Just Away then
+        False ->
+            if m.homeWin == Just False then
                 m.awayTeam.name ++ "   ✓"
 
             else
                 m.awayTeam.name
 
 
-playoffWinnerButton : Match -> HomeOrAway -> Element Msg
-playoffWinnerButton m homeOrAway =
+playoffWinnerButton : Match -> Bool -> Element Msg
+playoffWinnerButton m homeWin =
     let
         labelText =
-            getPlayoffText m homeOrAway
+            getPlayoffText m homeWin
     in
     Element.Input.button
         [ width (fillPortion 6)
         , paddingEach { edges | left = 10, top = 0 }
         ]
-        { onPress = Just (PickedWinner m.id homeOrAway)
+        { onPress = Just (PickedWinner m.id homeWin)
         , label = text labelText
         }
 
@@ -786,10 +786,10 @@ viewPlayoffMatch m =
                     False
 
         homeTeamText =
-            getPlayoffText m Home
+            getPlayoffText m True
 
         awayTeamText =
-            getPlayoffText m Away
+            getPlayoffText m False
     in
     column
         [ Border.width 2
@@ -801,7 +801,7 @@ viewPlayoffMatch m =
             [ width fill ]
             [ image [ alignLeft, paddingEach { edges | left = 10, top = 0 }, centerY, width (fillPortion 1) ] { src = m.homeTeam.flag, description = m.homeTeam.name ++ " flag" }
             , if draw then
-                playoffWinnerButton m Home
+                playoffWinnerButton m True
 
               else
                 el [ alignLeft, paddingEach { edges | left = 10, top = 0 }, centerY, width (fillPortion 6) ] (text homeTeamText)
@@ -811,7 +811,7 @@ viewPlayoffMatch m =
             [ width fill ]
             [ image [ alignLeft, paddingEach { edges | left = 10, top = 0 }, centerY, width (fillPortion 1) ] { src = m.awayTeam.flag, description = m.awayTeam.name ++ " flag" }
             , if draw then
-                playoffWinnerButton m Away
+                playoffWinnerButton m False
 
               else
                 el [ alignLeft, paddingEach { edges | left = 10, top = 0 }, width (fillPortion 6) ] (text awayTeamText)
