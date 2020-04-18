@@ -292,7 +292,7 @@ update msg model =
                 newMatches =
                     List.map2 updateRandomScore randomScoresGrouped model.matches
             in
-            updateGroups newMatches model
+            ( updateGroups newMatches model, Cmd.none )
 
         PickedWinner matchId homeOrAway ->
             let
@@ -331,10 +331,10 @@ update msg model =
                 newMatches =
                     List.map (updateMatchScoreByID matchId homeOrAway score) model.matches
             in
-            updateGroups newMatches model
+            ( updateGroups newMatches model, Cmd.none )
 
 
-updateGroups : List Match -> Model -> ( Model, Cmd Msg )
+updateGroups : List Match -> Model -> Model
 updateGroups matches model =
     let
         newGroupRows =
@@ -353,13 +353,11 @@ updateGroups matches model =
         newPlayOffMatchesScores =
             List.map resetGame newPlayOffMatches
     in
-    ( { model
+    { model
         | matches = matches
         , playOffMatches = newPlayOffMatchesScores
         , groups = groupRowsAfterTieBreaks
-      }
-    , Cmd.none
-    )
+    }
 
 
 updateGroupRow2 : GroupRow -> Int -> Int -> GroupRow

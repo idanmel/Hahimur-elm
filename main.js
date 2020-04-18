@@ -7613,11 +7613,9 @@ var $author$project$Main$updateGroups = F2(
 			A2($author$project$Euro2020$updateTeams, groupRowsAfterTieBreaks, thirdPlaces),
 			$author$project$Euro2020$playOffMatches);
 		var newPlayOffMatchesScores = A2($elm$core$List$map, $author$project$Main$resetGame, newPlayOffMatches);
-		return _Utils_Tuple2(
-			_Utils_update(
-				model,
-				{aa: groupRowsAfterTieBreaks, R: matches, D: newPlayOffMatchesScores}),
-			$elm$core$Platform$Cmd$none);
+		return _Utils_update(
+			model,
+			{aa: groupRowsAfterTieBreaks, R: matches, D: newPlayOffMatchesScores});
 	});
 var $author$project$Main$updateMatchScore = function (m) {
 	var homeScore = _Utils_eq(m.B.cO, $author$project$Euro2020$defaultFlag) ? $elm$core$Maybe$Nothing : m.aQ;
@@ -7913,7 +7911,9 @@ var $author$project$Main$update = F2(
 					var randomScores = msg.a;
 					var randomScoresGrouped = A2($elm_community$list_extra$List$Extra$groupsOf, 2, randomScores);
 					var newMatches = A3($elm$core$List$map2, $author$project$Main$updateRandomScore, randomScoresGrouped, model.R);
-					return A2($author$project$Main$updateGroups, newMatches, model);
+					return _Utils_Tuple2(
+						A2($author$project$Main$updateGroups, newMatches, model),
+						$elm$core$Platform$Cmd$none);
 				case 3:
 					var matchId = msg.a;
 					var homeOrAway = msg.b;
@@ -7974,7 +7974,9 @@ var $author$project$Main$update = F2(
 						$elm$core$List$map,
 						A3($author$project$Main$updateMatchScoreByID, matchId, homeOrAway, score),
 						model.R);
-					return A2($author$project$Main$updateGroups, newMatches, model);
+					return _Utils_Tuple2(
+						A2($author$project$Main$updateGroups, newMatches, model),
+						$elm$core$Platform$Cmd$none);
 			}
 		}
 	});
