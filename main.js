@@ -5712,12 +5712,9 @@ var $author$project$Main$subscriptions = function (model) {
 var $author$project$Main$GotRandomScores = function (a) {
 	return {$: 5, a: a};
 };
-var $author$project$Main$UpdateGroups = function (a) {
-	return {$: 6, a: a};
-};
 var $author$project$Main$UpdatePlayoff = F2(
 	function (a, b) {
-		return {$: 7, a: a, b: b};
+		return {$: 6, a: a, b: b};
 	});
 var $elm$random$Random$Generate = $elm$core$Basics$identity;
 var $elm$random$Random$Seed = F2(
@@ -5838,83 +5835,6 @@ var $elm$core$List$drop = F2(
 			}
 		}
 	});
-var $elm$core$List$head = function (list) {
-	if (list.b) {
-		var x = list.a;
-		var xs = list.b;
-		return $elm$core$Maybe$Just(x);
-	} else {
-		return $elm$core$Maybe$Nothing;
-	}
-};
-var $elm_community$list_extra$List$Extra$getAt = F2(
-	function (idx, xs) {
-		return (idx < 0) ? $elm$core$Maybe$Nothing : $elm$core$List$head(
-			A2($elm$core$List$drop, idx, xs));
-	});
-var $author$project$Main$get3rdPlaceTeam = function (groupRows) {
-	var thirdPlace = A2($elm_community$list_extra$List$Extra$getAt, 2, groupRows);
-	if (!thirdPlace.$) {
-		var gr = thirdPlace.a;
-		return gr;
-	} else {
-		return $author$project$Euro2020$GroupRow(
-			A2($author$project$Euro2020$Team, 'Turkey', ''))(0)(0)(0)(0)(0)(0)(0)(0)(0)(0)(0)(0);
-	}
-};
-var $elm$core$List$filter = F2(
-	function (isGood, list) {
-		return A3(
-			$elm$core$List$foldr,
-			F2(
-				function (x, xs) {
-					return isGood(x) ? A2($elm$core$List$cons, x, xs) : xs;
-				}),
-			_List_Nil,
-			list);
-	});
-var $author$project$Euro2020$filterByGroup = F2(
-	function (groupName, grs) {
-		return A2(
-			$elm$core$List$filter,
-			function (gr) {
-				return _Utils_eq(gr.aB, groupName);
-			},
-			grs);
-	});
-var $author$project$Euro2020$getScore = function (gr) {
-	return _List_fromArray(
-		[gr.bI, gr.bV, gr.bT, gr.bU, gr.bh, gr.bi, gr.b$]);
-};
-var $elm$core$List$sortBy = _List_sortBy;
-var $author$project$Euro2020$getGroupRows = F2(
-	function (groupName, grs) {
-		return $elm$core$List$reverse(
-			A2(
-				$elm$core$List$sortBy,
-				$author$project$Euro2020$getScore,
-				A2($author$project$Euro2020$filterByGroup, groupName, grs)));
-	});
-var $author$project$Main$get3rdTeamTable = function (groupRows) {
-	var thirdPlaceF = $author$project$Main$get3rdPlaceTeam(
-		A2($author$project$Euro2020$getGroupRows, 5, groupRows));
-	var thirdPlaceE = $author$project$Main$get3rdPlaceTeam(
-		A2($author$project$Euro2020$getGroupRows, 4, groupRows));
-	var thirdPlaceD = $author$project$Main$get3rdPlaceTeam(
-		A2($author$project$Euro2020$getGroupRows, 3, groupRows));
-	var thirdPlaceC = $author$project$Main$get3rdPlaceTeam(
-		A2($author$project$Euro2020$getGroupRows, 2, groupRows));
-	var thirdPlaceB = $author$project$Main$get3rdPlaceTeam(
-		A2($author$project$Euro2020$getGroupRows, 1, groupRows));
-	var thirdPlaceA = $author$project$Main$get3rdPlaceTeam(
-		A2($author$project$Euro2020$getGroupRows, 0, groupRows));
-	return $elm$core$List$reverse(
-		A2(
-			$elm$core$List$sortBy,
-			$author$project$Euro2020$getScore,
-			_List_fromArray(
-				[thirdPlaceA, thirdPlaceB, thirdPlaceC, thirdPlaceD, thirdPlaceE, thirdPlaceF])));
-};
 var $elm$core$List$takeReverse = F3(
 	function (n, list, kept) {
 		takeReverse:
@@ -6059,7 +5979,7 @@ var $elm_community$list_extra$List$Extra$groupsOf = F2(
 		return A3($elm_community$list_extra$List$Extra$groupsOfWithStep, size, size, xs);
 	});
 var $author$project$Main$PredictionsSaved = function (a) {
-	return {$: 10, a: a};
+	return {$: 9, a: a};
 };
 var $elm$json$Json$Encode$int = _Json_wrap;
 var $elm$json$Json$Encode$null = _Json_encodeNull;
@@ -7030,6 +6950,83 @@ var $author$project$Main$randomScoresGen = function () {
 		numberOfMatches,
 		A2($elm$random$Random$int, 0, 3));
 }();
+var $elm$core$List$head = function (list) {
+	if (list.b) {
+		var x = list.a;
+		var xs = list.b;
+		return $elm$core$Maybe$Just(x);
+	} else {
+		return $elm$core$Maybe$Nothing;
+	}
+};
+var $elm_community$list_extra$List$Extra$getAt = F2(
+	function (idx, xs) {
+		return (idx < 0) ? $elm$core$Maybe$Nothing : $elm$core$List$head(
+			A2($elm$core$List$drop, idx, xs));
+	});
+var $author$project$Main$get3rdPlaceTeam = function (groupRows) {
+	var thirdPlace = A2($elm_community$list_extra$List$Extra$getAt, 2, groupRows);
+	if (!thirdPlace.$) {
+		var gr = thirdPlace.a;
+		return gr;
+	} else {
+		return $author$project$Euro2020$GroupRow(
+			A2($author$project$Euro2020$Team, 'Turkey', ''))(0)(0)(0)(0)(0)(0)(0)(0)(0)(0)(0)(0);
+	}
+};
+var $elm$core$List$filter = F2(
+	function (isGood, list) {
+		return A3(
+			$elm$core$List$foldr,
+			F2(
+				function (x, xs) {
+					return isGood(x) ? A2($elm$core$List$cons, x, xs) : xs;
+				}),
+			_List_Nil,
+			list);
+	});
+var $author$project$Euro2020$filterByGroup = F2(
+	function (groupName, grs) {
+		return A2(
+			$elm$core$List$filter,
+			function (gr) {
+				return _Utils_eq(gr.aB, groupName);
+			},
+			grs);
+	});
+var $author$project$Euro2020$getScore = function (gr) {
+	return _List_fromArray(
+		[gr.bI, gr.bV, gr.bT, gr.bU, gr.bh, gr.bi, gr.b$]);
+};
+var $elm$core$List$sortBy = _List_sortBy;
+var $author$project$Euro2020$getGroupRows = F2(
+	function (groupName, grs) {
+		return $elm$core$List$reverse(
+			A2(
+				$elm$core$List$sortBy,
+				$author$project$Euro2020$getScore,
+				A2($author$project$Euro2020$filterByGroup, groupName, grs)));
+	});
+var $author$project$Main$get3rdTeamTable = function (groupRows) {
+	var thirdPlaceF = $author$project$Main$get3rdPlaceTeam(
+		A2($author$project$Euro2020$getGroupRows, 5, groupRows));
+	var thirdPlaceE = $author$project$Main$get3rdPlaceTeam(
+		A2($author$project$Euro2020$getGroupRows, 4, groupRows));
+	var thirdPlaceD = $author$project$Main$get3rdPlaceTeam(
+		A2($author$project$Euro2020$getGroupRows, 3, groupRows));
+	var thirdPlaceC = $author$project$Main$get3rdPlaceTeam(
+		A2($author$project$Euro2020$getGroupRows, 2, groupRows));
+	var thirdPlaceB = $author$project$Main$get3rdPlaceTeam(
+		A2($author$project$Euro2020$getGroupRows, 1, groupRows));
+	var thirdPlaceA = $author$project$Main$get3rdPlaceTeam(
+		A2($author$project$Euro2020$getGroupRows, 0, groupRows));
+	return $elm$core$List$reverse(
+		A2(
+			$elm$core$List$sortBy,
+			$author$project$Euro2020$getScore,
+			_List_fromArray(
+				[thirdPlaceA, thirdPlaceB, thirdPlaceC, thirdPlaceD, thirdPlaceE, thirdPlaceF])));
+};
 var $elm$core$List$any = F2(
 	function (isOkay, list) {
 		any:
@@ -7199,203 +7196,6 @@ var $author$project$Main$updateGroup = F2(
 			$elm$core$List$map,
 			$author$project$Main$updateGroupRow(match),
 			group);
-	});
-var $author$project$Main$updateMatchScore = function (m) {
-	var homeScore = _Utils_eq(m.B.cO, $author$project$Euro2020$defaultFlag) ? $elm$core$Maybe$Nothing : m.aQ;
-	var awayScore = _Utils_eq(m.z.cO, $author$project$Euro2020$defaultFlag) ? $elm$core$Maybe$Nothing : m.aK;
-	return _Utils_update(
-		m,
-		{aK: awayScore, aQ: homeScore});
-};
-var $author$project$Main$updateMatchScoreByID = F4(
-	function (matchId, homeOrAway, score, m) {
-		if (_Utils_eq(m.ab, matchId)) {
-			if (!homeOrAway) {
-				return $author$project$Main$updateMatchScore(
-					_Utils_update(
-						m,
-						{
-							aQ: $elm$core$String$toInt(score)
-						}));
-			} else {
-				return $author$project$Main$updateMatchScore(
-					_Utils_update(
-						m,
-						{
-							aK: $elm$core$String$toInt(score)
-						}));
-			}
-		} else {
-			return m;
-		}
-	});
-var $author$project$Euro2020$filterByMatchId = F2(
-	function (matchId, matchess) {
-		return A2(
-			$elm$core$List$filter,
-			function (m) {
-				return _Utils_eq(m.ab, matchId);
-			},
-			matchess);
-	});
-var $author$project$Main$getWinner = F3(
-	function (team, matchId, ms) {
-		var one_matches = A2($author$project$Euro2020$filterByMatchId, matchId, ms);
-		var match = A2($elm_community$list_extra$List$Extra$getAt, 0, one_matches);
-		if (!match.$) {
-			var m = match.a;
-			var _v1 = m.bn;
-			if (!_v1.$) {
-				if (_v1.a) {
-					return m.B;
-				} else {
-					return m.z;
-				}
-			} else {
-				return team;
-			}
-		} else {
-			return team;
-		}
-	});
-var $author$project$Main$updatePlayoffMatches = F2(
-	function (ms, m) {
-		var _v0 = m.ab;
-		switch (_v0) {
-			case 45:
-				return _Utils_update(
-					m,
-					{
-						z: A3(
-							$author$project$Main$getWinner,
-							A2($author$project$Euro2020$Team, 'Winner Match 42', $author$project$Euro2020$defaultFlag),
-							42,
-							ms),
-						B: A3(
-							$author$project$Main$getWinner,
-							A2($author$project$Euro2020$Team, 'Winner Match 41', $author$project$Euro2020$defaultFlag),
-							41,
-							ms)
-					});
-			case 46:
-				return _Utils_update(
-					m,
-					{
-						z: A3(
-							$author$project$Main$getWinner,
-							A2($author$project$Euro2020$Team, 'Winner Match 37', $author$project$Euro2020$defaultFlag),
-							37,
-							ms),
-						B: A3(
-							$author$project$Main$getWinner,
-							A2($author$project$Euro2020$Team, 'Winner Match 39', $author$project$Euro2020$defaultFlag),
-							39,
-							ms)
-					});
-			case 47:
-				return _Utils_update(
-					m,
-					{
-						z: A3(
-							$author$project$Main$getWinner,
-							A2($author$project$Euro2020$Team, 'Winner Match 38', $author$project$Euro2020$defaultFlag),
-							38,
-							ms),
-						B: A3(
-							$author$project$Main$getWinner,
-							A2($author$project$Euro2020$Team, 'Winner Match 40', $author$project$Euro2020$defaultFlag),
-							40,
-							ms)
-					});
-			case 48:
-				return _Utils_update(
-					m,
-					{
-						z: A3(
-							$author$project$Main$getWinner,
-							A2($author$project$Euro2020$Team, 'Winner Match 44', $author$project$Euro2020$defaultFlag),
-							44,
-							ms),
-						B: A3(
-							$author$project$Main$getWinner,
-							A2($author$project$Euro2020$Team, 'Winner Match 43', $author$project$Euro2020$defaultFlag),
-							43,
-							ms)
-					});
-			case 49:
-				return _Utils_update(
-					m,
-					{
-						z: A3(
-							$author$project$Main$getWinner,
-							A2($author$project$Euro2020$Team, 'Winner Match 45', $author$project$Euro2020$defaultFlag),
-							45,
-							ms),
-						B: A3(
-							$author$project$Main$getWinner,
-							A2($author$project$Euro2020$Team, 'Winner Match 46', $author$project$Euro2020$defaultFlag),
-							46,
-							ms)
-					});
-			case 50:
-				return _Utils_update(
-					m,
-					{
-						z: A3(
-							$author$project$Main$getWinner,
-							A2($author$project$Euro2020$Team, 'Winner Match 47', $author$project$Euro2020$defaultFlag),
-							47,
-							ms),
-						B: A3(
-							$author$project$Main$getWinner,
-							A2($author$project$Euro2020$Team, 'Winner Match 48', $author$project$Euro2020$defaultFlag),
-							48,
-							ms)
-					});
-			case 51:
-				return _Utils_update(
-					m,
-					{
-						z: A3(
-							$author$project$Main$getWinner,
-							A2($author$project$Euro2020$Team, 'Winner Match 50', $author$project$Euro2020$defaultFlag),
-							50,
-							ms),
-						B: A3(
-							$author$project$Main$getWinner,
-							A2($author$project$Euro2020$Team, 'Winner Match 49', $author$project$Euro2020$defaultFlag),
-							49,
-							ms)
-					});
-			default:
-				return m;
-		}
-	});
-var $elm_community$list_extra$List$Extra$last = function (items) {
-	last:
-	while (true) {
-		if (!items.b) {
-			return $elm$core$Maybe$Nothing;
-		} else {
-			if (!items.b.b) {
-				var x = items.a;
-				return $elm$core$Maybe$Just(x);
-			} else {
-				var rest = items.b;
-				var $temp$items = rest;
-				items = $temp$items;
-				continue last;
-			}
-		}
-	}
-};
-var $author$project$Main$updateRandomScore = F2(
-	function (scores, m) {
-		var homeScore = $elm$core$List$head(scores);
-		var awayScore = $elm_community$list_extra$List$Extra$last(scores);
-		return _Utils_update(
-			m,
-			{aK: awayScore, aQ: homeScore});
 	});
 var $author$project$Euro2020$B1 = 0;
 var $author$project$Euro2020$C1 = 1;
@@ -7800,6 +7600,222 @@ var $author$project$Euro2020$updateTeams = F3(
 				return m;
 		}
 	});
+var $author$project$Main$updateGroups = F2(
+	function (matches, model) {
+		var newGroupRows = A3($elm$core$List$foldl, $author$project$Main$updateGroup, $author$project$Euro2020$groupRows, matches);
+		var groupRowsAfterTieBreaks = A2(
+			$elm$core$List$map,
+			A2($author$project$Main$resolveTieBreak, matches, newGroupRows),
+			newGroupRows);
+		var thirdPlaces = $author$project$Main$get3rdTeamTable(groupRowsAfterTieBreaks);
+		var newPlayOffMatches = A2(
+			$elm$core$List$map,
+			A2($author$project$Euro2020$updateTeams, groupRowsAfterTieBreaks, thirdPlaces),
+			$author$project$Euro2020$playOffMatches);
+		var newPlayOffMatchesScores = A2($elm$core$List$map, $author$project$Main$resetGame, newPlayOffMatches);
+		return _Utils_Tuple2(
+			_Utils_update(
+				model,
+				{aa: groupRowsAfterTieBreaks, R: matches, D: newPlayOffMatchesScores}),
+			$elm$core$Platform$Cmd$none);
+	});
+var $author$project$Main$updateMatchScore = function (m) {
+	var homeScore = _Utils_eq(m.B.cO, $author$project$Euro2020$defaultFlag) ? $elm$core$Maybe$Nothing : m.aQ;
+	var awayScore = _Utils_eq(m.z.cO, $author$project$Euro2020$defaultFlag) ? $elm$core$Maybe$Nothing : m.aK;
+	return _Utils_update(
+		m,
+		{aK: awayScore, aQ: homeScore});
+};
+var $author$project$Main$updateMatchScoreByID = F4(
+	function (matchId, homeOrAway, score, m) {
+		if (_Utils_eq(m.ab, matchId)) {
+			if (!homeOrAway) {
+				return $author$project$Main$updateMatchScore(
+					_Utils_update(
+						m,
+						{
+							aQ: $elm$core$String$toInt(score)
+						}));
+			} else {
+				return $author$project$Main$updateMatchScore(
+					_Utils_update(
+						m,
+						{
+							aK: $elm$core$String$toInt(score)
+						}));
+			}
+		} else {
+			return m;
+		}
+	});
+var $author$project$Euro2020$filterByMatchId = F2(
+	function (matchId, matchess) {
+		return A2(
+			$elm$core$List$filter,
+			function (m) {
+				return _Utils_eq(m.ab, matchId);
+			},
+			matchess);
+	});
+var $author$project$Main$getWinner = F3(
+	function (team, matchId, ms) {
+		var one_matches = A2($author$project$Euro2020$filterByMatchId, matchId, ms);
+		var match = A2($elm_community$list_extra$List$Extra$getAt, 0, one_matches);
+		if (!match.$) {
+			var m = match.a;
+			var _v1 = m.bn;
+			if (!_v1.$) {
+				if (_v1.a) {
+					return m.B;
+				} else {
+					return m.z;
+				}
+			} else {
+				return team;
+			}
+		} else {
+			return team;
+		}
+	});
+var $author$project$Main$updatePlayoffMatches = F2(
+	function (ms, m) {
+		var _v0 = m.ab;
+		switch (_v0) {
+			case 45:
+				return _Utils_update(
+					m,
+					{
+						z: A3(
+							$author$project$Main$getWinner,
+							A2($author$project$Euro2020$Team, 'Winner Match 42', $author$project$Euro2020$defaultFlag),
+							42,
+							ms),
+						B: A3(
+							$author$project$Main$getWinner,
+							A2($author$project$Euro2020$Team, 'Winner Match 41', $author$project$Euro2020$defaultFlag),
+							41,
+							ms)
+					});
+			case 46:
+				return _Utils_update(
+					m,
+					{
+						z: A3(
+							$author$project$Main$getWinner,
+							A2($author$project$Euro2020$Team, 'Winner Match 37', $author$project$Euro2020$defaultFlag),
+							37,
+							ms),
+						B: A3(
+							$author$project$Main$getWinner,
+							A2($author$project$Euro2020$Team, 'Winner Match 39', $author$project$Euro2020$defaultFlag),
+							39,
+							ms)
+					});
+			case 47:
+				return _Utils_update(
+					m,
+					{
+						z: A3(
+							$author$project$Main$getWinner,
+							A2($author$project$Euro2020$Team, 'Winner Match 38', $author$project$Euro2020$defaultFlag),
+							38,
+							ms),
+						B: A3(
+							$author$project$Main$getWinner,
+							A2($author$project$Euro2020$Team, 'Winner Match 40', $author$project$Euro2020$defaultFlag),
+							40,
+							ms)
+					});
+			case 48:
+				return _Utils_update(
+					m,
+					{
+						z: A3(
+							$author$project$Main$getWinner,
+							A2($author$project$Euro2020$Team, 'Winner Match 44', $author$project$Euro2020$defaultFlag),
+							44,
+							ms),
+						B: A3(
+							$author$project$Main$getWinner,
+							A2($author$project$Euro2020$Team, 'Winner Match 43', $author$project$Euro2020$defaultFlag),
+							43,
+							ms)
+					});
+			case 49:
+				return _Utils_update(
+					m,
+					{
+						z: A3(
+							$author$project$Main$getWinner,
+							A2($author$project$Euro2020$Team, 'Winner Match 45', $author$project$Euro2020$defaultFlag),
+							45,
+							ms),
+						B: A3(
+							$author$project$Main$getWinner,
+							A2($author$project$Euro2020$Team, 'Winner Match 46', $author$project$Euro2020$defaultFlag),
+							46,
+							ms)
+					});
+			case 50:
+				return _Utils_update(
+					m,
+					{
+						z: A3(
+							$author$project$Main$getWinner,
+							A2($author$project$Euro2020$Team, 'Winner Match 47', $author$project$Euro2020$defaultFlag),
+							47,
+							ms),
+						B: A3(
+							$author$project$Main$getWinner,
+							A2($author$project$Euro2020$Team, 'Winner Match 48', $author$project$Euro2020$defaultFlag),
+							48,
+							ms)
+					});
+			case 51:
+				return _Utils_update(
+					m,
+					{
+						z: A3(
+							$author$project$Main$getWinner,
+							A2($author$project$Euro2020$Team, 'Winner Match 50', $author$project$Euro2020$defaultFlag),
+							50,
+							ms),
+						B: A3(
+							$author$project$Main$getWinner,
+							A2($author$project$Euro2020$Team, 'Winner Match 49', $author$project$Euro2020$defaultFlag),
+							49,
+							ms)
+					});
+			default:
+				return m;
+		}
+	});
+var $elm_community$list_extra$List$Extra$last = function (items) {
+	last:
+	while (true) {
+		if (!items.b) {
+			return $elm$core$Maybe$Nothing;
+		} else {
+			if (!items.b.b) {
+				var x = items.a;
+				return $elm$core$Maybe$Just(x);
+			} else {
+				var rest = items.b;
+				var $temp$items = rest;
+				items = $temp$items;
+				continue last;
+			}
+		}
+	}
+};
+var $author$project$Main$updateRandomScore = F2(
+	function (scores, m) {
+		var homeScore = $elm$core$List$head(scores);
+		var awayScore = $elm_community$list_extra$List$Extra$last(scores);
+		return _Utils_update(
+			m,
+			{aK: awayScore, aQ: homeScore});
+	});
 var $author$project$Main$updateWinner = F3(
 	function (matchId, homeWin, m) {
 		return _Utils_eq(m.ab, matchId) ? _Utils_update(
@@ -7856,11 +7872,11 @@ var $author$project$Main$update = F2(
 		update:
 		while (true) {
 			switch (msg.$) {
-				case 11:
+				case 10:
 					return _Utils_Tuple2(
 						model,
 						$author$project$Main$postPredictions(model));
-				case 10:
+				case 9:
 					var result = msg.a;
 					if (!result.$) {
 						return _Utils_Tuple2(
@@ -7875,14 +7891,14 @@ var $author$project$Main$update = F2(
 								{ak: 'Failed!'}),
 							$elm$core$Platform$Cmd$none);
 					}
-				case 8:
+				case 7:
 					var token = msg.a;
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
 							{an: token}),
 						$elm$core$Platform$Cmd$none);
-				case 9:
+				case 8:
 					var topScorer = msg.a;
 					return _Utils_Tuple2(
 						_Utils_update(
@@ -7897,11 +7913,7 @@ var $author$project$Main$update = F2(
 					var randomScores = msg.a;
 					var randomScoresGrouped = A2($elm_community$list_extra$List$Extra$groupsOf, 2, randomScores);
 					var newMatches = A3($elm$core$List$map2, $author$project$Main$updateRandomScore, randomScoresGrouped, model.R);
-					var $temp$msg = $author$project$Main$UpdateGroups(newMatches),
-						$temp$model = model;
-					msg = $temp$msg;
-					model = $temp$model;
-					continue update;
+					return A2($author$project$Main$updateGroups, newMatches, model);
 				case 3:
 					var matchId = msg.a;
 					var homeOrAway = msg.b;
@@ -7938,7 +7950,7 @@ var $author$project$Main$update = F2(
 					msg = $temp$msg;
 					model = $temp$model;
 					continue update;
-				case 7:
+				case 6:
 					var newPlayOffMatches = msg.a;
 					var matchId = msg.b;
 					var newPlayoffWinners = A2(
@@ -7954,7 +7966,7 @@ var $author$project$Main$update = F2(
 							model,
 							{D: newPlayOffMatches2}),
 						$elm$core$Platform$Cmd$none);
-				case 0:
+				default:
 					var matchId = msg.a;
 					var homeOrAway = msg.b;
 					var score = msg.c;
@@ -7962,29 +7974,7 @@ var $author$project$Main$update = F2(
 						$elm$core$List$map,
 						A3($author$project$Main$updateMatchScoreByID, matchId, homeOrAway, score),
 						model.R);
-					var $temp$msg = $author$project$Main$UpdateGroups(newMatches),
-						$temp$model = model;
-					msg = $temp$msg;
-					model = $temp$model;
-					continue update;
-				default:
-					var matches = msg.a;
-					var newGroupRows = A3($elm$core$List$foldl, $author$project$Main$updateGroup, $author$project$Euro2020$groupRows, matches);
-					var groupRowsAfterTieBreaks = A2(
-						$elm$core$List$map,
-						A2($author$project$Main$resolveTieBreak, matches, newGroupRows),
-						newGroupRows);
-					var thirdPlaces = $author$project$Main$get3rdTeamTable(groupRowsAfterTieBreaks);
-					var newPlayOffMatches = A2(
-						$elm$core$List$map,
-						A2($author$project$Euro2020$updateTeams, groupRowsAfterTieBreaks, thirdPlaces),
-						$author$project$Euro2020$playOffMatches);
-					var newPlayOffMatchesScores = A2($elm$core$List$map, $author$project$Main$resetGame, newPlayOffMatches);
-					return _Utils_Tuple2(
-						_Utils_update(
-							model,
-							{aa: groupRowsAfterTieBreaks, R: matches, D: newPlayOffMatchesScores}),
-						$elm$core$Platform$Cmd$none);
+					return A2($author$project$Main$updateGroups, newMatches, model);
 			}
 		}
 	});
@@ -15655,7 +15645,7 @@ var $author$project$Main$viewSpacer = function (p) {
 			]),
 		_List_Nil);
 };
-var $author$project$Main$ClickedSubmit = {$: 11};
+var $author$project$Main$ClickedSubmit = {$: 10};
 var $author$project$Main$viewSubmitButton = function (message) {
 	return A2(
 		$mdgriffith$elm_ui$Element$Input$button,
@@ -15671,7 +15661,7 @@ var $author$project$Main$viewSubmitButton = function (message) {
 		});
 };
 var $author$project$Main$UpdateToken = function (a) {
-	return {$: 8, a: a};
+	return {$: 7, a: a};
 };
 var $mdgriffith$elm_ui$Element$Input$Above = 2;
 var $mdgriffith$elm_ui$Element$Input$Label = F3(
@@ -15694,7 +15684,7 @@ var $author$project$Main$viewTokenInput = function (token) {
 		});
 };
 var $author$project$Main$UpdateTopScorer = function (a) {
-	return {$: 9, a: a};
+	return {$: 8, a: a};
 };
 var $author$project$Main$viewTopScorerInput = function (topScorer) {
 	return A2(

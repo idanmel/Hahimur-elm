@@ -77,7 +77,6 @@ type Msg
     | PickedWinner Int Bool
     | ClickedRandom
     | GotRandomScores (List Int)
-    | UpdateGroups (List Match)
     | UpdatePlayoff (List Match) Int
     | UpdateToken String
     | UpdateTopScorer String
@@ -293,7 +292,7 @@ update msg model =
                 newMatches =
                     List.map2 updateRandomScore randomScoresGrouped model.matches
             in
-            update (UpdateGroups newMatches) model
+            updateGroups newMatches model
 
         PickedWinner matchId homeOrAway ->
             let
@@ -332,33 +331,35 @@ update msg model =
                 newMatches =
                     List.map (updateMatchScoreByID matchId homeOrAway score) model.matches
             in
-            update (UpdateGroups newMatches) model
+            updateGroups newMatches model
 
-        UpdateGroups matches ->
-            let
-                newGroupRows =
-                    matches
-                        |> List.foldl updateGroup groupRows
 
-                groupRowsAfterTieBreaks =
-                    List.map (resolveTieBreak matches newGroupRows) newGroupRows
+updateGroups : List Match -> Model -> ( Model, Cmd Msg )
+updateGroups matches model =
+    let
+        newGroupRows =
+            matches
+                |> List.foldl updateGroup groupRows
 
-                thirdPlaces =
-                    get3rdTeamTable groupRowsAfterTieBreaks
+        groupRowsAfterTieBreaks =
+            List.map (resolveTieBreak matches newGroupRows) newGroupRows
 
-                newPlayOffMatches =
-                    List.map (updateTeams groupRowsAfterTieBreaks thirdPlaces) playOffMatches
+        thirdPlaces =
+            get3rdTeamTable groupRowsAfterTieBreaks
 
-                newPlayOffMatchesScores =
-                    List.map resetGame newPlayOffMatches
-            in
-            ( { model
-                | matches = matches
-                , playOffMatches = newPlayOffMatchesScores
-                , groups = groupRowsAfterTieBreaks
-              }
-            , Cmd.none
-            )
+        newPlayOffMatches =
+            List.map (updateTeams groupRowsAfterTieBreaks thirdPlaces) playOffMatches
+
+        newPlayOffMatchesScores =
+            List.map resetGame newPlayOffMatches
+    in
+    ( { model
+        | matches = matches
+        , playOffMatches = newPlayOffMatchesScores
+        , groups = groupRowsAfterTieBreaks
+      }
+    , Cmd.none
+    )
 
 
 updateGroupRow2 : GroupRow -> Int -> Int -> GroupRow
