@@ -1042,7 +1042,7 @@ encodeMatchPredictions model =
 postPredictions : Model -> Cmd Msg
 postPredictions model =
     Http.post
-        { url = "http://localhost:8000/tournaments/2/predictions?token=vibrant-modric"
+        { url = "http://localhost:8000/tournaments/2/predictions?token=" ++ model.token
         , body = Http.jsonBody (encodeMatchPredictions model)
         , expect = Http.expectWhatever PredictionsSaved
         }
