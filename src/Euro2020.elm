@@ -1,4 +1,4 @@
-module Euro2020 exposing (Group(..), GroupRow, GroupState(..), HomeOrAway(..), Match, Team, TeamPosition, defaultFlag, filterByMatchId, getGroupRows, getGroupState, getScore, groupRows, groupToString, isPlayoffMatch, matches, maybeOrDefaultTeam, playOffMatches, updateTeams)
+module Euro2020 exposing (Group(..), GroupRow, GroupState(..), HomeOrAway(..), Match, Team, TeamPosition, defaultFlag, encodeGroupMatches, encodeKoMatches, filterByMatchId, getGroupRows, getGroupState, getScore, groupRows, groupToString, isPlayoffMatch, matches, maybeOrDefaultTeam, playOffMatches, updateTeams)
 
 import Array
 import Json.Encode as Encode
@@ -16,33 +16,6 @@ type HomeOrAway
     | Away
 
 
-
---type alias KoMatch =
---    { id : Int
---    , homeTeam : Team
---    , homeScore : Maybe Int
---    , awayTeam : Team
---    , awayScore : Maybe Int
---    , group : Group
---    , date : String
---    , time : String
---    , home_win : Maybe Bool
---    }
---
---
---type alias FinishedKoMatch =
---    { id : Int
---    , homeTeam : Team
---    , homeScore : Int
---    , awayTeam : Team
---    , awayScore : Int
---    , group : Group
---    , date : String
---    , time : String
---    , home_win : Bool
---    }
-
-
 type alias Match =
     { id : Int
     , homeTeam : Team
@@ -56,37 +29,53 @@ type alias Match =
     }
 
 
+encodeMatchScore : Maybe Int -> Encode.Value
+encodeMatchScore matchScore =
+    case matchScore of
+        Just int ->
+            Encode.int int
 
---type alias FinishedGroupMatch =
---    { id : Int
---    , homeTeam : Team
---    , homeScore : Int
---    , awayTeam : Team
---    , awayScore : Int
---    , group : Group
---    , date : String
---    , time : String
---    }
---
---
---jsonGroupMatch : FinishedGroupMatch -> Encode.Value
---jsonGroupMatch match =
---    Encode.object
---        [ ( "match_number", Encode.int match.id )
---        , ( "home_score", Encode.int match.homeScore )
---        , ( "away_score", Encode.int match.awayScore )
---        ]
---
---
---
---jsonKoMatch : FinishedGroupMatch -> Encode.Value
---jsonKoMatch match =
---    Encode.object
---        [ ( "match_number", Encode.int match.id )
---        , ( "home_score", Encode.int match.homeScore )
---        , ( "away_score", Encode.int match.awayScore )
---        , ( "home_win", Encode.bool match.home_win )
---        ]
+        Nothing ->
+            Encode.null
+
+
+encodeHomeWin : Maybe Bool -> Encode.Value
+encodeHomeWin homeWin =
+    case homeWin of
+        Just bool ->
+            Encode.bool bool
+
+        Nothing ->
+            Encode.null
+
+
+encodeGroupMatch : Match -> Encode.Value
+encodeGroupMatch match =
+    Encode.object
+        [ ( "match_number", Encode.int match.id )
+        , ( "home_score", encodeMatchScore match.homeScore )
+        , ( "away_score", encodeMatchScore match.awayScore )
+        ]
+
+
+encodeGroupMatches : List Match -> Encode.Value
+encodeGroupMatches groupMatches =
+    Encode.list encodeGroupMatch groupMatches
+
+
+encodeKoMatch : Match -> Encode.Value
+encodeKoMatch match =
+    Encode.object
+        [ ( "match_number", Encode.int match.id )
+        , ( "home_score", encodeMatchScore match.homeScore )
+        , ( "away_score", encodeMatchScore match.awayScore )
+        , ( "home_win", encodeHomeWin match.homeWin )
+        ]
+
+
+encodeKoMatches : List Match -> Encode.Value
+encodeKoMatches koMatches =
+    Encode.list encodeKoMatch koMatches
 
 
 type Group

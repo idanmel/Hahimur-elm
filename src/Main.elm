@@ -7,11 +7,12 @@ import Element.Border as Border
 import Element.Font as Font
 import Element.Input
 import Element.Region as Region
-import Euro2020 exposing (Group(..), GroupRow, GroupState(..), HomeOrAway(..), Match, Team, TeamPosition, defaultFlag, filterByMatchId, getGroupRows, getGroupState, getScore, groupRows, groupToString, isPlayoffMatch, matches, playOffMatches, updateTeams)
+import Euro2020 exposing (Group(..), GroupRow, GroupState(..), HomeOrAway(..), Match, Team, TeamPosition, defaultFlag, encodeGroupMatches, encodeKoMatches, filterByMatchId, getGroupRows, getGroupState, getScore, groupRows, groupToString, isPlayoffMatch, matches, playOffMatches, updateTeams)
 import Html exposing (Html)
 import Html.Attributes
 import Http
 import Json.Decode exposing (list, string)
+import Json.Encode as Encode
 import List.Extra
 import Random
 
@@ -80,7 +81,7 @@ type Msg
     | UpdatePlayoff (List Match) Int
     | UpdateToken String
     | UpdateTopScorer String
-    | PredictionsSaved (Result Http.Error (List String))
+    | PredictionsSaved (Result Http.Error ())
     | ClickedSubmit
 
 
@@ -653,8 +654,7 @@ view model =
                 , viewSpacer 16
                 , row [] [ viewSubmitButton model.message ]
                 , viewSpacer 16
-
-                --, row [] [ viewRandomButton model.groups QuarterFinals ]
+                , row [] [ viewRandomButton model.groups QuarterFinals ]
                 ]
             , column [ width (fillPortion 1) ] []
             ]
@@ -1030,12 +1030,21 @@ viewTopScorerInput topScorer =
         }
 
 
+encodeMatchPredictions : Model -> Encode.Value
+encodeMatchPredictions model =
+    Encode.object
+        [ ( "group_matches", encodeGroupMatches model.matches )
+        , ( "knockout_matches", encodeKoMatches model.playOffMatches )
+        , ( "top_scorer", Encode.string model.topScorer )
+        ]
+
+
 postPredictions : Model -> Cmd Msg
 postPredictions model =
     Http.post
-        { url = "http://localhost:8000/tournaments/2/predictions?token=vibrant-modrid"
-        , body = Http.emptyBody
-        , expect = Http.expectJson PredictionsSaved (list string)
+        { url = "http://localhost:8000/tournaments/2/predictions?token=vibrant-modric"
+        , body = Http.jsonBody (encodeMatchPredictions model)
+        , expect = Http.expectWhatever PredictionsSaved
         }
 
 
