@@ -442,8 +442,8 @@ matches =
 
 
 filterByMatchId : Int -> List Match -> List Match
-filterByMatchId matchId matchess =
-    List.filter (\m -> m.id == matchId) matchess
+filterByMatchId matchId ms =
+    List.filter (\m -> m.id == matchId) ms
 
 
 filterByGroup : Group -> List GroupRow -> List GroupRow

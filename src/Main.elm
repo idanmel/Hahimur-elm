@@ -77,7 +77,7 @@ type Msg
     | PickedWinner Int Bool
     | ClickedRandom
     | GotRandomScores (List Int)
-    | UpdatePlayoff (List Match) Int
+    | GotRandomPlayoffScores (List Int)
     | UpdateToken String
     | UpdateTopScorer String
     | PredictionsSaved (Result Http.Error ())
@@ -239,12 +239,11 @@ updateWinnerByScore matchId m =
         m
 
 
-randomScoresGen : Random.Generator (List Int)
-randomScoresGen =
+randomScoresGen : Int -> Random.Generator (List Int)
+randomScoresGen amount =
     let
         numberOfMatches =
-            --List.length model.matches + List.length model.playOffMatches
-            36 * 2
+            amount * 2
     in
     Random.list numberOfMatches (Random.int 0 3)
 
@@ -282,7 +281,7 @@ update msg model =
             ( { model | topScorer = topScorer }, Cmd.none )
 
         ClickedRandom ->
-            ( model, Random.generate GotRandomScores randomScoresGen )
+            ( model, Random.generate GotRandomScores (randomScoresGen 36) )
 
         GotRandomScores randomScores ->
             let
@@ -291,8 +290,14 @@ update msg model =
 
                 newMatches =
                     List.map2 updateRandomScore randomScoresGrouped model.matches
+
+                newModel =
+                    updateGroups newMatches model
             in
-            ( updateGroups newMatches model, Cmd.none )
+            ( updateGroups newMatches model, Random.generate GotRandomPlayoffScores (randomScoresGen 15) )
+
+        GotRandomPlayoffScores randomScores ->
+            ( model, Cmd.none )
 
         PickedWinner matchId homeOrAway ->
             let
@@ -312,19 +317,7 @@ update msg model =
                 newPlayOffMatches =
                     List.map (updateMatchScoreByID matchId homeOrAway score) model.playOffMatches
             in
-            update (UpdatePlayoff newPlayOffMatches matchId) model
-
-        UpdatePlayoff newPlayOffMatches matchId ->
-            let
-                newPlayoffWinners =
-                    List.map (updateWinnerByScore matchId) newPlayOffMatches
-
-                newPlayOffMatches2 =
-                    List.map (updatePlayoffMatches newPlayoffWinners) newPlayoffWinners
-            in
-            ( { model | playOffMatches = newPlayOffMatches2 }
-            , Cmd.none
-            )
+            ( updatePlayoff newPlayOffMatches matchId model, Cmd.none )
 
         UpdatedGroupScore matchId homeOrAway score ->
             let
@@ -332,6 +325,18 @@ update msg model =
                     List.map (updateMatchScoreByID matchId homeOrAway score) model.matches
             in
             ( updateGroups newMatches model, Cmd.none )
+
+
+updatePlayoff : List Match -> Int -> Model -> Model
+updatePlayoff newPlayOffMatches matchId model =
+    let
+        newPlayoffWinners =
+            List.map (updateWinnerByScore matchId) newPlayOffMatches
+
+        newPlayOffMatches2 =
+            List.map (updatePlayoffMatches newPlayoffWinners) newPlayoffWinners
+    in
+    { model | playOffMatches = newPlayOffMatches2 }
 
 
 updateGroups : List Match -> Model -> Model

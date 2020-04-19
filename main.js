@@ -5709,13 +5709,12 @@ var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
 var $author$project$Main$subscriptions = function (model) {
 	return $elm$core$Platform$Sub$none;
 };
+var $author$project$Main$GotRandomPlayoffScores = function (a) {
+	return {$: 6, a: a};
+};
 var $author$project$Main$GotRandomScores = function (a) {
 	return {$: 5, a: a};
 };
-var $author$project$Main$UpdatePlayoff = F2(
-	function (a, b) {
-		return {$: 6, a: a, b: b};
-	});
 var $elm$random$Random$Generate = $elm$core$Basics$identity;
 var $elm$random$Random$Seed = F2(
 	function (a, b) {
@@ -6943,13 +6942,13 @@ var $elm$random$Random$list = F2(
 			return A4($elm$random$Random$listHelp, _List_Nil, n, gen, seed);
 		};
 	});
-var $author$project$Main$randomScoresGen = function () {
-	var numberOfMatches = 36 * 2;
+var $author$project$Main$randomScoresGen = function (amount) {
+	var numberOfMatches = amount * 2;
 	return A2(
 		$elm$random$Random$list,
 		numberOfMatches,
 		A2($elm$random$Random$int, 0, 3));
-}();
+};
 var $elm$core$List$head = function (list) {
 	if (list.b) {
 		var x = list.a;
@@ -7647,13 +7646,13 @@ var $author$project$Main$updateMatchScoreByID = F4(
 		}
 	});
 var $author$project$Euro2020$filterByMatchId = F2(
-	function (matchId, matchess) {
+	function (matchId, ms) {
 		return A2(
 			$elm$core$List$filter,
 			function (m) {
 				return _Utils_eq(m.ab, matchId);
 			},
-			matchess);
+			ms);
 	});
 var $author$project$Main$getWinner = F3(
 	function (team, matchId, ms) {
@@ -7788,40 +7787,6 @@ var $author$project$Main$updatePlayoffMatches = F2(
 				return m;
 		}
 	});
-var $elm_community$list_extra$List$Extra$last = function (items) {
-	last:
-	while (true) {
-		if (!items.b) {
-			return $elm$core$Maybe$Nothing;
-		} else {
-			if (!items.b.b) {
-				var x = items.a;
-				return $elm$core$Maybe$Just(x);
-			} else {
-				var rest = items.b;
-				var $temp$items = rest;
-				items = $temp$items;
-				continue last;
-			}
-		}
-	}
-};
-var $author$project$Main$updateRandomScore = F2(
-	function (scores, m) {
-		var homeScore = $elm$core$List$head(scores);
-		var awayScore = $elm_community$list_extra$List$Extra$last(scores);
-		return _Utils_update(
-			m,
-			{aK: awayScore, aQ: homeScore});
-	});
-var $author$project$Main$updateWinner = F3(
-	function (matchId, homeWin, m) {
-		return _Utils_eq(m.ab, matchId) ? _Utils_update(
-			m,
-			{
-				bn: $elm$core$Maybe$Just(homeWin)
-			}) : m;
-	});
 var $author$project$Main$updateWinnerByScore = F2(
 	function (matchId, m) {
 		if (_Utils_eq(m.ab, matchId)) {
@@ -7865,119 +7830,156 @@ var $author$project$Main$updateWinnerByScore = F2(
 			return m;
 		}
 	});
+var $author$project$Main$updatePlayoff = F3(
+	function (newPlayOffMatches, matchId, model) {
+		var newPlayoffWinners = A2(
+			$elm$core$List$map,
+			$author$project$Main$updateWinnerByScore(matchId),
+			newPlayOffMatches);
+		var newPlayOffMatches2 = A2(
+			$elm$core$List$map,
+			$author$project$Main$updatePlayoffMatches(newPlayoffWinners),
+			newPlayoffWinners);
+		return _Utils_update(
+			model,
+			{D: newPlayOffMatches2});
+	});
+var $elm_community$list_extra$List$Extra$last = function (items) {
+	last:
+	while (true) {
+		if (!items.b) {
+			return $elm$core$Maybe$Nothing;
+		} else {
+			if (!items.b.b) {
+				var x = items.a;
+				return $elm$core$Maybe$Just(x);
+			} else {
+				var rest = items.b;
+				var $temp$items = rest;
+				items = $temp$items;
+				continue last;
+			}
+		}
+	}
+};
+var $author$project$Main$updateRandomScore = F2(
+	function (scores, m) {
+		var homeScore = $elm$core$List$head(scores);
+		var awayScore = $elm_community$list_extra$List$Extra$last(scores);
+		return _Utils_update(
+			m,
+			{aK: awayScore, aQ: homeScore});
+	});
+var $author$project$Main$updateWinner = F3(
+	function (matchId, homeWin, m) {
+		return _Utils_eq(m.ab, matchId) ? _Utils_update(
+			m,
+			{
+				bn: $elm$core$Maybe$Just(homeWin)
+			}) : m;
+	});
 var $author$project$Main$update = F2(
 	function (msg, model) {
-		update:
-		while (true) {
-			switch (msg.$) {
-				case 10:
+		switch (msg.$) {
+			case 10:
+				return _Utils_Tuple2(
+					model,
+					$author$project$Main$postPredictions(model));
+			case 9:
+				var result = msg.a;
+				if (!result.$) {
 					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{ak: 'Sent!'}),
+						$elm$core$Platform$Cmd$none);
+				} else {
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{ak: 'Failed!'}),
+						$elm$core$Platform$Cmd$none);
+				}
+			case 7:
+				var token = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
 						model,
-						$author$project$Main$postPredictions(model));
-				case 9:
-					var result = msg.a;
-					if (!result.$) {
-						return _Utils_Tuple2(
-							_Utils_update(
-								model,
-								{ak: 'Sent!'}),
-							$elm$core$Platform$Cmd$none);
-					} else {
-						return _Utils_Tuple2(
-							_Utils_update(
-								model,
-								{ak: 'Failed!'}),
-							$elm$core$Platform$Cmd$none);
-					}
-				case 7:
-					var token = msg.a;
-					return _Utils_Tuple2(
-						_Utils_update(
-							model,
-							{an: token}),
-						$elm$core$Platform$Cmd$none);
-				case 8:
-					var topScorer = msg.a;
-					return _Utils_Tuple2(
-						_Utils_update(
-							model,
-							{ap: topScorer}),
-						$elm$core$Platform$Cmd$none);
-				case 4:
-					return _Utils_Tuple2(
+						{an: token}),
+					$elm$core$Platform$Cmd$none);
+			case 8:
+				var topScorer = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
 						model,
-						A2($elm$random$Random$generate, $author$project$Main$GotRandomScores, $author$project$Main$randomScoresGen));
-				case 5:
-					var randomScores = msg.a;
-					var randomScoresGrouped = A2($elm_community$list_extra$List$Extra$groupsOf, 2, randomScores);
-					var newMatches = A3($elm$core$List$map2, $author$project$Main$updateRandomScore, randomScoresGrouped, model.R);
-					return _Utils_Tuple2(
-						A2($author$project$Main$updateGroups, newMatches, model),
-						$elm$core$Platform$Cmd$none);
-				case 3:
-					var matchId = msg.a;
-					var homeOrAway = msg.b;
-					var updatedWinners = A2(
-						$elm$core$List$map,
-						A2($author$project$Main$updateWinner, matchId, homeOrAway),
-						model.D);
-					var newPlayOffMatches = A2(
-						$elm$core$List$map,
-						$author$project$Main$updatePlayoffMatches(updatedWinners),
-						updatedWinners);
-					return _Utils_Tuple2(
-						_Utils_update(
-							model,
-							{D: newPlayOffMatches}),
-						$elm$core$Platform$Cmd$none);
-				case 2:
-					var group = msg.a;
-					return _Utils_Tuple2(
-						_Utils_update(
-							model,
-							{ad: group}),
-						$elm$core$Platform$Cmd$none);
-				case 1:
-					var matchId = msg.a;
-					var homeOrAway = msg.b;
-					var score = msg.c;
-					var newPlayOffMatches = A2(
-						$elm$core$List$map,
-						A3($author$project$Main$updateMatchScoreByID, matchId, homeOrAway, score),
-						model.D);
-					var $temp$msg = A2($author$project$Main$UpdatePlayoff, newPlayOffMatches, matchId),
-						$temp$model = model;
-					msg = $temp$msg;
-					model = $temp$model;
-					continue update;
-				case 6:
-					var newPlayOffMatches = msg.a;
-					var matchId = msg.b;
-					var newPlayoffWinners = A2(
-						$elm$core$List$map,
-						$author$project$Main$updateWinnerByScore(matchId),
-						newPlayOffMatches);
-					var newPlayOffMatches2 = A2(
-						$elm$core$List$map,
-						$author$project$Main$updatePlayoffMatches(newPlayoffWinners),
-						newPlayoffWinners);
-					return _Utils_Tuple2(
-						_Utils_update(
-							model,
-							{D: newPlayOffMatches2}),
-						$elm$core$Platform$Cmd$none);
-				default:
-					var matchId = msg.a;
-					var homeOrAway = msg.b;
-					var score = msg.c;
-					var newMatches = A2(
-						$elm$core$List$map,
-						A3($author$project$Main$updateMatchScoreByID, matchId, homeOrAway, score),
-						model.R);
-					return _Utils_Tuple2(
-						A2($author$project$Main$updateGroups, newMatches, model),
-						$elm$core$Platform$Cmd$none);
-			}
+						{ap: topScorer}),
+					$elm$core$Platform$Cmd$none);
+			case 4:
+				return _Utils_Tuple2(
+					model,
+					A2(
+						$elm$random$Random$generate,
+						$author$project$Main$GotRandomScores,
+						$author$project$Main$randomScoresGen(36)));
+			case 5:
+				var randomScores = msg.a;
+				var randomScoresGrouped = A2($elm_community$list_extra$List$Extra$groupsOf, 2, randomScores);
+				var newMatches = A3($elm$core$List$map2, $author$project$Main$updateRandomScore, randomScoresGrouped, model.R);
+				var newModel = A2($author$project$Main$updateGroups, newMatches, model);
+				return _Utils_Tuple2(
+					A2($author$project$Main$updateGroups, newMatches, model),
+					A2(
+						$elm$random$Random$generate,
+						$author$project$Main$GotRandomPlayoffScores,
+						$author$project$Main$randomScoresGen(15)));
+			case 6:
+				var randomScores = msg.a;
+				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+			case 3:
+				var matchId = msg.a;
+				var homeOrAway = msg.b;
+				var updatedWinners = A2(
+					$elm$core$List$map,
+					A2($author$project$Main$updateWinner, matchId, homeOrAway),
+					model.D);
+				var newPlayOffMatches = A2(
+					$elm$core$List$map,
+					$author$project$Main$updatePlayoffMatches(updatedWinners),
+					updatedWinners);
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{D: newPlayOffMatches}),
+					$elm$core$Platform$Cmd$none);
+			case 2:
+				var group = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{ad: group}),
+					$elm$core$Platform$Cmd$none);
+			case 1:
+				var matchId = msg.a;
+				var homeOrAway = msg.b;
+				var score = msg.c;
+				var newPlayOffMatches = A2(
+					$elm$core$List$map,
+					A3($author$project$Main$updateMatchScoreByID, matchId, homeOrAway, score),
+					model.D);
+				return _Utils_Tuple2(
+					A3($author$project$Main$updatePlayoff, newPlayOffMatches, matchId, model),
+					$elm$core$Platform$Cmd$none);
+			default:
+				var matchId = msg.a;
+				var homeOrAway = msg.b;
+				var score = msg.c;
+				var newMatches = A2(
+					$elm$core$List$map,
+					A3($author$project$Main$updateMatchScoreByID, matchId, homeOrAway, score),
+					model.R);
+				return _Utils_Tuple2(
+					A2($author$project$Main$updateGroups, newMatches, model),
+					$elm$core$Platform$Cmd$none);
 		}
 	});
 var $mdgriffith$elm_ui$Internal$Model$AlignX = function (a) {
