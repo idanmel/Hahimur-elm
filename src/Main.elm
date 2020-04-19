@@ -335,8 +335,32 @@ updatePlayoff newPlayOffMatches matchId model =
 
         newPlayOffMatches2 =
             List.map (updatePlayoffMatches newPlayoffWinners) newPlayoffWinners
+
+        newPlayOffMatches3 =
+            List.map updatePlayoffScore newPlayOffMatches2
+
+        newPlayOffMatches4 =
+            List.map (updatePlayoffMatches newPlayOffMatches3) newPlayOffMatches3
+
+        newPlayOffMatches5 =
+            List.map updatePlayoffScore newPlayOffMatches4
+
+        newPlayOffMatches6 =
+            List.map (updatePlayoffMatches newPlayOffMatches5) newPlayOffMatches5
+
+        newPlayOffMatches7 =
+            List.map updatePlayoffScore newPlayOffMatches6
     in
-    { model | playOffMatches = newPlayOffMatches2 }
+    { model | playOffMatches = newPlayOffMatches7 }
+
+
+updatePlayoffScore : Match -> Match
+updatePlayoffScore m =
+    if m.homeTeam.flag == defaultFlag || m.awayTeam.flag == defaultFlag then
+        { m | homeScore = Nothing, awayScore = Nothing, homeWin = Nothing }
+
+    else
+        m
 
 
 updateGroups : List Match -> Model -> Model
