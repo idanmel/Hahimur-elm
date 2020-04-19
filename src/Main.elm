@@ -82,6 +82,9 @@ type Msg
     | UpdateTopScorer String
     | PredictionsSaved (Result Http.Error ())
     | ClickedSubmit
+    | ClickedSubmitWithoutFinishingMatches
+    | ClickedSubmitNoToken
+    | ClickedSubmitNoScorer
 
 
 updateMatchScoreByID : Int -> HomeOrAway -> String -> Match -> Match
@@ -263,6 +266,15 @@ updateRandomScore scores m =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        ClickedSubmitNoScorer ->
+            ( { model | message = "Submit Failed: Choose your top scorer" }, Cmd.none )
+
+        ClickedSubmitNoToken ->
+            ( { model | message = "Submit Failed: You need a token, yo!" }, Cmd.none )
+
+        ClickedSubmitWithoutFinishingMatches ->
+            ( { model | message = "Submit Failed: Finish filling all matches" }, Cmd.none )
+
         ClickedSubmit ->
             ( model, postPredictions model )
 
@@ -607,6 +619,21 @@ get3rdTeamTable groupRows =
         |> List.reverse
 
 
+playoffMatchHasWinner : Match -> Bool
+playoffMatchHasWinner m =
+    case m.homeWin of
+        Just _ ->
+            True
+
+        Nothing ->
+            False
+
+
+allPlayoffMatchesHaveAWinner : List Match -> Bool
+allPlayoffMatchesHaveAWinner ms =
+    List.length (List.filter playoffMatchHasWinner ms) == List.length ms
+
+
 
 -- MODEL
 
@@ -630,7 +657,7 @@ init _ =
       , selectedGroup = GroupA
       , token = ""
       , topScorer = ""
-      , message = "Submit"
+      , message = ""
       }
     , Cmd.none
     )
@@ -680,9 +707,12 @@ view model =
                 , viewSpacer 16
                 , row [] [ viewTokenInput model.token ]
                 , viewSpacer 16
-                , row [] [ viewSubmitButton model.message ]
+                , row [ Font.color red ] [ text model.message ]
+                , viewSpacer 4
+                , row [] [ viewSubmitButton model ]
                 , viewSpacer 16
-                , row [] [ viewRandomButton model.groups QuarterFinals ]
+
+                --, row [] [ viewRandomButton model.groups QuarterFinals ]
                 ]
             , column [ width (fillPortion 1) ] []
             ]
@@ -1076,13 +1106,27 @@ postPredictions model =
         }
 
 
-viewSubmitButton : String -> Element Msg
-viewSubmitButton message =
+viewSubmitButton : Model -> Element Msg
+viewSubmitButton model =
+    let
+        msg =
+            if model.token == "" then
+                ClickedSubmitNoToken
+
+            else if model.topScorer == "" then
+                ClickedSubmitNoScorer
+
+            else if not (allPlayoffMatchesHaveAWinner model.playOffMatches) then
+                ClickedSubmitWithoutFinishingMatches
+
+            else
+                ClickedSubmit
+    in
     Element.Input.button
         [ Background.color blue
         , Font.color white
         , padding 20
         ]
-        { onPress = Just ClickedSubmit
-        , label = text message
+        { onPress = Just msg
+        , label = text "Submit"
         }
