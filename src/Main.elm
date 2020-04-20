@@ -279,10 +279,10 @@ update msg model =
             ( model, postPredictions model )
 
         PredictionsSaved (Ok _) ->
-            ( { model | message = "Sent!" }, Cmd.none )
+            ( { model | message = "You form was saved :-)", messageColor = green }, Cmd.none )
 
         PredictionsSaved (Err _) ->
-            ( { model | message = "Failed!" }, Cmd.none )
+            ( { model | message = "Failed!", messageColor = red }, Cmd.none )
 
         UpdateToken token ->
             ( { model | token = token }, Cmd.none )
@@ -644,6 +644,7 @@ type alias Model =
     , token : String
     , topScorer : String
     , message : String
+    , messageColor : Color
     }
 
 
@@ -656,6 +657,7 @@ init _ =
       , token = ""
       , topScorer = ""
       , message = ""
+      , messageColor = red
       }
     , Cmd.none
     )
@@ -705,7 +707,7 @@ view model =
                 , viewSpacer 16
                 , row [] [ viewTokenInput model.token ]
                 , viewSpacer 16
-                , row [ Font.color red ] [ text model.message ]
+                , row [ Font.color model.messageColor ] [ text model.message ]
                 , viewSpacer 4
                 , row [] [ viewSubmitButton model ]
                 , viewSpacer 16
