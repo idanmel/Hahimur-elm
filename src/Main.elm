@@ -11,7 +11,7 @@ import Euro2020 exposing (Group(..), GroupRow, GroupState(..), HomeOrAway(..), M
 import Html exposing (Html)
 import Html.Attributes
 import Http
-import Json.Decode exposing (list, string)
+import Json.Decode as Decode
 import Json.Encode as Encode
 import List.Extra
 import Random
@@ -278,13 +278,11 @@ update msg model =
         ClickedSubmit ->
             ( model, postPredictions model )
 
-        PredictionsSaved result ->
-            case result of
-                Ok _ ->
-                    ( { model | message = "Sent!" }, Cmd.none )
+        PredictionsSaved (Ok _) ->
+            ( { model | message = "Sent!" }, Cmd.none )
 
-                Err _ ->
-                    ( { model | message = "Failed!" }, Cmd.none )
+        PredictionsSaved (Err _) ->
+            ( { model | message = "Failed!" }, Cmd.none )
 
         UpdateToken token ->
             ( { model | token = token }, Cmd.none )
@@ -1100,7 +1098,7 @@ encodeMatchPredictions model =
 postPredictions : Model -> Cmd Msg
 postPredictions model =
     Http.post
-        { url = "http://localhost:8000/tournaments/2/predictions?token=" ++ model.token
+        { url = "https://hahimur-django.herokuapp.com/tournaments/1/predictions?token=" ++ model.token
         , body = Http.jsonBody (encodeMatchPredictions model)
         , expect = Http.expectWhatever PredictionsSaved
         }
