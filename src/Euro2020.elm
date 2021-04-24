@@ -173,8 +173,8 @@ austria =
     Team "Austria" "https://www.countryflags.io/at/flat/64.png"
 
 
-romania =
-    Team "Romania" "https://www.countryflags.io/ro/flat/64.png"
+northMacedonia =
+    Team "North Macedonia" "https://www.countryflags.io/mk/flat/64.png"
 
 
 england =
@@ -185,8 +185,8 @@ crotia =
     Team "Croatia" "https://www.countryflags.io/hr/flat/64.png"
 
 
-ireland =
-    Team "Ireland" "https://www.countryflags.io/ie/flat/64.png"
+scotland =
+    Team "Scotland" "https://www.countryflags.com/wp-content/uploads/scotland-flag-jpg-xl.jpg"
 
 
 czech =
@@ -205,12 +205,12 @@ poland =
     Team "Poland" "https://www.countryflags.io/pl/flat/64.png"
 
 
-iceland =
-    Team "Iceland" "https://www.countryflags.io/is/flat/64.png"
+slovakia =
+    Team "Slovakia" "https://www.countryflags.io/sk/flat/64.png"
 
 
-serbia =
-    Team "Serbia" "https://www.countryflags.io/rs/flat/64.png"
+hungary =
+    Team "Hungary" "https://www.countryflags.io/hu/flat/64.png"
 
 
 portugal =
@@ -273,8 +273,8 @@ austriaRow =
     GroupRow austria 0 0 0 0 0 0 0 0 GroupC 0 0 0
 
 
-romaniaRow =
-    GroupRow romania 0 0 0 0 0 0 0 0 GroupC 0 0 0
+northMacedoniaRow =
+    GroupRow northMacedonia 0 0 0 0 0 0 0 0 GroupC 0 0 0
 
 
 englandRow =
@@ -285,8 +285,8 @@ croatiaRow =
     GroupRow crotia 0 0 0 0 0 0 0 0 GroupD 0 0 0
 
 
-irelandRow =
-    GroupRow ireland 0 0 0 0 0 0 0 0 GroupD 0 0 0
+scotlandRow =
+    GroupRow scotland 0 0 0 0 0 0 0 0 GroupD 0 0 0
 
 
 czechRow =
@@ -305,12 +305,12 @@ polandRow =
     GroupRow poland 0 0 0 0 0 0 0 0 GroupE 0 0 0
 
 
-icelandRow =
-    GroupRow iceland 0 0 0 0 0 0 0 0 GroupE 0 0 0
+slovakiaRow =
+    GroupRow slovakia 0 0 0 0 0 0 0 0 GroupE 0 0 0
 
 
-serbiaRow =
-    GroupRow serbia 0 0 0 0 0 0 0 0 GroupF 0 0 0
+hungaryRow =
+    GroupRow hungary 0 0 0 0 0 0 0 0 GroupF 0 0 0
 
 
 portugalRow =
@@ -334,19 +334,19 @@ groupB =
 
 
 groupC =
-    [ netherlandsRow, ukraineRow, austriaRow, romaniaRow ]
+    [ netherlandsRow, ukraineRow, austriaRow, northMacedoniaRow ]
 
 
 groupD =
-    [ englandRow, croatiaRow, irelandRow, czechRow ]
+    [ englandRow, croatiaRow, scotlandRow, czechRow ]
 
 
 groupE =
-    [ spainRow, swedenRow, polandRow, icelandRow ]
+    [ spainRow, swedenRow, polandRow, slovakiaRow ]
 
 
 groupF =
-    [ serbiaRow, portugalRow, franceRow, germanyRow ]
+    [ hungaryRow, portugalRow, franceRow, germanyRow ]
 
 
 
@@ -374,42 +374,42 @@ matchesGroupB =
 
 
 matchesGroupC =
-    [ Match 6 austria Nothing romania Nothing GroupC "16 June 2020" "18:00" Nothing
+    [ Match 6 austria Nothing northMacedonia Nothing GroupC "16 June 2020" "18:00" Nothing
     , Match 5 netherlands Nothing ukraine Nothing GroupC "16 June 2020" "18:00" Nothing
-    , Match 18 ukraine Nothing romania Nothing GroupC "16 June 2020" "18:00" Nothing
+    , Match 18 ukraine Nothing northMacedonia Nothing GroupC "16 June 2020" "18:00" Nothing
     , Match 17 netherlands Nothing austria Nothing GroupC "16 June 2020" "18:00" Nothing
-    , Match 29 romania Nothing netherlands Nothing GroupC "16 June 2020" "18:00" Nothing
+    , Match 29 northMacedonia Nothing netherlands Nothing GroupC "16 June 2020" "18:00" Nothing
     , Match 30 ukraine Nothing austria Nothing GroupC "16 June 2020" "18:00" Nothing
     ]
 
 
 matchesGroupD =
     [ Match 7 england Nothing crotia Nothing GroupD "16 June 2020" "18:00" Nothing
-    , Match 8 ireland Nothing czech Nothing GroupD "16 June 2020" "18:00" Nothing
+    , Match 8 scotland Nothing czech Nothing GroupD "16 June 2020" "18:00" Nothing
     , Match 19 crotia Nothing czech Nothing GroupD "16 June 2020" "18:00" Nothing
-    , Match 20 england Nothing ireland Nothing GroupD "16 June 2020" "18:00" Nothing
-    , Match 31 crotia Nothing ireland Nothing GroupD "16 June 2020" "18:00" Nothing
+    , Match 20 england Nothing scotland Nothing GroupD "16 June 2020" "18:00" Nothing
+    , Match 31 crotia Nothing scotland Nothing GroupD "16 June 2020" "18:00" Nothing
     , Match 32 czech Nothing england Nothing GroupD "16 June 2020" "18:00" Nothing
     ]
 
 
 matchesGroupE =
-    [ Match 10 poland Nothing iceland Nothing GroupE "16 June 2020" "18:00" Nothing
+    [ Match 10 poland Nothing slovakia Nothing GroupE "16 June 2020" "18:00" Nothing
     , Match 9 spain Nothing sweden Nothing GroupE "16 June 2020" "18:00" Nothing
-    , Match 21 sweden Nothing iceland Nothing GroupE "16 June 2020" "18:00" Nothing
+    , Match 21 sweden Nothing slovakia Nothing GroupE "16 June 2020" "18:00" Nothing
     , Match 22 spain Nothing poland Nothing GroupE "16 June 2020" "18:00" Nothing
-    , Match 33 iceland Nothing spain Nothing GroupE "16 June 2020" "18:00" Nothing
+    , Match 33 slovakia Nothing spain Nothing GroupE "16 June 2020" "18:00" Nothing
     , Match 34 sweden Nothing poland Nothing GroupE "16 June 2020" "18:00" Nothing
     ]
 
 
 matchesGroupF =
-    [ Match 11 serbia Nothing portugal Nothing GroupF "16 June 2020" "18:00" Nothing
+    [ Match 11 hungary Nothing portugal Nothing GroupF "16 June 2020" "18:00" Nothing
     , Match 12 france Nothing germany Nothing GroupF "16 June 2020" "18:00" Nothing
-    , Match 23 serbia Nothing france Nothing GroupF "16 June 2020" "18:00" Nothing
+    , Match 23 hungary Nothing france Nothing GroupF "16 June 2020" "18:00" Nothing
     , Match 24 portugal Nothing germany Nothing GroupF "16 June 2020" "18:00" Nothing
     , Match 35 portugal Nothing france Nothing GroupF "16 June 2020" "18:00" Nothing
-    , Match 36 germany Nothing serbia Nothing GroupF "16 June 2020" "18:00" Nothing
+    , Match 36 germany Nothing hungary Nothing GroupF "16 June 2020" "18:00" Nothing
     ]
 
 

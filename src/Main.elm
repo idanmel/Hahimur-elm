@@ -218,6 +218,14 @@ updateWinner matchId homeWin m =
         m
 
 
+hello : String
+hello =
+    "Hello"
+        |> String.reverse
+        |> String.toUpper
+
+
+
 updateWinnerByScore : Int -> Match -> Match
 updateWinnerByScore matchId m =
     if m.id == matchId then
