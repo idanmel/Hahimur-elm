@@ -130,99 +130,99 @@ defaultFlag =
 
 
 turkey =
-    Team "Turkey" "https://www.countryflags.io/tr/flat/64.png"
+    Team "Turkey" "https://flagcdn.com/w80/tr.png"
 
 
 italy =
-    Team "Italy" "https://www.countryflags.io/it/flat/64.png"
+    Team "Italy" "https://flagcdn.com/w80/it.png"
 
 
 wales =
-    Team "Wales" "https://upload.wikimedia.org/wikipedia/commons/a/a9/Flag_of_Wales_%281959%E2%80%93present%29.svg"
+    Team "Wales" "https://flagcdn.com/w80/gb-wls.png"
 
 
 switzerland =
-    Team "Switzerland" "https://www.countryflags.io/ch/flat/64.png"
+    Team "Switzerland" "https://flagcdn.com/w80/ch.png"
 
 
 belgium =
-    Team "Belgium" "https://www.countryflags.io/be/flat/64.png"
+    Team "Belgium" "https://flagcdn.com/w80/be.png"
 
 
 russia =
-    Team "Russia" "https://www.countryflags.io/ru/flat/64.png"
+    Team "Russia" "https://flagcdn.com/w80/ru.png"
 
 
 finland =
-    Team "Finland" "https://www.countryflags.io/fi/flat/64.png"
+    Team "Finland" "https://flagcdn.com/w80/fi.png"
 
 
 denmark =
-    Team "Denmark" "https://www.countryflags.io/dk/flat/64.png"
+    Team "Denmark" "https://flagcdn.com/w80/dk.png"
 
 
 netherlands =
-    Team "Netherlands" "https://www.countryflags.io/nl/flat/64.png"
+    Team "Netherlands" "https://flagcdn.com/w80/nl.png"
 
 
 ukraine =
-    Team "Ukraine" "https://www.countryflags.io/ua/flat/64.png"
+    Team "Ukraine" "https://flagcdn.com/w80/ua.png"
 
 
 austria =
-    Team "Austria" "https://www.countryflags.io/at/flat/64.png"
+    Team "Austria" "https://flagcdn.com/w80/at.png"
 
 
 northMacedonia =
-    Team "North Macedonia" "https://www.countryflags.io/mk/flat/64.png"
+    Team "North Macedonia" "https://flagcdn.com/w80/mk.png"
 
 
 england =
-    Team "England" "https://www.countryflags.io/gb/flat/64.png"
+    Team "England" "https://flagcdn.com/w80/gb.png"
 
 
 crotia =
-    Team "Croatia" "https://www.countryflags.io/hr/flat/64.png"
+    Team "Croatia" "https://flagcdn.com/w80/hr.png"
 
 
 scotland =
-    Team "Scotland" "https://www.countryflags.com/wp-content/uploads/scotland-flag-jpg-xl.jpg"
+    Team "Scotland" "https://flagcdn.com/w80/gb-sct.png"
 
 
 czech =
-    Team "Czech Republic" "https://www.countryflags.io/cz/flat/64.png"
+    Team "Czech Republic" "https://flagcdn.com/w80/cz.png"
 
 
 spain =
-    Team "Spain" "https://www.countryflags.io/es/flat/64.png"
+    Team "Spain" "https://flagcdn.com/w80/es.png"
 
 
 sweden =
-    Team "Sweden" "https://www.countryflags.io/se/flat/64.png"
+    Team "Sweden" "https://flagcdn.com/w80/se.png"
 
 
 poland =
-    Team "Poland" "https://www.countryflags.io/pl/flat/64.png"
+    Team "Poland" "https://flagcdn.com/w80/pl.png"
 
 
 slovakia =
-    Team "Slovakia" "https://www.countryflags.io/sk/flat/64.png"
+    Team "Slovakia" "https://flagcdn.com/w80/sk.png"
 
 
 hungary =
-    Team "Hungary" "https://www.countryflags.io/hu/flat/64.png"
+    Team "Hungary" "https://flagcdn.com/w80/hu.png"
 
 
 portugal =
-    Team "Portugal" "https://www.countryflags.io/pt/flat/64.png"
+    Team "Portugal" "https://flagcdn.com/w80/pt.png"
 
 
 france =
-    Team "France" "https://www.countryflags.io/fr/flat/64.png"
+    Team "France" "https://flagcdn.com/w80/fr.png"
 
 
 germany =
-    Team "Germany" "https://www.countryflags.io/de/flat/64.png"
+    Team "Germany" "https://flagcdn.com/w80/de.png"
 
 
 
