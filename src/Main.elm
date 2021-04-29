@@ -218,14 +218,6 @@ updateWinner matchId homeWin m =
         m
 
 
-hello : String
-hello =
-    "Hello"
-        |> String.reverse
-        |> String.toUpper
-
-
-
 updateWinnerByScore : Int -> Match -> Match
 updateWinnerByScore matchId m =
     if m.id == matchId then
@@ -399,11 +391,15 @@ updateGroups matches model =
 
         newPlayOffMatchesScores =
             List.map resetGame newPlayOffMatches
+
+        thirdTeamsMessage =
+            get3rdTeamsMessage thirdPlaces
     in
     { model
         | matches = matches
         , playOffMatches = newPlayOffMatchesScores
         , groups = groupRowsAfterTieBreaks
+        , thirdTeamsMessage = thirdTeamsMessage
     }
 
 
@@ -587,6 +583,31 @@ resolveTieBreak matches allGroupRow gr =
     { gr | tieBreakPoints = tieBreakPoints, tieBreakGd = tieBreakGd, tieBreakGf = tieBreakGf }
 
 
+get3rdTeamsMessage : List GroupRow -> String
+get3rdTeamsMessage groupRows =
+    let
+        fourth =
+            List.Extra.getAt 3 groupRows
+
+        fifth =
+            List.Extra.getAt 4 groupRows
+    in
+    case ( fourth, fifth ) of
+        ( Just a, Just b ) ->
+            case compare (getScore a) (getScore b) of
+                EQ ->
+                    "You have a tie in points, goal difference, goals scored, and wins. I'm choosing randomly between them."
+
+                LT ->
+                    ""
+
+                GT ->
+                    ""
+
+        ( _, _ ) ->
+            "Shouldn't happen"
+
+
 get3rdTeamTable : List GroupRow -> List GroupRow
 get3rdTeamTable groupRows =
     let
@@ -653,6 +674,7 @@ type alias Model =
     , topScorer : String
     , message : String
     , messageColor : Color
+    , thirdTeamsMessage : String
     }
 
 
@@ -666,6 +688,7 @@ init _ =
       , topScorer = ""
       , message = ""
       , messageColor = red
+      , thirdTeamsMessage = ""
       }
     , Cmd.none
     )
@@ -702,6 +725,11 @@ view model =
                 , viewSpacer 8
                 , viewMatches model.matches model.selectedGroup
                 , viewSpacer 16
+                , viewGroupTitle ThirdPlaces
+                , viewSpacer 8
+                , view3rdTeamTable (get3rdTeamTable model.groups)
+                , row [ Font.color red ] [ text model.thirdTeamsMessage ]
+                , viewSpacer 16
                 , row [ width fill, spaceEvenly ]
                     [ viewGroupTitle RoundOf16
                     , viewGroupTitle QuarterFinals
@@ -713,8 +741,9 @@ view model =
                 , viewSpacer 16
                 , row [] [ viewTopScorerInput model.topScorer ]
                 , viewSpacer 16
-                , row [] [ viewTokenInput model.token ]
-                , viewSpacer 16
+
+                --, row [] [ viewTokenInput model.token ]
+                --, viewSpacer 16
                 , row [ Font.color model.messageColor ] [ text model.message ]
                 , viewSpacer 4
                 , row [] [ viewSubmitButton model ]
@@ -923,6 +952,78 @@ viewGroupTitle group =
         ]
         [ text (groupToString group)
         ]
+
+
+view3rdTeamTable : List GroupRow -> Element Msg
+view3rdTeamTable groupRows =
+    Element.indexedTable
+        [ paddingEach { edges | bottom = 16 }
+        , spacing 8
+        ]
+        { data = groupRows
+        , columns =
+            [ { header = Element.text "Pos"
+              , width = fill
+              , view =
+                    \n groupRow ->
+                        Element.text (String.fromInt (n + 1))
+              }
+            , { header = Element.text "Team"
+              , width = fillPortion 2
+              , view =
+                    \n groupRow ->
+                        Element.text groupRow.team.name
+              }
+            , { header = Element.text "Pld"
+              , width = fill
+              , view =
+                    \n groupRow ->
+                        Element.text (String.fromInt groupRow.pld)
+              }
+            , { header = Element.text "W"
+              , width = fill
+              , view =
+                    \n groupRow ->
+                        Element.text (String.fromInt groupRow.w)
+              }
+            , { header = Element.text "D"
+              , width = fill
+              , view =
+                    \n groupRow ->
+                        Element.text (String.fromInt groupRow.d)
+              }
+            , { header = Element.text "L"
+              , width = fill
+              , view =
+                    \n groupRow ->
+                        Element.text (String.fromInt groupRow.l)
+              }
+            , { header = Element.text "GF"
+              , width = fill
+              , view =
+                    \n groupRow ->
+                        Element.text (String.fromInt groupRow.gf)
+              }
+            , { header = Element.text "GA"
+              , width = fill
+              , view =
+                    \n groupRow ->
+                        Element.text (String.fromInt groupRow.ga)
+              }
+            , { header = Element.text "GD"
+              , width = fill
+              , view =
+                    \n groupRow ->
+                        Element.text (String.fromInt groupRow.gd)
+              }
+            , { header = Element.text "Pts"
+              , width = fill
+              , view =
+                    \n groupRow ->
+                        Element.text (String.fromInt groupRow.pts)
+              }
+            ]
+        }
 
 
 viewGroup : List GroupRow -> Group -> Element Msg

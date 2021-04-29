@@ -85,6 +85,7 @@ type Group
     | GroupD
     | GroupE
     | GroupF
+    | ThirdPlaces
     | RoundOf16
     | QuarterFinals
     | SemiFinals
@@ -825,6 +826,9 @@ groupToString g =
 
         GroupF ->
             "Group F"
+
+        ThirdPlaces ->
+            "Third Places"
 
         RoundOf16 ->
             "Round Of 16"
