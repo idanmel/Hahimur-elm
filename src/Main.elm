@@ -7,11 +7,11 @@ import Element.Border as Border
 import Element.Font as Font
 import Element.Input
 import Element.Region as Region
-import Euro2020 exposing (Group(..), GroupRow, GroupState(..), HomeOrAway(..), Match, Team, TeamPosition, defaultFlag, encodeGroupMatches, encodeKoMatches, filterByMatchId, getGroupRows, getGroupState, getScore, groupRows, groupToString, isPlayoffMatch, matches, playOffMatches, updateTeams)
+import Euro2020 exposing (Group, GroupRow, GroupState(..), HomeOrAway(..), Match, Team, TeamPosition, defaultFlag, encodeGroupMatches, encodeKoMatches, filterByMatchId, final, getGroupRows, getGroupState, getScore, groupA, groupB, groupC, groupD, groupE, groupF, groupRows, isPlayoffMatch, matches, playOffMatches, quarterFinals, roundOf16, semiFinals, thirdPlacesGroup, updateTeams)
 import Html exposing (Html)
 import Html.Attributes
 import Http
-import Json.Decode as Decode
+import Json.Decode exposing (Decoder, dict, field, list, map2, string)
 import Json.Encode as Encode
 import List.Extra
 import Random
@@ -479,7 +479,7 @@ get3rdPlaceTeam groupRows =
             gr
 
         Nothing ->
-            GroupRow (Team "Turkey" "") 0 0 0 0 0 0 0 0 GroupA 0 0 0
+            GroupRow (Team "Turkey" "") 0 0 0 0 0 0 0 0 groupA 0 0 0
 
 
 sameTeams : List Team -> Match -> Bool
@@ -613,32 +613,32 @@ get3rdTeamTable groupRows =
     let
         thirdPlaceA =
             groupRows
-                |> getGroupRows GroupA
+                |> getGroupRows groupA
                 |> get3rdPlaceTeam
 
         thirdPlaceB =
             groupRows
-                |> getGroupRows GroupB
+                |> getGroupRows groupB
                 |> get3rdPlaceTeam
 
         thirdPlaceC =
             groupRows
-                |> getGroupRows GroupC
+                |> getGroupRows groupC
                 |> get3rdPlaceTeam
 
         thirdPlaceD =
             groupRows
-                |> getGroupRows GroupD
+                |> getGroupRows groupD
                 |> get3rdPlaceTeam
 
         thirdPlaceE =
             groupRows
-                |> getGroupRows GroupE
+                |> getGroupRows groupE
                 |> get3rdPlaceTeam
 
         thirdPlaceF =
             groupRows
-                |> getGroupRows GroupF
+                |> getGroupRows groupF
                 |> get3rdPlaceTeam
     in
     [ thirdPlaceA, thirdPlaceB, thirdPlaceC, thirdPlaceD, thirdPlaceE, thirdPlaceF ]
@@ -683,7 +683,7 @@ init _ =
     ( { matches = matches
       , groups = groupRows
       , playOffMatches = playOffMatches
-      , selectedGroup = GroupA
+      , selectedGroup = groupA
       , token = ""
       , topScorer = ""
       , message = ""
@@ -699,7 +699,7 @@ init _ =
 
 
 groupStageGroups =
-    [ GroupA, GroupB, GroupC, GroupD, GroupE, GroupF ]
+    [ groupA, groupB, groupC, groupD, groupE, groupF ]
 
 
 view : Model -> Html Msg
@@ -725,19 +725,19 @@ view model =
                 , viewSpacer 8
                 , viewMatches model.matches model.selectedGroup
                 , viewSpacer 16
-                , viewGroupTitle ThirdPlaces
+                , viewGroupTitle thirdPlacesGroup
                 , viewSpacer 8
                 , view3rdTeamTable (get3rdTeamTable model.groups)
                 , row [ Font.color red ] [ text model.thirdTeamsMessage ]
                 , viewSpacer 16
                 , row [ width fill, spaceEvenly ]
-                    [ viewGroupTitle RoundOf16
-                    , viewGroupTitle QuarterFinals
-                    , viewGroupTitle SemiFinals
-                    , viewGroupTitle Final
+                    [ viewGroupTitle roundOf16
+                    , viewGroupTitle quarterFinals
+                    , viewGroupTitle semiFinals
+                    , viewGroupTitle final
                     ]
                 , viewSpacer 16
-                , row [] (List.map (viewPlayoffMatches model.playOffMatches) [ RoundOf16, QuarterFinals, SemiFinals, Final ])
+                , row [] (List.map (viewPlayoffMatches model.playOffMatches) [ roundOf16, quarterFinals, semiFinals, final ])
                 , viewSpacer 16
                 , row [] [ viewTopScorerInput model.topScorer ]
                 , viewSpacer 16
@@ -803,7 +803,7 @@ viewGroupButton allGroupRows gr =
         , padding 20
         ]
         { onPress = Just (ClickedGroup gr)
-        , label = text (groupToString gr)
+        , label = text gr.name
         }
 
 
@@ -950,7 +950,7 @@ viewGroupTitle group =
         , Region.heading 3
         , Font.size 28
         ]
-        [ text (groupToString group)
+        [ text group.name
         ]
 
 
@@ -1239,3 +1239,35 @@ viewSubmitButton model =
         { onPress = Just msg
         , label = text "Submit"
         }
+
+
+
+--getMatchesInfo : Cmd Msg
+--getMatchesInfo =
+--    Http.get
+--        { url = "https://hahimur-django.herokuapp.com/matches"
+--        , expect = Http.expectJson GotGif gifDecoder
+--        }
+
+
+teamNameDecoder : Decoder String
+teamNameDecoder =
+    field "name" string
+
+
+teamflagDecoder : Decoder String
+teamflagDecoder =
+    field "flag" string
+
+
+teamDecoder : Decoder Team
+teamDecoder =
+    map2 Team
+        teamNameDecoder
+        teamflagDecoder
+
+
+
+--groupDecoder : Decoder Group
+--groupDecoder =
+--    field "group" GroupA

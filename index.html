@@ -5371,7 +5371,10 @@ var $elm$core$Task$perform = F2(
 				A2($elm$core$Task$map, toMessage, task)));
 	});
 var $elm$browser$Browser$element = _Browser_element;
-var $author$project$Euro2020$GroupA = {$: 'GroupA'};
+var $author$project$Euro2020$Group = function (name) {
+	return {name: name};
+};
+var $author$project$Euro2020$groupA = $author$project$Euro2020$Group('Group A');
 var $author$project$Euro2020$GroupRow = function (team) {
 	return function (pld) {
 		return function (w) {
@@ -5404,136 +5407,136 @@ var $author$project$Euro2020$Team = F2(
 		return {flag: flag, name: name};
 	});
 var $author$project$Euro2020$italy = A2($author$project$Euro2020$Team, 'Italy', 'https://flagcdn.com/w80/it.png');
-var $author$project$Euro2020$italyRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$italy)(0)(0)(0)(0)(0)(0)(0)(0)($author$project$Euro2020$GroupA)(0)(0)(0);
+var $author$project$Euro2020$italyRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$italy)(0)(0)(0)(0)(0)(0)(0)(0)($author$project$Euro2020$groupA)(0)(0)(0);
 var $author$project$Euro2020$switzerland = A2($author$project$Euro2020$Team, 'Switzerland', 'https://flagcdn.com/w80/ch.png');
-var $author$project$Euro2020$switzerlandRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$switzerland)(0)(0)(0)(0)(0)(0)(0)(0)($author$project$Euro2020$GroupA)(0)(0)(0);
+var $author$project$Euro2020$switzerlandRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$switzerland)(0)(0)(0)(0)(0)(0)(0)(0)($author$project$Euro2020$groupA)(0)(0)(0);
 var $author$project$Euro2020$turkey = A2($author$project$Euro2020$Team, 'Turkey', 'https://flagcdn.com/w80/tr.png');
-var $author$project$Euro2020$turkeyRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$turkey)(0)(0)(0)(0)(0)(0)(0)(0)($author$project$Euro2020$GroupA)(0)(0)(0);
+var $author$project$Euro2020$turkeyRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$turkey)(0)(0)(0)(0)(0)(0)(0)(0)($author$project$Euro2020$groupA)(0)(0)(0);
 var $author$project$Euro2020$wales = A2($author$project$Euro2020$Team, 'Wales', 'https://flagcdn.com/w80/gb-wls.png');
-var $author$project$Euro2020$walesRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$wales)(0)(0)(0)(0)(0)(0)(0)(0)($author$project$Euro2020$GroupA)(0)(0)(0);
-var $author$project$Euro2020$groupA = _List_fromArray(
+var $author$project$Euro2020$walesRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$wales)(0)(0)(0)(0)(0)(0)(0)(0)($author$project$Euro2020$groupA)(0)(0)(0);
+var $author$project$Euro2020$groupATeams = _List_fromArray(
 	[$author$project$Euro2020$turkeyRow, $author$project$Euro2020$italyRow, $author$project$Euro2020$walesRow, $author$project$Euro2020$switzerlandRow]);
-var $author$project$Euro2020$GroupB = {$: 'GroupB'};
 var $author$project$Euro2020$belgium = A2($author$project$Euro2020$Team, 'Belgium', 'https://flagcdn.com/w80/be.png');
-var $author$project$Euro2020$belgiumRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$belgium)(0)(0)(0)(0)(0)(0)(0)(0)($author$project$Euro2020$GroupB)(0)(0)(0);
+var $author$project$Euro2020$groupB = $author$project$Euro2020$Group('Group B');
+var $author$project$Euro2020$belgiumRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$belgium)(0)(0)(0)(0)(0)(0)(0)(0)($author$project$Euro2020$groupB)(0)(0)(0);
 var $author$project$Euro2020$denmark = A2($author$project$Euro2020$Team, 'Denmark', 'https://flagcdn.com/w80/dk.png');
-var $author$project$Euro2020$denmarkRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$denmark)(0)(0)(0)(0)(0)(0)(0)(0)($author$project$Euro2020$GroupB)(0)(0)(0);
+var $author$project$Euro2020$denmarkRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$denmark)(0)(0)(0)(0)(0)(0)(0)(0)($author$project$Euro2020$groupB)(0)(0)(0);
 var $author$project$Euro2020$finland = A2($author$project$Euro2020$Team, 'Finland', 'https://flagcdn.com/w80/fi.png');
-var $author$project$Euro2020$finlandRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$finland)(0)(0)(0)(0)(0)(0)(0)(0)($author$project$Euro2020$GroupB)(0)(0)(0);
+var $author$project$Euro2020$finlandRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$finland)(0)(0)(0)(0)(0)(0)(0)(0)($author$project$Euro2020$groupB)(0)(0)(0);
 var $author$project$Euro2020$russia = A2($author$project$Euro2020$Team, 'Russia', 'https://flagcdn.com/w80/ru.png');
-var $author$project$Euro2020$russiaRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$russia)(0)(0)(0)(0)(0)(0)(0)(0)($author$project$Euro2020$GroupB)(0)(0)(0);
-var $author$project$Euro2020$groupB = _List_fromArray(
+var $author$project$Euro2020$russiaRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$russia)(0)(0)(0)(0)(0)(0)(0)(0)($author$project$Euro2020$groupB)(0)(0)(0);
+var $author$project$Euro2020$groupBTeams = _List_fromArray(
 	[$author$project$Euro2020$belgiumRow, $author$project$Euro2020$russiaRow, $author$project$Euro2020$finlandRow, $author$project$Euro2020$denmarkRow]);
-var $author$project$Euro2020$GroupC = {$: 'GroupC'};
 var $author$project$Euro2020$austria = A2($author$project$Euro2020$Team, 'Austria', 'https://flagcdn.com/w80/at.png');
-var $author$project$Euro2020$austriaRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$austria)(0)(0)(0)(0)(0)(0)(0)(0)($author$project$Euro2020$GroupC)(0)(0)(0);
+var $author$project$Euro2020$groupC = $author$project$Euro2020$Group('Group C');
+var $author$project$Euro2020$austriaRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$austria)(0)(0)(0)(0)(0)(0)(0)(0)($author$project$Euro2020$groupC)(0)(0)(0);
 var $author$project$Euro2020$netherlands = A2($author$project$Euro2020$Team, 'Netherlands', 'https://flagcdn.com/w80/nl.png');
-var $author$project$Euro2020$netherlandsRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$netherlands)(0)(0)(0)(0)(0)(0)(0)(0)($author$project$Euro2020$GroupC)(0)(0)(0);
+var $author$project$Euro2020$netherlandsRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$netherlands)(0)(0)(0)(0)(0)(0)(0)(0)($author$project$Euro2020$groupC)(0)(0)(0);
 var $author$project$Euro2020$northMacedonia = A2($author$project$Euro2020$Team, 'North Macedonia', 'https://flagcdn.com/w80/mk.png');
-var $author$project$Euro2020$northMacedoniaRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$northMacedonia)(0)(0)(0)(0)(0)(0)(0)(0)($author$project$Euro2020$GroupC)(0)(0)(0);
+var $author$project$Euro2020$northMacedoniaRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$northMacedonia)(0)(0)(0)(0)(0)(0)(0)(0)($author$project$Euro2020$groupC)(0)(0)(0);
 var $author$project$Euro2020$ukraine = A2($author$project$Euro2020$Team, 'Ukraine', 'https://flagcdn.com/w80/ua.png');
-var $author$project$Euro2020$ukraineRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$ukraine)(0)(0)(0)(0)(0)(0)(0)(0)($author$project$Euro2020$GroupC)(0)(0)(0);
-var $author$project$Euro2020$groupC = _List_fromArray(
+var $author$project$Euro2020$ukraineRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$ukraine)(0)(0)(0)(0)(0)(0)(0)(0)($author$project$Euro2020$groupC)(0)(0)(0);
+var $author$project$Euro2020$groupCTeams = _List_fromArray(
 	[$author$project$Euro2020$netherlandsRow, $author$project$Euro2020$ukraineRow, $author$project$Euro2020$austriaRow, $author$project$Euro2020$northMacedoniaRow]);
-var $author$project$Euro2020$GroupD = {$: 'GroupD'};
 var $author$project$Euro2020$crotia = A2($author$project$Euro2020$Team, 'Croatia', 'https://flagcdn.com/w80/hr.png');
-var $author$project$Euro2020$croatiaRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$crotia)(0)(0)(0)(0)(0)(0)(0)(0)($author$project$Euro2020$GroupD)(0)(0)(0);
+var $author$project$Euro2020$groupD = $author$project$Euro2020$Group('Group D');
+var $author$project$Euro2020$croatiaRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$crotia)(0)(0)(0)(0)(0)(0)(0)(0)($author$project$Euro2020$groupD)(0)(0)(0);
 var $author$project$Euro2020$czech = A2($author$project$Euro2020$Team, 'Czech Republic', 'https://flagcdn.com/w80/cz.png');
-var $author$project$Euro2020$czechRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$czech)(0)(0)(0)(0)(0)(0)(0)(0)($author$project$Euro2020$GroupD)(0)(0)(0);
+var $author$project$Euro2020$czechRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$czech)(0)(0)(0)(0)(0)(0)(0)(0)($author$project$Euro2020$groupD)(0)(0)(0);
 var $author$project$Euro2020$england = A2($author$project$Euro2020$Team, 'England', 'https://flagcdn.com/w80/gb.png');
-var $author$project$Euro2020$englandRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$england)(0)(0)(0)(0)(0)(0)(0)(0)($author$project$Euro2020$GroupD)(0)(0)(0);
+var $author$project$Euro2020$englandRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$england)(0)(0)(0)(0)(0)(0)(0)(0)($author$project$Euro2020$groupD)(0)(0)(0);
 var $author$project$Euro2020$scotland = A2($author$project$Euro2020$Team, 'Scotland', 'https://flagcdn.com/w80/gb-sct.png');
-var $author$project$Euro2020$scotlandRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$scotland)(0)(0)(0)(0)(0)(0)(0)(0)($author$project$Euro2020$GroupD)(0)(0)(0);
-var $author$project$Euro2020$groupD = _List_fromArray(
+var $author$project$Euro2020$scotlandRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$scotland)(0)(0)(0)(0)(0)(0)(0)(0)($author$project$Euro2020$groupD)(0)(0)(0);
+var $author$project$Euro2020$groupDTeams = _List_fromArray(
 	[$author$project$Euro2020$englandRow, $author$project$Euro2020$croatiaRow, $author$project$Euro2020$scotlandRow, $author$project$Euro2020$czechRow]);
-var $author$project$Euro2020$GroupE = {$: 'GroupE'};
+var $author$project$Euro2020$groupE = $author$project$Euro2020$Group('Group E');
 var $author$project$Euro2020$poland = A2($author$project$Euro2020$Team, 'Poland', 'https://flagcdn.com/w80/pl.png');
-var $author$project$Euro2020$polandRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$poland)(0)(0)(0)(0)(0)(0)(0)(0)($author$project$Euro2020$GroupE)(0)(0)(0);
+var $author$project$Euro2020$polandRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$poland)(0)(0)(0)(0)(0)(0)(0)(0)($author$project$Euro2020$groupE)(0)(0)(0);
 var $author$project$Euro2020$slovakia = A2($author$project$Euro2020$Team, 'Slovakia', 'https://flagcdn.com/w80/sk.png');
-var $author$project$Euro2020$slovakiaRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$slovakia)(0)(0)(0)(0)(0)(0)(0)(0)($author$project$Euro2020$GroupE)(0)(0)(0);
+var $author$project$Euro2020$slovakiaRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$slovakia)(0)(0)(0)(0)(0)(0)(0)(0)($author$project$Euro2020$groupE)(0)(0)(0);
 var $author$project$Euro2020$spain = A2($author$project$Euro2020$Team, 'Spain', 'https://flagcdn.com/w80/es.png');
-var $author$project$Euro2020$spainRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$spain)(0)(0)(0)(0)(0)(0)(0)(0)($author$project$Euro2020$GroupE)(0)(0)(0);
+var $author$project$Euro2020$spainRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$spain)(0)(0)(0)(0)(0)(0)(0)(0)($author$project$Euro2020$groupE)(0)(0)(0);
 var $author$project$Euro2020$sweden = A2($author$project$Euro2020$Team, 'Sweden', 'https://flagcdn.com/w80/se.png');
-var $author$project$Euro2020$swedenRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$sweden)(0)(0)(0)(0)(0)(0)(0)(0)($author$project$Euro2020$GroupE)(0)(0)(0);
-var $author$project$Euro2020$groupE = _List_fromArray(
+var $author$project$Euro2020$swedenRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$sweden)(0)(0)(0)(0)(0)(0)(0)(0)($author$project$Euro2020$groupE)(0)(0)(0);
+var $author$project$Euro2020$groupETeams = _List_fromArray(
 	[$author$project$Euro2020$spainRow, $author$project$Euro2020$swedenRow, $author$project$Euro2020$polandRow, $author$project$Euro2020$slovakiaRow]);
-var $author$project$Euro2020$GroupF = {$: 'GroupF'};
 var $author$project$Euro2020$france = A2($author$project$Euro2020$Team, 'France', 'https://flagcdn.com/w80/fr.png');
-var $author$project$Euro2020$franceRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$france)(0)(0)(0)(0)(0)(0)(0)(0)($author$project$Euro2020$GroupF)(0)(0)(0);
+var $author$project$Euro2020$groupF = $author$project$Euro2020$Group('Group F');
+var $author$project$Euro2020$franceRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$france)(0)(0)(0)(0)(0)(0)(0)(0)($author$project$Euro2020$groupF)(0)(0)(0);
 var $author$project$Euro2020$germany = A2($author$project$Euro2020$Team, 'Germany', 'https://flagcdn.com/w80/de.png');
-var $author$project$Euro2020$germanyRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$germany)(0)(0)(0)(0)(0)(0)(0)(0)($author$project$Euro2020$GroupF)(0)(0)(0);
+var $author$project$Euro2020$germanyRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$germany)(0)(0)(0)(0)(0)(0)(0)(0)($author$project$Euro2020$groupF)(0)(0)(0);
 var $author$project$Euro2020$hungary = A2($author$project$Euro2020$Team, 'Hungary', 'https://flagcdn.com/w80/hu.png');
-var $author$project$Euro2020$hungaryRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$hungary)(0)(0)(0)(0)(0)(0)(0)(0)($author$project$Euro2020$GroupF)(0)(0)(0);
+var $author$project$Euro2020$hungaryRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$hungary)(0)(0)(0)(0)(0)(0)(0)(0)($author$project$Euro2020$groupF)(0)(0)(0);
 var $author$project$Euro2020$portugal = A2($author$project$Euro2020$Team, 'Portugal', 'https://flagcdn.com/w80/pt.png');
-var $author$project$Euro2020$portugalRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$portugal)(0)(0)(0)(0)(0)(0)(0)(0)($author$project$Euro2020$GroupF)(0)(0)(0);
-var $author$project$Euro2020$groupF = _List_fromArray(
+var $author$project$Euro2020$portugalRow = $author$project$Euro2020$GroupRow($author$project$Euro2020$portugal)(0)(0)(0)(0)(0)(0)(0)(0)($author$project$Euro2020$groupF)(0)(0)(0);
+var $author$project$Euro2020$groupFTeams = _List_fromArray(
 	[$author$project$Euro2020$hungaryRow, $author$project$Euro2020$portugalRow, $author$project$Euro2020$franceRow, $author$project$Euro2020$germanyRow]);
 var $author$project$Euro2020$groupRows = _Utils_ap(
-	$author$project$Euro2020$groupA,
+	$author$project$Euro2020$groupATeams,
 	_Utils_ap(
-		$author$project$Euro2020$groupB,
+		$author$project$Euro2020$groupBTeams,
 		_Utils_ap(
-			$author$project$Euro2020$groupC,
+			$author$project$Euro2020$groupCTeams,
 			_Utils_ap(
-				$author$project$Euro2020$groupD,
-				_Utils_ap($author$project$Euro2020$groupE, $author$project$Euro2020$groupF)))));
+				$author$project$Euro2020$groupDTeams,
+				_Utils_ap($author$project$Euro2020$groupETeams, $author$project$Euro2020$groupFTeams)))));
 var $author$project$Euro2020$Match = F9(
 	function (id, homeTeam, homeScore, awayTeam, awayScore, group, date, time, homeWin) {
 		return {awayScore: awayScore, awayTeam: awayTeam, date: date, group: group, homeScore: homeScore, homeTeam: homeTeam, homeWin: homeWin, id: id, time: time};
 	});
 var $author$project$Euro2020$matchesGroupA = _List_fromArray(
 	[
-		A9($author$project$Euro2020$Match, 1, $author$project$Euro2020$turkey, $elm$core$Maybe$Nothing, $author$project$Euro2020$italy, $elm$core$Maybe$Nothing, $author$project$Euro2020$GroupA, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 2, $author$project$Euro2020$wales, $elm$core$Maybe$Nothing, $author$project$Euro2020$switzerland, $elm$core$Maybe$Nothing, $author$project$Euro2020$GroupA, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 13, $author$project$Euro2020$turkey, $elm$core$Maybe$Nothing, $author$project$Euro2020$wales, $elm$core$Maybe$Nothing, $author$project$Euro2020$GroupA, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 14, $author$project$Euro2020$italy, $elm$core$Maybe$Nothing, $author$project$Euro2020$switzerland, $elm$core$Maybe$Nothing, $author$project$Euro2020$GroupA, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 25, $author$project$Euro2020$switzerland, $elm$core$Maybe$Nothing, $author$project$Euro2020$turkey, $elm$core$Maybe$Nothing, $author$project$Euro2020$GroupA, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 26, $author$project$Euro2020$italy, $elm$core$Maybe$Nothing, $author$project$Euro2020$wales, $elm$core$Maybe$Nothing, $author$project$Euro2020$GroupA, '16 June 2020', '18:00', $elm$core$Maybe$Nothing)
+		A9($author$project$Euro2020$Match, 1, $author$project$Euro2020$turkey, $elm$core$Maybe$Nothing, $author$project$Euro2020$italy, $elm$core$Maybe$Nothing, $author$project$Euro2020$groupA, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 2, $author$project$Euro2020$wales, $elm$core$Maybe$Nothing, $author$project$Euro2020$switzerland, $elm$core$Maybe$Nothing, $author$project$Euro2020$groupA, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 13, $author$project$Euro2020$turkey, $elm$core$Maybe$Nothing, $author$project$Euro2020$wales, $elm$core$Maybe$Nothing, $author$project$Euro2020$groupA, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 14, $author$project$Euro2020$italy, $elm$core$Maybe$Nothing, $author$project$Euro2020$switzerland, $elm$core$Maybe$Nothing, $author$project$Euro2020$groupA, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 25, $author$project$Euro2020$switzerland, $elm$core$Maybe$Nothing, $author$project$Euro2020$turkey, $elm$core$Maybe$Nothing, $author$project$Euro2020$groupA, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 26, $author$project$Euro2020$italy, $elm$core$Maybe$Nothing, $author$project$Euro2020$wales, $elm$core$Maybe$Nothing, $author$project$Euro2020$groupA, '16 June 2020', '18:00', $elm$core$Maybe$Nothing)
 	]);
 var $author$project$Euro2020$matchesGroupB = _List_fromArray(
 	[
-		A9($author$project$Euro2020$Match, 3, $author$project$Euro2020$denmark, $elm$core$Maybe$Nothing, $author$project$Euro2020$finland, $elm$core$Maybe$Nothing, $author$project$Euro2020$GroupB, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 4, $author$project$Euro2020$belgium, $elm$core$Maybe$Nothing, $author$project$Euro2020$russia, $elm$core$Maybe$Nothing, $author$project$Euro2020$GroupB, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 15, $author$project$Euro2020$finland, $elm$core$Maybe$Nothing, $author$project$Euro2020$russia, $elm$core$Maybe$Nothing, $author$project$Euro2020$GroupB, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 16, $author$project$Euro2020$denmark, $elm$core$Maybe$Nothing, $author$project$Euro2020$belgium, $elm$core$Maybe$Nothing, $author$project$Euro2020$GroupB, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 27, $author$project$Euro2020$russia, $elm$core$Maybe$Nothing, $author$project$Euro2020$denmark, $elm$core$Maybe$Nothing, $author$project$Euro2020$GroupB, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 28, $author$project$Euro2020$finland, $elm$core$Maybe$Nothing, $author$project$Euro2020$belgium, $elm$core$Maybe$Nothing, $author$project$Euro2020$GroupB, '16 June 2020', '18:00', $elm$core$Maybe$Nothing)
+		A9($author$project$Euro2020$Match, 3, $author$project$Euro2020$denmark, $elm$core$Maybe$Nothing, $author$project$Euro2020$finland, $elm$core$Maybe$Nothing, $author$project$Euro2020$groupB, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 4, $author$project$Euro2020$belgium, $elm$core$Maybe$Nothing, $author$project$Euro2020$russia, $elm$core$Maybe$Nothing, $author$project$Euro2020$groupB, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 15, $author$project$Euro2020$finland, $elm$core$Maybe$Nothing, $author$project$Euro2020$russia, $elm$core$Maybe$Nothing, $author$project$Euro2020$groupB, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 16, $author$project$Euro2020$denmark, $elm$core$Maybe$Nothing, $author$project$Euro2020$belgium, $elm$core$Maybe$Nothing, $author$project$Euro2020$groupB, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 27, $author$project$Euro2020$russia, $elm$core$Maybe$Nothing, $author$project$Euro2020$denmark, $elm$core$Maybe$Nothing, $author$project$Euro2020$groupB, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 28, $author$project$Euro2020$finland, $elm$core$Maybe$Nothing, $author$project$Euro2020$belgium, $elm$core$Maybe$Nothing, $author$project$Euro2020$groupB, '16 June 2020', '18:00', $elm$core$Maybe$Nothing)
 	]);
 var $author$project$Euro2020$matchesGroupC = _List_fromArray(
 	[
-		A9($author$project$Euro2020$Match, 6, $author$project$Euro2020$austria, $elm$core$Maybe$Nothing, $author$project$Euro2020$northMacedonia, $elm$core$Maybe$Nothing, $author$project$Euro2020$GroupC, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 5, $author$project$Euro2020$netherlands, $elm$core$Maybe$Nothing, $author$project$Euro2020$ukraine, $elm$core$Maybe$Nothing, $author$project$Euro2020$GroupC, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 18, $author$project$Euro2020$ukraine, $elm$core$Maybe$Nothing, $author$project$Euro2020$northMacedonia, $elm$core$Maybe$Nothing, $author$project$Euro2020$GroupC, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 17, $author$project$Euro2020$netherlands, $elm$core$Maybe$Nothing, $author$project$Euro2020$austria, $elm$core$Maybe$Nothing, $author$project$Euro2020$GroupC, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 29, $author$project$Euro2020$northMacedonia, $elm$core$Maybe$Nothing, $author$project$Euro2020$netherlands, $elm$core$Maybe$Nothing, $author$project$Euro2020$GroupC, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 30, $author$project$Euro2020$ukraine, $elm$core$Maybe$Nothing, $author$project$Euro2020$austria, $elm$core$Maybe$Nothing, $author$project$Euro2020$GroupC, '16 June 2020', '18:00', $elm$core$Maybe$Nothing)
+		A9($author$project$Euro2020$Match, 6, $author$project$Euro2020$austria, $elm$core$Maybe$Nothing, $author$project$Euro2020$northMacedonia, $elm$core$Maybe$Nothing, $author$project$Euro2020$groupC, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 5, $author$project$Euro2020$netherlands, $elm$core$Maybe$Nothing, $author$project$Euro2020$ukraine, $elm$core$Maybe$Nothing, $author$project$Euro2020$groupC, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 18, $author$project$Euro2020$ukraine, $elm$core$Maybe$Nothing, $author$project$Euro2020$northMacedonia, $elm$core$Maybe$Nothing, $author$project$Euro2020$groupC, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 17, $author$project$Euro2020$netherlands, $elm$core$Maybe$Nothing, $author$project$Euro2020$austria, $elm$core$Maybe$Nothing, $author$project$Euro2020$groupC, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 29, $author$project$Euro2020$northMacedonia, $elm$core$Maybe$Nothing, $author$project$Euro2020$netherlands, $elm$core$Maybe$Nothing, $author$project$Euro2020$groupC, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 30, $author$project$Euro2020$ukraine, $elm$core$Maybe$Nothing, $author$project$Euro2020$austria, $elm$core$Maybe$Nothing, $author$project$Euro2020$groupC, '16 June 2020', '18:00', $elm$core$Maybe$Nothing)
 	]);
 var $author$project$Euro2020$matchesGroupD = _List_fromArray(
 	[
-		A9($author$project$Euro2020$Match, 7, $author$project$Euro2020$england, $elm$core$Maybe$Nothing, $author$project$Euro2020$crotia, $elm$core$Maybe$Nothing, $author$project$Euro2020$GroupD, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 8, $author$project$Euro2020$scotland, $elm$core$Maybe$Nothing, $author$project$Euro2020$czech, $elm$core$Maybe$Nothing, $author$project$Euro2020$GroupD, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 19, $author$project$Euro2020$crotia, $elm$core$Maybe$Nothing, $author$project$Euro2020$czech, $elm$core$Maybe$Nothing, $author$project$Euro2020$GroupD, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 20, $author$project$Euro2020$england, $elm$core$Maybe$Nothing, $author$project$Euro2020$scotland, $elm$core$Maybe$Nothing, $author$project$Euro2020$GroupD, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 31, $author$project$Euro2020$crotia, $elm$core$Maybe$Nothing, $author$project$Euro2020$scotland, $elm$core$Maybe$Nothing, $author$project$Euro2020$GroupD, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 32, $author$project$Euro2020$czech, $elm$core$Maybe$Nothing, $author$project$Euro2020$england, $elm$core$Maybe$Nothing, $author$project$Euro2020$GroupD, '16 June 2020', '18:00', $elm$core$Maybe$Nothing)
+		A9($author$project$Euro2020$Match, 7, $author$project$Euro2020$england, $elm$core$Maybe$Nothing, $author$project$Euro2020$crotia, $elm$core$Maybe$Nothing, $author$project$Euro2020$groupD, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 8, $author$project$Euro2020$scotland, $elm$core$Maybe$Nothing, $author$project$Euro2020$czech, $elm$core$Maybe$Nothing, $author$project$Euro2020$groupD, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 19, $author$project$Euro2020$crotia, $elm$core$Maybe$Nothing, $author$project$Euro2020$czech, $elm$core$Maybe$Nothing, $author$project$Euro2020$groupD, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 20, $author$project$Euro2020$england, $elm$core$Maybe$Nothing, $author$project$Euro2020$scotland, $elm$core$Maybe$Nothing, $author$project$Euro2020$groupD, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 31, $author$project$Euro2020$crotia, $elm$core$Maybe$Nothing, $author$project$Euro2020$scotland, $elm$core$Maybe$Nothing, $author$project$Euro2020$groupD, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 32, $author$project$Euro2020$czech, $elm$core$Maybe$Nothing, $author$project$Euro2020$england, $elm$core$Maybe$Nothing, $author$project$Euro2020$groupD, '16 June 2020', '18:00', $elm$core$Maybe$Nothing)
 	]);
 var $author$project$Euro2020$matchesGroupE = _List_fromArray(
 	[
-		A9($author$project$Euro2020$Match, 10, $author$project$Euro2020$poland, $elm$core$Maybe$Nothing, $author$project$Euro2020$slovakia, $elm$core$Maybe$Nothing, $author$project$Euro2020$GroupE, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 9, $author$project$Euro2020$spain, $elm$core$Maybe$Nothing, $author$project$Euro2020$sweden, $elm$core$Maybe$Nothing, $author$project$Euro2020$GroupE, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 21, $author$project$Euro2020$sweden, $elm$core$Maybe$Nothing, $author$project$Euro2020$slovakia, $elm$core$Maybe$Nothing, $author$project$Euro2020$GroupE, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 22, $author$project$Euro2020$spain, $elm$core$Maybe$Nothing, $author$project$Euro2020$poland, $elm$core$Maybe$Nothing, $author$project$Euro2020$GroupE, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 33, $author$project$Euro2020$slovakia, $elm$core$Maybe$Nothing, $author$project$Euro2020$spain, $elm$core$Maybe$Nothing, $author$project$Euro2020$GroupE, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 34, $author$project$Euro2020$sweden, $elm$core$Maybe$Nothing, $author$project$Euro2020$poland, $elm$core$Maybe$Nothing, $author$project$Euro2020$GroupE, '16 June 2020', '18:00', $elm$core$Maybe$Nothing)
+		A9($author$project$Euro2020$Match, 10, $author$project$Euro2020$poland, $elm$core$Maybe$Nothing, $author$project$Euro2020$slovakia, $elm$core$Maybe$Nothing, $author$project$Euro2020$groupE, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 9, $author$project$Euro2020$spain, $elm$core$Maybe$Nothing, $author$project$Euro2020$sweden, $elm$core$Maybe$Nothing, $author$project$Euro2020$groupE, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 21, $author$project$Euro2020$sweden, $elm$core$Maybe$Nothing, $author$project$Euro2020$slovakia, $elm$core$Maybe$Nothing, $author$project$Euro2020$groupE, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 22, $author$project$Euro2020$spain, $elm$core$Maybe$Nothing, $author$project$Euro2020$poland, $elm$core$Maybe$Nothing, $author$project$Euro2020$groupE, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 33, $author$project$Euro2020$slovakia, $elm$core$Maybe$Nothing, $author$project$Euro2020$spain, $elm$core$Maybe$Nothing, $author$project$Euro2020$groupE, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 34, $author$project$Euro2020$sweden, $elm$core$Maybe$Nothing, $author$project$Euro2020$poland, $elm$core$Maybe$Nothing, $author$project$Euro2020$groupE, '16 June 2020', '18:00', $elm$core$Maybe$Nothing)
 	]);
 var $author$project$Euro2020$matchesGroupF = _List_fromArray(
 	[
-		A9($author$project$Euro2020$Match, 11, $author$project$Euro2020$hungary, $elm$core$Maybe$Nothing, $author$project$Euro2020$portugal, $elm$core$Maybe$Nothing, $author$project$Euro2020$GroupF, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 12, $author$project$Euro2020$france, $elm$core$Maybe$Nothing, $author$project$Euro2020$germany, $elm$core$Maybe$Nothing, $author$project$Euro2020$GroupF, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 23, $author$project$Euro2020$hungary, $elm$core$Maybe$Nothing, $author$project$Euro2020$france, $elm$core$Maybe$Nothing, $author$project$Euro2020$GroupF, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 24, $author$project$Euro2020$portugal, $elm$core$Maybe$Nothing, $author$project$Euro2020$germany, $elm$core$Maybe$Nothing, $author$project$Euro2020$GroupF, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 35, $author$project$Euro2020$portugal, $elm$core$Maybe$Nothing, $author$project$Euro2020$france, $elm$core$Maybe$Nothing, $author$project$Euro2020$GroupF, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
-		A9($author$project$Euro2020$Match, 36, $author$project$Euro2020$germany, $elm$core$Maybe$Nothing, $author$project$Euro2020$hungary, $elm$core$Maybe$Nothing, $author$project$Euro2020$GroupF, '16 June 2020', '18:00', $elm$core$Maybe$Nothing)
+		A9($author$project$Euro2020$Match, 11, $author$project$Euro2020$hungary, $elm$core$Maybe$Nothing, $author$project$Euro2020$portugal, $elm$core$Maybe$Nothing, $author$project$Euro2020$groupF, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 12, $author$project$Euro2020$france, $elm$core$Maybe$Nothing, $author$project$Euro2020$germany, $elm$core$Maybe$Nothing, $author$project$Euro2020$groupF, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 23, $author$project$Euro2020$hungary, $elm$core$Maybe$Nothing, $author$project$Euro2020$france, $elm$core$Maybe$Nothing, $author$project$Euro2020$groupF, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 24, $author$project$Euro2020$portugal, $elm$core$Maybe$Nothing, $author$project$Euro2020$germany, $elm$core$Maybe$Nothing, $author$project$Euro2020$groupF, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 35, $author$project$Euro2020$portugal, $elm$core$Maybe$Nothing, $author$project$Euro2020$france, $elm$core$Maybe$Nothing, $author$project$Euro2020$groupF, '16 June 2020', '18:00', $elm$core$Maybe$Nothing),
+		A9($author$project$Euro2020$Match, 36, $author$project$Euro2020$germany, $elm$core$Maybe$Nothing, $author$project$Euro2020$hungary, $elm$core$Maybe$Nothing, $author$project$Euro2020$groupF, '16 June 2020', '18:00', $elm$core$Maybe$Nothing)
 	]);
 var $author$project$Euro2020$matches = _Utils_ap(
 	$author$project$Euro2020$matchesGroupA,
@@ -5546,11 +5549,11 @@ var $author$project$Euro2020$matches = _Utils_ap(
 				_Utils_ap($author$project$Euro2020$matchesGroupE, $author$project$Euro2020$matchesGroupF)))));
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
-var $author$project$Euro2020$Final = {$: 'Final'};
-var $author$project$Euro2020$QuarterFinals = {$: 'QuarterFinals'};
-var $author$project$Euro2020$RoundOf16 = {$: 'RoundOf16'};
-var $author$project$Euro2020$SemiFinals = {$: 'SemiFinals'};
 var $author$project$Euro2020$defaultFlag = 'https://upload.wikimedia.org/wikipedia/en/9/96/UEFA_Euro_2020_Logo.svg';
+var $author$project$Euro2020$final = $author$project$Euro2020$Group('Final');
+var $author$project$Euro2020$quarterFinals = $author$project$Euro2020$Group('Quarter Finals');
+var $author$project$Euro2020$roundOf16 = $author$project$Euro2020$Group('Round of 16');
+var $author$project$Euro2020$semiFinals = $author$project$Euro2020$Group('Semi Finals');
 var $author$project$Euro2020$playOffMatches = _List_fromArray(
 	[
 		A9(
@@ -5560,7 +5563,7 @@ var $author$project$Euro2020$playOffMatches = _List_fromArray(
 		$elm$core$Maybe$Nothing,
 		A2($author$project$Euro2020$Team, '3rd Group A/D/E/F', $author$project$Euro2020$defaultFlag),
 		$elm$core$Maybe$Nothing,
-		$author$project$Euro2020$RoundOf16,
+		$author$project$Euro2020$roundOf16,
 		'16 June 2020',
 		'18:00',
 		$elm$core$Maybe$Nothing),
@@ -5571,7 +5574,7 @@ var $author$project$Euro2020$playOffMatches = _List_fromArray(
 		$elm$core$Maybe$Nothing,
 		A2($author$project$Euro2020$Team, 'Runner-up Group C', $author$project$Euro2020$defaultFlag),
 		$elm$core$Maybe$Nothing,
-		$author$project$Euro2020$RoundOf16,
+		$author$project$Euro2020$roundOf16,
 		'16 June 2020',
 		'18:00',
 		$elm$core$Maybe$Nothing),
@@ -5582,7 +5585,7 @@ var $author$project$Euro2020$playOffMatches = _List_fromArray(
 		$elm$core$Maybe$Nothing,
 		A2($author$project$Euro2020$Team, '3rd Group A/B/C', $author$project$Euro2020$defaultFlag),
 		$elm$core$Maybe$Nothing,
-		$author$project$Euro2020$RoundOf16,
+		$author$project$Euro2020$roundOf16,
 		'16 June 2020',
 		'18:00',
 		$elm$core$Maybe$Nothing),
@@ -5593,7 +5596,7 @@ var $author$project$Euro2020$playOffMatches = _List_fromArray(
 		$elm$core$Maybe$Nothing,
 		A2($author$project$Euro2020$Team, 'Runner-up Group E', $author$project$Euro2020$defaultFlag),
 		$elm$core$Maybe$Nothing,
-		$author$project$Euro2020$RoundOf16,
+		$author$project$Euro2020$roundOf16,
 		'16 June 2020',
 		'18:00',
 		$elm$core$Maybe$Nothing),
@@ -5604,7 +5607,7 @@ var $author$project$Euro2020$playOffMatches = _List_fromArray(
 		$elm$core$Maybe$Nothing,
 		A2($author$project$Euro2020$Team, '3rd Group A/B/C/D', $author$project$Euro2020$defaultFlag),
 		$elm$core$Maybe$Nothing,
-		$author$project$Euro2020$RoundOf16,
+		$author$project$Euro2020$roundOf16,
 		'16 June 2020',
 		'18:00',
 		$elm$core$Maybe$Nothing),
@@ -5615,7 +5618,7 @@ var $author$project$Euro2020$playOffMatches = _List_fromArray(
 		$elm$core$Maybe$Nothing,
 		A2($author$project$Euro2020$Team, 'Runner-up Group F', $author$project$Euro2020$defaultFlag),
 		$elm$core$Maybe$Nothing,
-		$author$project$Euro2020$RoundOf16,
+		$author$project$Euro2020$roundOf16,
 		'16 June 2020',
 		'18:00',
 		$elm$core$Maybe$Nothing),
@@ -5626,7 +5629,7 @@ var $author$project$Euro2020$playOffMatches = _List_fromArray(
 		$elm$core$Maybe$Nothing,
 		A2($author$project$Euro2020$Team, '3rd Group D/E/F', $author$project$Euro2020$defaultFlag),
 		$elm$core$Maybe$Nothing,
-		$author$project$Euro2020$RoundOf16,
+		$author$project$Euro2020$roundOf16,
 		'16 June 2020',
 		'18:00',
 		$elm$core$Maybe$Nothing),
@@ -5637,7 +5640,7 @@ var $author$project$Euro2020$playOffMatches = _List_fromArray(
 		$elm$core$Maybe$Nothing,
 		A2($author$project$Euro2020$Team, 'Runner-up Group B', $author$project$Euro2020$defaultFlag),
 		$elm$core$Maybe$Nothing,
-		$author$project$Euro2020$RoundOf16,
+		$author$project$Euro2020$roundOf16,
 		'16 June 2020',
 		'18:00',
 		$elm$core$Maybe$Nothing),
@@ -5648,7 +5651,7 @@ var $author$project$Euro2020$playOffMatches = _List_fromArray(
 		$elm$core$Maybe$Nothing,
 		A2($author$project$Euro2020$Team, 'Winner Match 37', $author$project$Euro2020$defaultFlag),
 		$elm$core$Maybe$Nothing,
-		$author$project$Euro2020$QuarterFinals,
+		$author$project$Euro2020$quarterFinals,
 		'16 June 2020',
 		'18:00',
 		$elm$core$Maybe$Nothing),
@@ -5659,7 +5662,7 @@ var $author$project$Euro2020$playOffMatches = _List_fromArray(
 		$elm$core$Maybe$Nothing,
 		A2($author$project$Euro2020$Team, 'Winner Match 42', $author$project$Euro2020$defaultFlag),
 		$elm$core$Maybe$Nothing,
-		$author$project$Euro2020$QuarterFinals,
+		$author$project$Euro2020$quarterFinals,
 		'16 June 2020',
 		'18:00',
 		$elm$core$Maybe$Nothing),
@@ -5670,7 +5673,7 @@ var $author$project$Euro2020$playOffMatches = _List_fromArray(
 		$elm$core$Maybe$Nothing,
 		A2($author$project$Euro2020$Team, 'Winner Match 44', $author$project$Euro2020$defaultFlag),
 		$elm$core$Maybe$Nothing,
-		$author$project$Euro2020$QuarterFinals,
+		$author$project$Euro2020$quarterFinals,
 		'16 June 2020',
 		'18:00',
 		$elm$core$Maybe$Nothing),
@@ -5681,7 +5684,7 @@ var $author$project$Euro2020$playOffMatches = _List_fromArray(
 		$elm$core$Maybe$Nothing,
 		A2($author$project$Euro2020$Team, 'Winner Match 38', $author$project$Euro2020$defaultFlag),
 		$elm$core$Maybe$Nothing,
-		$author$project$Euro2020$QuarterFinals,
+		$author$project$Euro2020$quarterFinals,
 		'16 June 2020',
 		'18:00',
 		$elm$core$Maybe$Nothing),
@@ -5692,7 +5695,7 @@ var $author$project$Euro2020$playOffMatches = _List_fromArray(
 		$elm$core$Maybe$Nothing,
 		A2($author$project$Euro2020$Team, 'Winner Match 45', $author$project$Euro2020$defaultFlag),
 		$elm$core$Maybe$Nothing,
-		$author$project$Euro2020$SemiFinals,
+		$author$project$Euro2020$semiFinals,
 		'16 June 2020',
 		'18:00',
 		$elm$core$Maybe$Nothing),
@@ -5703,7 +5706,7 @@ var $author$project$Euro2020$playOffMatches = _List_fromArray(
 		$elm$core$Maybe$Nothing,
 		A2($author$project$Euro2020$Team, 'Winner Match 47', $author$project$Euro2020$defaultFlag),
 		$elm$core$Maybe$Nothing,
-		$author$project$Euro2020$SemiFinals,
+		$author$project$Euro2020$semiFinals,
 		'16 June 2020',
 		'18:00',
 		$elm$core$Maybe$Nothing),
@@ -5714,7 +5717,7 @@ var $author$project$Euro2020$playOffMatches = _List_fromArray(
 		$elm$core$Maybe$Nothing,
 		A2($author$project$Euro2020$Team, 'Winner Match 50', $author$project$Euro2020$defaultFlag),
 		$elm$core$Maybe$Nothing,
-		$author$project$Euro2020$Final,
+		$author$project$Euro2020$final,
 		'16 June 2020',
 		'18:00',
 		$elm$core$Maybe$Nothing)
@@ -5730,7 +5733,7 @@ var $mdgriffith$elm_ui$Element$rgb = F3(
 var $author$project$Main$red = A3($mdgriffith$elm_ui$Element$rgb, 0.8, 0, 0);
 var $author$project$Main$init = function (_v0) {
 	return _Utils_Tuple2(
-		{groups: $author$project$Euro2020$groupRows, matches: $author$project$Euro2020$matches, message: '', messageColor: $author$project$Main$red, playOffMatches: $author$project$Euro2020$playOffMatches, selectedGroup: $author$project$Euro2020$GroupA, thirdTeamsMessage: '', token: '', topScorer: ''},
+		{groups: $author$project$Euro2020$groupRows, matches: $author$project$Euro2020$matches, message: '', messageColor: $author$project$Main$red, playOffMatches: $author$project$Euro2020$playOffMatches, selectedGroup: $author$project$Euro2020$groupA, thirdTeamsMessage: '', token: '', topScorer: ''},
 		$elm$core$Platform$Cmd$none);
 };
 var $elm$core$Platform$Sub$batch = _Platform_batch;
@@ -7015,7 +7018,7 @@ var $author$project$Main$get3rdPlaceTeam = function (groupRows) {
 		return gr;
 	} else {
 		return $author$project$Euro2020$GroupRow(
-			A2($author$project$Euro2020$Team, 'Turkey', ''))(0)(0)(0)(0)(0)(0)(0)(0)($author$project$Euro2020$GroupA)(0)(0)(0);
+			A2($author$project$Euro2020$Team, 'Turkey', ''))(0)(0)(0)(0)(0)(0)(0)(0)($author$project$Euro2020$groupA)(0)(0)(0);
 	}
 };
 var $elm$core$List$filter = F2(
@@ -7030,11 +7033,11 @@ var $elm$core$List$filter = F2(
 			list);
 	});
 var $author$project$Euro2020$filterByGroup = F2(
-	function (groupName, grs) {
+	function (group, grs) {
 		return A2(
 			$elm$core$List$filter,
 			function (gr) {
-				return _Utils_eq(gr.group, groupName);
+				return _Utils_eq(gr.group.name, group.name);
 			},
 			grs);
 	});
@@ -7053,17 +7056,17 @@ var $author$project$Euro2020$getGroupRows = F2(
 	});
 var $author$project$Main$get3rdTeamTable = function (groupRows) {
 	var thirdPlaceF = $author$project$Main$get3rdPlaceTeam(
-		A2($author$project$Euro2020$getGroupRows, $author$project$Euro2020$GroupF, groupRows));
+		A2($author$project$Euro2020$getGroupRows, $author$project$Euro2020$groupF, groupRows));
 	var thirdPlaceE = $author$project$Main$get3rdPlaceTeam(
-		A2($author$project$Euro2020$getGroupRows, $author$project$Euro2020$GroupE, groupRows));
+		A2($author$project$Euro2020$getGroupRows, $author$project$Euro2020$groupE, groupRows));
 	var thirdPlaceD = $author$project$Main$get3rdPlaceTeam(
-		A2($author$project$Euro2020$getGroupRows, $author$project$Euro2020$GroupD, groupRows));
+		A2($author$project$Euro2020$getGroupRows, $author$project$Euro2020$groupD, groupRows));
 	var thirdPlaceC = $author$project$Main$get3rdPlaceTeam(
-		A2($author$project$Euro2020$getGroupRows, $author$project$Euro2020$GroupC, groupRows));
+		A2($author$project$Euro2020$getGroupRows, $author$project$Euro2020$groupC, groupRows));
 	var thirdPlaceB = $author$project$Main$get3rdPlaceTeam(
-		A2($author$project$Euro2020$getGroupRows, $author$project$Euro2020$GroupB, groupRows));
+		A2($author$project$Euro2020$getGroupRows, $author$project$Euro2020$groupB, groupRows));
 	var thirdPlaceA = $author$project$Main$get3rdPlaceTeam(
-		A2($author$project$Euro2020$getGroupRows, $author$project$Euro2020$GroupA, groupRows));
+		A2($author$project$Euro2020$getGroupRows, $author$project$Euro2020$groupA, groupRows));
 	return $elm$core$List$reverse(
 		A2(
 			$elm$core$List$sortBy,
@@ -7071,21 +7074,18 @@ var $author$project$Main$get3rdTeamTable = function (groupRows) {
 			_List_fromArray(
 				[thirdPlaceA, thirdPlaceB, thirdPlaceC, thirdPlaceD, thirdPlaceE, thirdPlaceF])));
 };
-var $elm$core$Debug$log = _Debug_log;
 var $author$project$Main$get3rdTeamsMessage = function (groupRows) {
 	var fourth = A2($elm_community$list_extra$List$Extra$getAt, 3, groupRows);
 	var fifth = A2($elm_community$list_extra$List$Extra$getAt, 4, groupRows);
-	var _v0 = A2($elm$core$Debug$log, 'fourth team: ', fourth);
-	var _v1 = A2($elm$core$Debug$log, 'fifth team: ', fifth);
-	var _v2 = _Utils_Tuple2(fourth, fifth);
-	if ((_v2.a.$ === 'Just') && (_v2.b.$ === 'Just')) {
-		var a = _v2.a.a;
-		var b = _v2.b.a;
-		var _v3 = A2(
+	var _v0 = _Utils_Tuple2(fourth, fifth);
+	if ((_v0.a.$ === 'Just') && (_v0.b.$ === 'Just')) {
+		var a = _v0.a.a;
+		var b = _v0.b.a;
+		var _v1 = A2(
 			$elm$core$Basics$compare,
 			$author$project$Euro2020$getScore(a),
 			$author$project$Euro2020$getScore(b));
-		switch (_v3.$) {
+		switch (_v1.$) {
 			case 'EQ':
 				return 'You have a tie in points, goal difference, goals scored, and wins. I\'m choosing randomly between them.';
 			case 'LT':
@@ -7379,32 +7379,6 @@ var $author$project$Euro2020$getRoundOf16Team = F2(
 				$elm$core$Array$fromList(
 					A2($author$project$Euro2020$filterByGroup, g, top4Table))));
 	});
-var $author$project$Euro2020$groupToString = function (g) {
-	switch (g.$) {
-		case 'GroupA':
-			return 'Group A';
-		case 'GroupB':
-			return 'Group B';
-		case 'GroupC':
-			return 'Group C';
-		case 'GroupD':
-			return 'Group D';
-		case 'GroupE':
-			return 'Group E';
-		case 'GroupF':
-			return 'Group F';
-		case 'ThirdPlaces':
-			return 'Third Places';
-		case 'RoundOf16':
-			return 'Round Of 16';
-		case 'QuarterFinals':
-			return 'Quarter Finals';
-		case 'SemiFinals':
-			return 'Semi Finals';
-		default:
-			return 'Final';
-	}
-};
 var $elm$core$String$replace = F3(
 	function (before, after, string) {
 		return A2(
@@ -7424,7 +7398,9 @@ var $author$project$Euro2020$applyCrazyUefaLogic = F2(
 					A2($elm$core$String$replace, 'Group ', ''),
 					A2(
 						$elm$core$List$map,
-						$author$project$Euro2020$groupToString,
+						function ($) {
+							return $.name;
+						},
 						A2(
 							$elm$core$List$map,
 							function ($) {
@@ -7433,13 +7409,13 @@ var $author$project$Euro2020$applyCrazyUefaLogic = F2(
 							top4groupRows)))));
 		switch (tp.$) {
 			case 'B1':
-				return (sortedStringGroups === 'ABCD') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupA, top4groupRows) : ((sortedStringGroups === 'ABCE') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupA, top4groupRows) : ((sortedStringGroups === 'ABCF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupA, top4groupRows) : ((sortedStringGroups === 'ABDE') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupD, top4groupRows) : ((sortedStringGroups === 'ABDF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupD, top4groupRows) : ((sortedStringGroups === 'ABEF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupE, top4groupRows) : ((sortedStringGroups === 'ACDE') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupE, top4groupRows) : ((sortedStringGroups === 'ACDF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupF, top4groupRows) : ((sortedStringGroups === 'ACEF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupE, top4groupRows) : ((sortedStringGroups === 'ADEF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupE, top4groupRows) : ((sortedStringGroups === 'BCDE') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupE, top4groupRows) : ((sortedStringGroups === 'BCDF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupF, top4groupRows) : ((sortedStringGroups === 'BCEF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupF, top4groupRows) : ((sortedStringGroups === 'BDEF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupF, top4groupRows) : A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupF, top4groupRows))))))))))))));
+				return (sortedStringGroups === 'ABCD') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupA, top4groupRows) : ((sortedStringGroups === 'ABCE') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupA, top4groupRows) : ((sortedStringGroups === 'ABCF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupA, top4groupRows) : ((sortedStringGroups === 'ABDE') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupD, top4groupRows) : ((sortedStringGroups === 'ABDF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupD, top4groupRows) : ((sortedStringGroups === 'ABEF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupD, top4groupRows) : ((sortedStringGroups === 'ACDE') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupE, top4groupRows) : ((sortedStringGroups === 'ACDF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupF, top4groupRows) : ((sortedStringGroups === 'ACEF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupE, top4groupRows) : ((sortedStringGroups === 'ADEF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupE, top4groupRows) : ((sortedStringGroups === 'BCDE') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupE, top4groupRows) : ((sortedStringGroups === 'BCDF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupF, top4groupRows) : ((sortedStringGroups === 'BCEF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupF, top4groupRows) : ((sortedStringGroups === 'BDEF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupF, top4groupRows) : A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupF, top4groupRows))))))))))))));
 			case 'C1':
-				return (sortedStringGroups === 'ABCD') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupD, top4groupRows) : ((sortedStringGroups === 'ABCE') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupE, top4groupRows) : ((sortedStringGroups === 'ABCF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupF, top4groupRows) : ((sortedStringGroups === 'ABDE') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupE, top4groupRows) : ((sortedStringGroups === 'ABDF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupF, top4groupRows) : ((sortedStringGroups === 'ABEF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupF, top4groupRows) : ((sortedStringGroups === 'ACDE') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupD, top4groupRows) : ((sortedStringGroups === 'ACDF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupD, top4groupRows) : ((sortedStringGroups === 'ACEF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupF, top4groupRows) : ((sortedStringGroups === 'ADEF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupF, top4groupRows) : ((sortedStringGroups === 'BCDE') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupD, top4groupRows) : ((sortedStringGroups === 'BCDF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupD, top4groupRows) : ((sortedStringGroups === 'BCEF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupE, top4groupRows) : ((sortedStringGroups === 'BDEF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupE, top4groupRows) : A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupE, top4groupRows))))))))))))));
+				return (sortedStringGroups === 'ABCD') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupD, top4groupRows) : ((sortedStringGroups === 'ABCE') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupE, top4groupRows) : ((sortedStringGroups === 'ABCF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupF, top4groupRows) : ((sortedStringGroups === 'ABDE') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupE, top4groupRows) : ((sortedStringGroups === 'ABDF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupF, top4groupRows) : ((sortedStringGroups === 'ABEF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupF, top4groupRows) : ((sortedStringGroups === 'ACDE') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupD, top4groupRows) : ((sortedStringGroups === 'ACDF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupD, top4groupRows) : ((sortedStringGroups === 'ACEF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupF, top4groupRows) : ((sortedStringGroups === 'ADEF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupF, top4groupRows) : ((sortedStringGroups === 'BCDE') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupD, top4groupRows) : ((sortedStringGroups === 'BCDF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupD, top4groupRows) : ((sortedStringGroups === 'BCEF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupE, top4groupRows) : ((sortedStringGroups === 'BDEF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupE, top4groupRows) : A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupE, top4groupRows))))))))))))));
 			case 'E1':
-				return (sortedStringGroups === 'ABCD') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupB, top4groupRows) : ((sortedStringGroups === 'ABCE') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupB, top4groupRows) : ((sortedStringGroups === 'ABCF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupB, top4groupRows) : ((sortedStringGroups === 'ABDE') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupA, top4groupRows) : ((sortedStringGroups === 'ABDF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupA, top4groupRows) : ((sortedStringGroups === 'ABEF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupB, top4groupRows) : ((sortedStringGroups === 'ACDE') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupC, top4groupRows) : ((sortedStringGroups === 'ACDF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupC, top4groupRows) : ((sortedStringGroups === 'ACEF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupC, top4groupRows) : ((sortedStringGroups === 'ADEF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupD, top4groupRows) : ((sortedStringGroups === 'BCDE') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupB, top4groupRows) : ((sortedStringGroups === 'BCDF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupC, top4groupRows) : ((sortedStringGroups === 'BCEF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupC, top4groupRows) : ((sortedStringGroups === 'BDEF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupD, top4groupRows) : A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupD, top4groupRows))))))))))))));
+				return (sortedStringGroups === 'ABCD') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupB, top4groupRows) : ((sortedStringGroups === 'ABCE') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupB, top4groupRows) : ((sortedStringGroups === 'ABCF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupB, top4groupRows) : ((sortedStringGroups === 'ABDE') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupA, top4groupRows) : ((sortedStringGroups === 'ABDF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupA, top4groupRows) : ((sortedStringGroups === 'ABEF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupB, top4groupRows) : ((sortedStringGroups === 'ACDE') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupC, top4groupRows) : ((sortedStringGroups === 'ACDF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupC, top4groupRows) : ((sortedStringGroups === 'ACEF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupC, top4groupRows) : ((sortedStringGroups === 'ADEF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupD, top4groupRows) : ((sortedStringGroups === 'BCDE') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupB, top4groupRows) : ((sortedStringGroups === 'BCDF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupC, top4groupRows) : ((sortedStringGroups === 'BCEF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupC, top4groupRows) : ((sortedStringGroups === 'BDEF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupD, top4groupRows) : A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupD, top4groupRows))))))))))))));
 			default:
-				return (sortedStringGroups === 'ABCD') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupC, top4groupRows) : ((sortedStringGroups === 'ABCE') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupC, top4groupRows) : ((sortedStringGroups === 'ABCF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupC, top4groupRows) : ((sortedStringGroups === 'ABDE') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupB, top4groupRows) : ((sortedStringGroups === 'ABDF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupB, top4groupRows) : ((sortedStringGroups === 'ABEF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupA, top4groupRows) : ((sortedStringGroups === 'ACDE') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupA, top4groupRows) : ((sortedStringGroups === 'ACDF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupA, top4groupRows) : ((sortedStringGroups === 'ACEF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupA, top4groupRows) : ((sortedStringGroups === 'ADEF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupA, top4groupRows) : ((sortedStringGroups === 'BCDE') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupC, top4groupRows) : ((sortedStringGroups === 'BCDF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupB, top4groupRows) : ((sortedStringGroups === 'BCEF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupB, top4groupRows) : ((sortedStringGroups === 'BDEF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupB, top4groupRows) : A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$GroupC, top4groupRows))))))))))))));
+				return (sortedStringGroups === 'ABCD') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupC, top4groupRows) : ((sortedStringGroups === 'ABCE') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupC, top4groupRows) : ((sortedStringGroups === 'ABCF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupC, top4groupRows) : ((sortedStringGroups === 'ABDE') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupB, top4groupRows) : ((sortedStringGroups === 'ABDF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupB, top4groupRows) : ((sortedStringGroups === 'ABEF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupA, top4groupRows) : ((sortedStringGroups === 'ACDE') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupA, top4groupRows) : ((sortedStringGroups === 'ACDF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupA, top4groupRows) : ((sortedStringGroups === 'ACEF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupA, top4groupRows) : ((sortedStringGroups === 'ADEF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupA, top4groupRows) : ((sortedStringGroups === 'BCDE') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupC, top4groupRows) : ((sortedStringGroups === 'BCDF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupB, top4groupRows) : ((sortedStringGroups === 'BCEF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupB, top4groupRows) : ((sortedStringGroups === 'BDEF') ? A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupB, top4groupRows) : A2($author$project$Euro2020$getRoundOf16Team, $author$project$Euro2020$groupC, top4groupRows))))))))))))));
 		}
 	});
 var $author$project$Euro2020$playedAllGames = function (gr) {
@@ -7542,13 +7518,13 @@ var $author$project$Euro2020$updateTeams = F3(
 						awayTeam: A4(
 							$author$project$Euro2020$getTeamPlaying,
 							A2($author$project$Euro2020$Team, 'Runner-up Group C', $author$project$Euro2020$defaultFlag),
-							$author$project$Euro2020$GroupC,
+							$author$project$Euro2020$groupC,
 							2,
 							grs),
 						homeTeam: A4(
 							$author$project$Euro2020$getTeamPlaying,
 							A2($author$project$Euro2020$Team, 'Winner Group A', $author$project$Euro2020$defaultFlag),
-							$author$project$Euro2020$GroupA,
+							$author$project$Euro2020$groupA,
 							1,
 							grs)
 					});
@@ -7559,13 +7535,13 @@ var $author$project$Euro2020$updateTeams = F3(
 						awayTeam: A4(
 							$author$project$Euro2020$getTeamPlaying,
 							A2($author$project$Euro2020$Team, 'Runner-up Group B', $author$project$Euro2020$defaultFlag),
-							$author$project$Euro2020$GroupB,
+							$author$project$Euro2020$groupB,
 							2,
 							grs),
 						homeTeam: A4(
 							$author$project$Euro2020$getTeamPlaying,
 							A2($author$project$Euro2020$Team, 'Runner-up Group A', $author$project$Euro2020$defaultFlag),
-							$author$project$Euro2020$GroupA,
+							$author$project$Euro2020$groupA,
 							2,
 							grs)
 					});
@@ -7582,7 +7558,7 @@ var $author$project$Euro2020$updateTeams = F3(
 						homeTeam: A4(
 							$author$project$Euro2020$getTeamPlaying,
 							A2($author$project$Euro2020$Team, 'Winner Group B', $author$project$Euro2020$defaultFlag),
-							$author$project$Euro2020$GroupB,
+							$author$project$Euro2020$groupB,
 							1,
 							grs)
 					});
@@ -7599,7 +7575,7 @@ var $author$project$Euro2020$updateTeams = F3(
 						homeTeam: A4(
 							$author$project$Euro2020$getTeamPlaying,
 							A2($author$project$Euro2020$Team, 'Winner Group C', $author$project$Euro2020$defaultFlag),
-							$author$project$Euro2020$GroupC,
+							$author$project$Euro2020$groupC,
 							1,
 							grs)
 					});
@@ -7616,7 +7592,7 @@ var $author$project$Euro2020$updateTeams = F3(
 						homeTeam: A4(
 							$author$project$Euro2020$getTeamPlaying,
 							A2($author$project$Euro2020$Team, 'Winner Group F', $author$project$Euro2020$defaultFlag),
-							$author$project$Euro2020$GroupF,
+							$author$project$Euro2020$groupF,
 							1,
 							grs)
 					});
@@ -7627,13 +7603,13 @@ var $author$project$Euro2020$updateTeams = F3(
 						awayTeam: A4(
 							$author$project$Euro2020$getTeamPlaying,
 							A2($author$project$Euro2020$Team, 'Runner-up Group E', $author$project$Euro2020$defaultFlag),
-							$author$project$Euro2020$GroupE,
+							$author$project$Euro2020$groupE,
 							2,
 							grs),
 						homeTeam: A4(
 							$author$project$Euro2020$getTeamPlaying,
 							A2($author$project$Euro2020$Team, 'Runner-up Group D', $author$project$Euro2020$defaultFlag),
-							$author$project$Euro2020$GroupD,
+							$author$project$Euro2020$groupD,
 							2,
 							grs)
 					});
@@ -7650,7 +7626,7 @@ var $author$project$Euro2020$updateTeams = F3(
 						homeTeam: A4(
 							$author$project$Euro2020$getTeamPlaying,
 							A2($author$project$Euro2020$Team, 'Winner Group E', $author$project$Euro2020$defaultFlag),
-							$author$project$Euro2020$GroupE,
+							$author$project$Euro2020$groupE,
 							1,
 							grs)
 					});
@@ -7661,13 +7637,13 @@ var $author$project$Euro2020$updateTeams = F3(
 						awayTeam: A4(
 							$author$project$Euro2020$getTeamPlaying,
 							A2($author$project$Euro2020$Team, 'Runner-up Group F', $author$project$Euro2020$defaultFlag),
-							$author$project$Euro2020$GroupF,
+							$author$project$Euro2020$groupF,
 							2,
 							grs),
 						homeTeam: A4(
 							$author$project$Euro2020$getTeamPlaying,
 							A2($author$project$Euro2020$Team, 'Winner Group D', $author$project$Euro2020$defaultFlag),
-							$author$project$Euro2020$GroupD,
+							$author$project$Euro2020$groupD,
 							1,
 							grs)
 					});
@@ -8092,7 +8068,6 @@ var $author$project$Main$update = F2(
 					$elm$core$Platform$Cmd$none);
 		}
 	});
-var $author$project$Euro2020$ThirdPlaces = {$: 'ThirdPlaces'};
 var $mdgriffith$elm_ui$Internal$Model$AlignX = function (a) {
 	return {$: 'AlignX', a: a};
 };
@@ -13485,7 +13460,7 @@ var $mdgriffith$elm_ui$Element$fill = $mdgriffith$elm_ui$Internal$Model$Fill(1);
 var $mdgriffith$elm_ui$Element$fillPortion = $mdgriffith$elm_ui$Internal$Model$Fill;
 var $author$project$Main$grey = A3($mdgriffith$elm_ui$Element$rgb255, 242, 242, 242);
 var $author$project$Main$groupStageGroups = _List_fromArray(
-	[$author$project$Euro2020$GroupA, $author$project$Euro2020$GroupB, $author$project$Euro2020$GroupC, $author$project$Euro2020$GroupD, $author$project$Euro2020$GroupE, $author$project$Euro2020$GroupF]);
+	[$author$project$Euro2020$groupA, $author$project$Euro2020$groupB, $author$project$Euro2020$groupC, $author$project$Euro2020$groupD, $author$project$Euro2020$groupE, $author$project$Euro2020$groupF]);
 var $author$project$Main$blue = A3($mdgriffith$elm_ui$Element$rgb255, 9, 62, 132);
 var $mdgriffith$elm_ui$Internal$Model$AlignY = function (a) {
 	return {$: 'AlignY', a: a};
@@ -13910,6 +13885,7 @@ var $mdgriffith$elm_ui$Internal$Model$Class = F2(
 	});
 var $mdgriffith$elm_ui$Internal$Flag$spacing = $mdgriffith$elm_ui$Internal$Flag$flag(3);
 var $mdgriffith$elm_ui$Element$spaceEvenly = A2($mdgriffith$elm_ui$Internal$Model$Class, $mdgriffith$elm_ui$Internal$Flag$spacing, $mdgriffith$elm_ui$Internal$Style$classes.spaceEvenly);
+var $author$project$Euro2020$thirdPlacesGroup = $author$project$Euro2020$Group('Third Places');
 var $mdgriffith$elm_ui$Element$InternalIndexedColumn = function (a) {
 	return {$: 'InternalIndexedColumn', a: a};
 };
@@ -14525,8 +14501,7 @@ var $author$project$Main$viewGroupButton = F2(
 					$mdgriffith$elm_ui$Element$padding(20)
 				]),
 			{
-				label: $mdgriffith$elm_ui$Element$text(
-					$author$project$Euro2020$groupToString(gr)),
+				label: $mdgriffith$elm_ui$Element$text(gr.name),
 				onPress: $elm$core$Maybe$Just(
 					$author$project$Main$ClickedGroup(gr))
 			});
@@ -14546,8 +14521,7 @@ var $author$project$Main$viewGroupTitle = function (group) {
 			]),
 		_List_fromArray(
 			[
-				$mdgriffith$elm_ui$Element$text(
-				$author$project$Euro2020$groupToString(group))
+				$mdgriffith$elm_ui$Element$text(group.name)
 			]));
 };
 var $author$project$Euro2020$Away = {$: 'Away'};
@@ -15887,8 +15861,8 @@ var $author$project$Main$viewSubmitButton = function (model) {
 			onPress: $elm$core$Maybe$Just(msg)
 		});
 };
-var $author$project$Main$UpdateToken = function (a) {
-	return {$: 'UpdateToken', a: a};
+var $author$project$Main$UpdateTopScorer = function (a) {
+	return {$: 'UpdateTopScorer', a: a};
 };
 var $mdgriffith$elm_ui$Element$Input$Above = {$: 'Above'};
 var $mdgriffith$elm_ui$Element$Input$Label = F3(
@@ -15896,23 +15870,6 @@ var $mdgriffith$elm_ui$Element$Input$Label = F3(
 		return {$: 'Label', a: a, b: b, c: c};
 	});
 var $mdgriffith$elm_ui$Element$Input$labelAbove = $mdgriffith$elm_ui$Element$Input$Label($mdgriffith$elm_ui$Element$Input$Above);
-var $author$project$Main$viewTokenInput = function (token) {
-	return A2(
-		$mdgriffith$elm_ui$Element$Input$text,
-		_List_Nil,
-		{
-			label: A2(
-				$mdgriffith$elm_ui$Element$Input$labelAbove,
-				_List_Nil,
-				$mdgriffith$elm_ui$Element$text('Token')),
-			onChange: $author$project$Main$UpdateToken,
-			placeholder: $elm$core$Maybe$Nothing,
-			text: token
-		});
-};
-var $author$project$Main$UpdateTopScorer = function (a) {
-	return {$: 'UpdateTopScorer', a: a};
-};
 var $author$project$Main$viewTopScorerInput = function (topScorer) {
 	return A2(
 		$mdgriffith$elm_ui$Element$Input$text,
@@ -15990,7 +15947,7 @@ var $author$project$Main$view = function (model) {
 							$author$project$Main$viewSpacer(8),
 							A2($author$project$Main$viewMatches, model.matches, model.selectedGroup),
 							$author$project$Main$viewSpacer(16),
-							$author$project$Main$viewGroupTitle($author$project$Euro2020$ThirdPlaces),
+							$author$project$Main$viewGroupTitle($author$project$Euro2020$thirdPlacesGroup),
 							$author$project$Main$viewSpacer(8),
 							$author$project$Main$view3rdTeamTable(
 							$author$project$Main$get3rdTeamTable(model.groups)),
@@ -16014,10 +15971,10 @@ var $author$project$Main$view = function (model) {
 								]),
 							_List_fromArray(
 								[
-									$author$project$Main$viewGroupTitle($author$project$Euro2020$RoundOf16),
-									$author$project$Main$viewGroupTitle($author$project$Euro2020$QuarterFinals),
-									$author$project$Main$viewGroupTitle($author$project$Euro2020$SemiFinals),
-									$author$project$Main$viewGroupTitle($author$project$Euro2020$Final)
+									$author$project$Main$viewGroupTitle($author$project$Euro2020$roundOf16),
+									$author$project$Main$viewGroupTitle($author$project$Euro2020$quarterFinals),
+									$author$project$Main$viewGroupTitle($author$project$Euro2020$semiFinals),
+									$author$project$Main$viewGroupTitle($author$project$Euro2020$final)
 								])),
 							$author$project$Main$viewSpacer(16),
 							A2(
@@ -16027,7 +15984,7 @@ var $author$project$Main$view = function (model) {
 								$elm$core$List$map,
 								$author$project$Main$viewPlayoffMatches(model.playOffMatches),
 								_List_fromArray(
-									[$author$project$Euro2020$RoundOf16, $author$project$Euro2020$QuarterFinals, $author$project$Euro2020$SemiFinals, $author$project$Euro2020$Final]))),
+									[$author$project$Euro2020$roundOf16, $author$project$Euro2020$quarterFinals, $author$project$Euro2020$semiFinals, $author$project$Euro2020$final]))),
 							$author$project$Main$viewSpacer(16),
 							A2(
 							$mdgriffith$elm_ui$Element$row,
@@ -16035,14 +15992,6 @@ var $author$project$Main$view = function (model) {
 							_List_fromArray(
 								[
 									$author$project$Main$viewTopScorerInput(model.topScorer)
-								])),
-							$author$project$Main$viewSpacer(16),
-							A2(
-							$mdgriffith$elm_ui$Element$row,
-							_List_Nil,
-							_List_fromArray(
-								[
-									$author$project$Main$viewTokenInput(model.token)
 								])),
 							$author$project$Main$viewSpacer(16),
 							A2(
