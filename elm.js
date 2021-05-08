@@ -6874,7 +6874,7 @@ var $author$project$Main$postPredictions = function (model) {
 			cs: $elm$http$Http$jsonBody(
 				$author$project$Main$encodeMatchPredictions(model)),
 			cO: $elm$http$Http$expectWhatever($author$project$Main$PredictionsSaved),
-			d_: 'http://localhost:8001/predictions?token=' + model.ag
+			d_: 'https://hahimur-django.herokuapp.com/predictions?token=' + model.ag
 		});
 };
 var $elm$core$Bitwise$and = _Bitwise_and;

@@ -1220,7 +1220,7 @@ encodeMatchPredictions model =
 postPredictions : Model -> Cmd Msg
 postPredictions model =
     Http.post
-        { url = "http://localhost:8001/predictions?token=" ++ model.token
+        { url = "https://hahimur-django.herokuapp.com/predictions?token=" ++ model.token
         , body = Http.jsonBody (encodeMatchPredictions model)
         , expect = Http.expectWhatever PredictionsSaved
         }
