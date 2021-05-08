@@ -1252,9 +1252,9 @@ viewSubmitButton model =
         }
 
 
-matchIdDecoder : JD.Decoder Int
-matchIdDecoder =
-    JD.field "match_id" JD.int
+--matchIdDecoder : JD.Decoder Int
+--matchIdDecoder =
+--    JD.field "match_id" JD.int
 
 
 teamNameDecoder : JD.Decoder String
