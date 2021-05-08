@@ -1,4 +1,4 @@
-module Euro2020 exposing (Group, GroupRow, GroupState(..), HomeOrAway(..), Match, Team, TeamPosition, defaultFlag, encodeGroupMatches, encodeKoMatches, filterByMatchId, final, getGroupRows, getGroupState, getScore, groupA, groupB, groupC, groupD, groupE, groupF, groupRows, isPlayoffMatch, matches, maybeOrDefaultTeam, playOffMatches, quarterFinals, roundOf16, semiFinals, thirdPlacesGroup, updateTeams)
+module Euro2020 exposing (Group, GroupRow, GroupState(..), HomeOrAway(..), Match, Team, TeamPosition, defaultFlag, encodeMatches, filterByMatchId, final, getGroupRows, getGroupState, getScore, groupA, groupB, groupC, groupD, groupE, groupF, groupRows, isPlayoffMatch, matches, maybeOrDefaultTeam, playOffMatches, quarterFinals, roundOf16, semiFinals, thirdPlacesGroup, updateTeams)
 
 import Array
 import Json.Encode as Encode
@@ -49,33 +49,22 @@ encodeHomeWin homeWin =
             Encode.null
 
 
-encodeGroupMatch : Match -> Encode.Value
-encodeGroupMatch match =
+
+encodeMatch : Match -> Encode.Value
+encodeMatch match =
     Encode.object
         [ ( "match_number", Encode.int match.id )
         , ( "home_score", encodeMatchScore match.homeScore )
+        , ( "home_team_name", Encode.string match.homeTeam.name )
         , ( "away_score", encodeMatchScore match.awayScore )
-        ]
-
-
-encodeGroupMatches : List Match -> Encode.Value
-encodeGroupMatches groupMatches =
-    Encode.list encodeGroupMatch groupMatches
-
-
-encodeKoMatch : Match -> Encode.Value
-encodeKoMatch match =
-    Encode.object
-        [ ( "match_number", Encode.int match.id )
-        , ( "home_score", encodeMatchScore match.homeScore )
-        , ( "away_score", encodeMatchScore match.awayScore )
+        , ( "away_team_name", Encode.string match.awayTeam.name )
         , ( "home_win", encodeHomeWin match.homeWin )
         ]
 
 
-encodeKoMatches : List Match -> Encode.Value
-encodeKoMatches koMatches =
-    Encode.list encodeKoMatch koMatches
+encodeMatches : List Match -> Encode.Value
+encodeMatches koMatches =
+    Encode.list encodeMatch koMatches
 
 
 type alias Group =
@@ -385,6 +374,10 @@ groupFTeams =
     [ hungaryRow, portugalRow, franceRow, germanyRow ]
 
 
+groupRows =
+    groupATeams ++ groupBTeams ++ groupCTeams ++ groupDTeams ++ groupETeams ++ groupFTeams
+
+
 
 -- Matches
 
@@ -466,11 +459,6 @@ playOffMatches =
     , Match 50 (Team "Winner Match 48" defaultFlag) Nothing (Team "Winner Match 47" defaultFlag) Nothing semiFinals "16 June 2020" "18:00" Nothing
     , Match 51 (Team "Winner Match 49" defaultFlag) Nothing (Team "Winner Match 50" defaultFlag) Nothing final "16 June 2020" "18:00" Nothing
     ]
-
-
-groupRows : List GroupRow
-groupRows =
-    groupATeams ++ groupBTeams ++ groupCTeams ++ groupDTeams ++ groupETeams ++ groupFTeams
 
 
 matches =

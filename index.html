@@ -6026,8 +6026,17 @@ var $elm_community$list_extra$List$Extra$groupsOf = F2(
 var $author$project$Main$PredictionsSaved = function (a) {
 	return {$: 'PredictionsSaved', a: a};
 };
-var $elm$json$Json$Encode$int = _Json_wrap;
+var $elm$json$Json$Encode$bool = _Json_wrap;
 var $elm$json$Json$Encode$null = _Json_encodeNull;
+var $author$project$Euro2020$encodeHomeWin = function (homeWin) {
+	if (homeWin.$ === 'Just') {
+		var bool = homeWin.a;
+		return $elm$json$Json$Encode$bool(bool);
+	} else {
+		return $elm$json$Json$Encode$null;
+	}
+};
+var $elm$json$Json$Encode$int = _Json_wrap;
 var $author$project$Euro2020$encodeMatchScore = function (matchScore) {
 	if (matchScore.$ === 'Just') {
 		var _int = matchScore.a;
@@ -6049,7 +6058,8 @@ var $elm$json$Json$Encode$object = function (pairs) {
 			_Json_emptyObject(_Utils_Tuple0),
 			pairs));
 };
-var $author$project$Euro2020$encodeGroupMatch = function (match) {
+var $elm$json$Json$Encode$string = _Json_wrap;
+var $author$project$Euro2020$encodeMatch = function (match) {
 	return $elm$json$Json$Encode$object(
 		_List_fromArray(
 			[
@@ -6060,8 +6070,17 @@ var $author$project$Euro2020$encodeGroupMatch = function (match) {
 				'home_score',
 				$author$project$Euro2020$encodeMatchScore(match.homeScore)),
 				_Utils_Tuple2(
+				'home_team_name',
+				$elm$json$Json$Encode$string(match.homeTeam.name)),
+				_Utils_Tuple2(
 				'away_score',
-				$author$project$Euro2020$encodeMatchScore(match.awayScore))
+				$author$project$Euro2020$encodeMatchScore(match.awayScore)),
+				_Utils_Tuple2(
+				'away_team_name',
+				$elm$json$Json$Encode$string(match.awayTeam.name)),
+				_Utils_Tuple2(
+				'home_win',
+				$author$project$Euro2020$encodeHomeWin(match.homeWin))
 			]));
 };
 var $elm$json$Json$Encode$list = F2(
@@ -6073,50 +6092,19 @@ var $elm$json$Json$Encode$list = F2(
 				_Json_emptyArray(_Utils_Tuple0),
 				entries));
 	});
-var $author$project$Euro2020$encodeGroupMatches = function (groupMatches) {
-	return A2($elm$json$Json$Encode$list, $author$project$Euro2020$encodeGroupMatch, groupMatches);
+var $author$project$Euro2020$encodeMatches = function (koMatches) {
+	return A2($elm$json$Json$Encode$list, $author$project$Euro2020$encodeMatch, koMatches);
 };
-var $elm$json$Json$Encode$bool = _Json_wrap;
-var $author$project$Euro2020$encodeHomeWin = function (homeWin) {
-	if (homeWin.$ === 'Just') {
-		var bool = homeWin.a;
-		return $elm$json$Json$Encode$bool(bool);
-	} else {
-		return $elm$json$Json$Encode$null;
-	}
-};
-var $author$project$Euro2020$encodeKoMatch = function (match) {
-	return $elm$json$Json$Encode$object(
-		_List_fromArray(
-			[
-				_Utils_Tuple2(
-				'match_number',
-				$elm$json$Json$Encode$int(match.id)),
-				_Utils_Tuple2(
-				'home_score',
-				$author$project$Euro2020$encodeMatchScore(match.homeScore)),
-				_Utils_Tuple2(
-				'away_score',
-				$author$project$Euro2020$encodeMatchScore(match.awayScore)),
-				_Utils_Tuple2(
-				'home_win',
-				$author$project$Euro2020$encodeHomeWin(match.homeWin))
-			]));
-};
-var $author$project$Euro2020$encodeKoMatches = function (koMatches) {
-	return A2($elm$json$Json$Encode$list, $author$project$Euro2020$encodeKoMatch, koMatches);
-};
-var $elm$json$Json$Encode$string = _Json_wrap;
 var $author$project$Main$encodeMatchPredictions = function (model) {
 	return $elm$json$Json$Encode$object(
 		_List_fromArray(
 			[
 				_Utils_Tuple2(
 				'group_matches',
-				$author$project$Euro2020$encodeGroupMatches(model.matches)),
+				$author$project$Euro2020$encodeMatches(model.matches)),
 				_Utils_Tuple2(
 				'knockout_matches',
-				$author$project$Euro2020$encodeKoMatches(model.playOffMatches)),
+				$author$project$Euro2020$encodeMatches(model.playOffMatches)),
 				_Utils_Tuple2(
 				'top_scorer',
 				$elm$json$Json$Encode$string(model.topScorer))
@@ -6915,7 +6903,7 @@ var $author$project$Main$postPredictions = function (model) {
 			body: $elm$http$Http$jsonBody(
 				$author$project$Main$encodeMatchPredictions(model)),
 			expect: $elm$http$Http$expectWhatever($author$project$Main$PredictionsSaved),
-			url: 'https://hahimur-django.herokuapp.com/tournaments/1/predictions?token=' + model.token
+			url: 'http://localhost:8001/predictions?token=' + model.token
 		});
 };
 var $elm$core$Bitwise$and = _Bitwise_and;
@@ -15861,8 +15849,8 @@ var $author$project$Main$viewSubmitButton = function (model) {
 			onPress: $elm$core$Maybe$Just(msg)
 		});
 };
-var $author$project$Main$UpdateTopScorer = function (a) {
-	return {$: 'UpdateTopScorer', a: a};
+var $author$project$Main$UpdateToken = function (a) {
+	return {$: 'UpdateToken', a: a};
 };
 var $mdgriffith$elm_ui$Element$Input$Above = {$: 'Above'};
 var $mdgriffith$elm_ui$Element$Input$Label = F3(
@@ -15870,6 +15858,23 @@ var $mdgriffith$elm_ui$Element$Input$Label = F3(
 		return {$: 'Label', a: a, b: b, c: c};
 	});
 var $mdgriffith$elm_ui$Element$Input$labelAbove = $mdgriffith$elm_ui$Element$Input$Label($mdgriffith$elm_ui$Element$Input$Above);
+var $author$project$Main$viewTokenInput = function (token) {
+	return A2(
+		$mdgriffith$elm_ui$Element$Input$text,
+		_List_Nil,
+		{
+			label: A2(
+				$mdgriffith$elm_ui$Element$Input$labelAbove,
+				_List_Nil,
+				$mdgriffith$elm_ui$Element$text('Token')),
+			onChange: $author$project$Main$UpdateToken,
+			placeholder: $elm$core$Maybe$Nothing,
+			text: token
+		});
+};
+var $author$project$Main$UpdateTopScorer = function (a) {
+	return {$: 'UpdateTopScorer', a: a};
+};
 var $author$project$Main$viewTopScorerInput = function (topScorer) {
 	return A2(
 		$mdgriffith$elm_ui$Element$Input$text,
@@ -15992,6 +15997,14 @@ var $author$project$Main$view = function (model) {
 							_List_fromArray(
 								[
 									$author$project$Main$viewTopScorerInput(model.topScorer)
+								])),
+							$author$project$Main$viewSpacer(16),
+							A2(
+							$mdgriffith$elm_ui$Element$row,
+							_List_Nil,
+							_List_fromArray(
+								[
+									$author$project$Main$viewTokenInput(model.token)
 								])),
 							$author$project$Main$viewSpacer(16),
 							A2(

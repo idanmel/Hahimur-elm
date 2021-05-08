@@ -7,11 +7,12 @@ import Element.Border as Border
 import Element.Font as Font
 import Element.Input
 import Element.Region as Region
-import Euro2020 exposing (Group, GroupRow, GroupState(..), HomeOrAway(..), Match, Team, TeamPosition, defaultFlag, encodeGroupMatches, encodeKoMatches, filterByMatchId, final, getGroupRows, getGroupState, getScore, groupA, groupB, groupC, groupD, groupE, groupF, groupRows, isPlayoffMatch, matches, playOffMatches, quarterFinals, roundOf16, semiFinals, thirdPlacesGroup, updateTeams)
+import Euro2020 exposing (Group, GroupRow, GroupState(..), HomeOrAway(..), Match, Team, TeamPosition, defaultFlag, encodeMatches, filterByMatchId, final, getGroupRows, getGroupState, getScore, groupA, groupB, groupC, groupD, groupE, groupF, groupRows, isPlayoffMatch, matches, playOffMatches, quarterFinals, roundOf16, semiFinals, thirdPlacesGroup, updateTeams)
 import Html exposing (Html)
 import Html.Attributes
 import Http
-import Json.Decode exposing (Decoder, dict, field, list, map2, string)
+import Json.Decode as JD
+import Json.Decode.Pipeline exposing (required)
 import Json.Encode as Encode
 import List.Extra
 import Random
@@ -85,6 +86,10 @@ type Msg
     | ClickedSubmitWithoutFinishingMatches
     | ClickedSubmitNoToken
     | ClickedSubmitNoScorer
+
+
+
+--| GotMatches (Result Http.Error (List Match))
 
 
 updateMatchScoreByID : Int -> HomeOrAway -> String -> Match -> Match
@@ -266,6 +271,13 @@ updateRandomScore scores m =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        --GotMatches result ->
+        --    case result of
+        --        Ok matchesFromTheWire ->
+        --            ( { model | matches = matchesFromTheWire, groups = getGroupRows matchesFromTheWire }, Cmd.none )
+        --
+        --        Err _ ->
+        --            ( model, Cmd.none )
         ClickedSubmitNoScorer ->
             ( { model | message = "Submit Failed: Choose your top scorer" }, Cmd.none )
 
@@ -741,9 +753,8 @@ view model =
                 , viewSpacer 16
                 , row [] [ viewTopScorerInput model.topScorer ]
                 , viewSpacer 16
-
-                --, row [] [ viewTokenInput model.token ]
-                --, viewSpacer 16
+                , row [] [ viewTokenInput model.token ]
+                , viewSpacer 16
                 , row [ Font.color model.messageColor ] [ text model.message ]
                 , viewSpacer 4
                 , row [] [ viewSubmitButton model ]
@@ -1200,8 +1211,8 @@ viewTopScorerInput topScorer =
 encodeMatchPredictions : Model -> Encode.Value
 encodeMatchPredictions model =
     Encode.object
-        [ ( "group_matches", encodeGroupMatches model.matches )
-        , ( "knockout_matches", encodeKoMatches model.playOffMatches )
+        [ ( "group_matches", encodeMatches model.matches )
+        , ( "knockout_matches", encodeMatches model.playOffMatches )
         , ( "top_scorer", Encode.string model.topScorer )
         ]
 
@@ -1209,7 +1220,7 @@ encodeMatchPredictions model =
 postPredictions : Model -> Cmd Msg
 postPredictions model =
     Http.post
-        { url = "https://hahimur-django.herokuapp.com/tournaments/1/predictions?token=" ++ model.token
+        { url = "http://localhost:8001/predictions?token=" ++ model.token
         , body = Http.jsonBody (encodeMatchPredictions model)
         , expect = Http.expectWhatever PredictionsSaved
         }
@@ -1241,33 +1252,61 @@ viewSubmitButton model =
         }
 
 
+matchIdDecoder : JD.Decoder Int
+matchIdDecoder =
+    JD.field "match_id" JD.int
+
+
+teamNameDecoder : JD.Decoder String
+teamNameDecoder =
+    JD.field "name" JD.string
+
+
+teamflagDecoder : JD.Decoder String
+teamflagDecoder =
+    JD.field "flag" JD.string
+
+
+teamDecoder : JD.Decoder Team
+teamDecoder =
+    JD.map2 Team
+        teamNameDecoder
+        teamflagDecoder
+
+
+groupNameDecoder : JD.Decoder String
+groupNameDecoder =
+    JD.field "name" JD.string
+
+
+groupDecoder : JD.Decoder Group
+groupDecoder =
+    JD.map Group groupNameDecoder
+
+
+matchDecoder : JD.Decoder Match
+matchDecoder =
+    JD.succeed Match
+        |> required "match_id" JD.int
+        |> required "home_team" teamDecoder
+        |> required "home_score" (JD.maybe JD.int)
+        |> required "away_team" teamDecoder
+        |> required "away_score" (JD.maybe JD.int)
+        |> required "group" groupDecoder
+        |> required "date" JD.string
+        |> required "time" JD.string
+        |> required "home_win" (JD.maybe JD.bool)
+
+
+matchesInfoDecoder : JD.Decoder (List Match)
+matchesInfoDecoder =
+    JD.field "euro2020" (JD.field "matches_info" (JD.list matchDecoder))
+
+
 
 --getMatchesInfo : Cmd Msg
 --getMatchesInfo =
 --    Http.get
 --        { url = "https://hahimur-django.herokuapp.com/matches"
---        , expect = Http.expectJson GotGif gifDecoder
+--        , expect = Http.expectJson GotMatches matchesInfoDecoder
 --        }
-
-
-teamNameDecoder : Decoder String
-teamNameDecoder =
-    field "name" string
-
-
-teamflagDecoder : Decoder String
-teamflagDecoder =
-    field "flag" string
-
-
-teamDecoder : Decoder Team
-teamDecoder =
-    map2 Team
-        teamNameDecoder
-        teamflagDecoder
-
-
-
---groupDecoder : Decoder Group
---groupDecoder =
---    field "group" GroupA
