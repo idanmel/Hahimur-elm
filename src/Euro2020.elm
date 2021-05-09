@@ -661,7 +661,7 @@ applyCrazyUefaLogic top4groupRows tp =
                 getRoundOf16Team groupD top4groupRows
 
             else if sortedStringGroups == "ABEF" then
-                getRoundOf16Team groupD top4groupRows
+                getRoundOf16Team groupE top4groupRows
 
             else if sortedStringGroups == "ACDE" then
                 getRoundOf16Team groupE top4groupRows
