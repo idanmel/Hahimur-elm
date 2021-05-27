@@ -7,7 +7,7 @@ import Element.Border as Border
 import Element.Font as Font
 import Element.Input
 import Element.Region as Region
-import Euro2020 exposing (Group, GroupRow, GroupState(..), HomeOrAway(..), Match, Team, TeamPosition, defaultFlag, encodeMatches, filterByMatchId, final, getGroupRows, getGroupState, getScore, groupA, groupB, groupC, groupD, groupE, groupF, groupRows, isPlayoffMatch, matches, playOffMatches, quarterFinals, roundOf16, semiFinals, thirdPlacesGroup, updateTeams)
+import Euro2020 exposing (Group, GroupRow, GroupState(..), HomeOrAway(..), Match, Team, TeamPosition, defaultFlag, encodeGroupRows, encodeMatches, filterByMatchId, final, getGroupRows, getGroupState, getScore, groupA, groupB, groupC, groupD, groupE, groupF, groupRows, isPlayoffMatch, matches, playOffMatches, quarterFinals, roundOf16, semiFinals, thirdPlacesGroup, updateTeams)
 import Html exposing (Html)
 import Html.Attributes
 import Http
@@ -1212,6 +1212,7 @@ encodeMatchPredictions : Model -> Encode.Value
 encodeMatchPredictions model =
     Encode.object
         [ ( "group_matches", encodeMatches model.matches )
+        , ( "3rd_places", encodeGroupRows (get3rdTeamTable model.groups) )
         , ( "knockout_matches", encodeMatches model.playOffMatches )
         , ( "top_scorer", Encode.string model.topScorer )
         ]
@@ -1220,6 +1221,7 @@ encodeMatchPredictions model =
 postPredictions : Model -> Cmd Msg
 postPredictions model =
     Http.post
+        --{ url = "http://localhost:8000/predictions?token=" ++ model.token
         { url = "https://hahimur-django.herokuapp.com/predictions?token=" ++ model.token
         , body = Http.jsonBody (encodeMatchPredictions model)
         , expect = Http.expectWhatever PredictionsSaved
@@ -1250,6 +1252,33 @@ viewSubmitButton model =
         { onPress = Just msg
         , label = text "Submit"
         }
+
+
+viewLoadButton : Model -> Element Msg
+viewLoadButton model =
+    let
+        msg =
+            if model.token == "" then
+                ClickedSubmitNoToken
+
+            else if model.topScorer == "" then
+                ClickedSubmitNoScorer
+
+            else if not (allPlayoffMatchesHaveAWinner model.playOffMatches) then
+                ClickedSubmitWithoutFinishingMatches
+
+            else
+                ClickedSubmit
+    in
+    Element.Input.button
+        [ Background.color blue
+        , Font.color white
+        , padding 20
+        ]
+        { onPress = Just msg
+        , label = text "Submit"
+        }
+
 
 
 --matchIdDecoder : JD.Decoder Int

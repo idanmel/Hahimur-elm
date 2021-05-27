@@ -1,4 +1,4 @@
-module Euro2020 exposing (Group, GroupRow, GroupState(..), HomeOrAway(..), Match, Team, TeamPosition, defaultFlag, encodeMatches, filterByMatchId, final, getGroupRows, getGroupState, getScore, groupA, groupB, groupC, groupD, groupE, groupF, groupRows, isPlayoffMatch, matches, maybeOrDefaultTeam, playOffMatches, quarterFinals, roundOf16, semiFinals, thirdPlacesGroup, updateTeams)
+module Euro2020 exposing (Group, GroupRow, GroupState(..), HomeOrAway(..), Match, Team, TeamPosition, defaultFlag, encodeGroupRows, encodeMatches, filterByMatchId, final, getGroupRows, getGroupState, getScore, groupA, groupB, groupC, groupD, groupE, groupF, groupRows, isPlayoffMatch, matches, maybeOrDefaultTeam, playOffMatches, quarterFinals, roundOf16, semiFinals, thirdPlacesGroup, updateTeams)
 
 import Array
 import Json.Encode as Encode
@@ -47,7 +47,6 @@ encodeHomeWin homeWin =
 
         Nothing ->
             Encode.null
-
 
 
 encodeMatch : Match -> Encode.Value
@@ -146,6 +145,30 @@ type alias GroupRow =
     }
 
 
+encodeGroupRow : GroupRow -> Encode.Value
+encodeGroupRow gr =
+    Encode.object
+        [ ( "team_name", Encode.string gr.team.name )
+        , ( "pld", Encode.int gr.pld )
+        , ( "w", Encode.int gr.w )
+        , ( "d", Encode.int gr.d )
+        , ( "l", Encode.int gr.l )
+        , ( "gf", Encode.int gr.gf )
+        , ( "ga", Encode.int gr.ga )
+        , ( "gd", Encode.int gr.gd )
+        , ( "pts", Encode.int gr.pts )
+        , ( "group", Encode.string gr.group.name )
+        , ( "tieBreakPoints", Encode.int gr.tieBreakPoints )
+        , ( "tieBreakGd", Encode.int gr.tieBreakGd )
+        , ( "tieBreakGf", Encode.int gr.tieBreakGf )
+        ]
+
+
+encodeGroupRows : List GroupRow -> Encode.Value
+encodeGroupRows grs =
+    Encode.list encodeGroupRow grs
+
+
 defaultFlag =
     "https://upload.wikimedia.org/wikipedia/en/9/96/UEFA_Euro_2020_Logo.svg"
 
@@ -203,7 +226,7 @@ northMacedonia =
 
 
 england =
-    Team "England" "https://flagcdn.com/w80/gb.png"
+    Team "England" "https://flagcdn.com/w80/gb-eng.png"
 
 
 crotia =
@@ -487,11 +510,20 @@ getScore gr =
     ]
 
 
+getScoreFor3rdPlace : GroupRow -> List Int
+getScoreFor3rdPlace gr =
+    [ gr.pts
+    , gr.gd
+    , gr.gf
+    , gr.w
+    ]
+
+
 getGroupRows : Group -> List GroupRow -> List GroupRow
 getGroupRows groupName grs =
     grs
         |> filterByGroup groupName
-        |> List.sortBy getScore
+        |> List.sortBy getScoreFor3rdPlace
         |> List.reverse
 
 
