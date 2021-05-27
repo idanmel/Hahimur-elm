@@ -7,7 +7,7 @@ import Element.Border as Border
 import Element.Font as Font
 import Element.Input
 import Element.Region as Region
-import Euro2020 exposing (Group, GroupRow, GroupState(..), HomeOrAway(..), Match, Team, TeamPosition, defaultFlag, encodeGroupRows, encodeMatches, filterByMatchId, final, getGroupRows, getGroupState, getScore, groupA, groupB, groupC, groupD, groupE, groupF, groupRows, isPlayoffMatch, matches, playOffMatches, quarterFinals, roundOf16, semiFinals, thirdPlacesGroup, updateTeams)
+import Euro2020 exposing (Group, GroupRow, GroupState(..), HomeOrAway(..), Match, Team, TeamPosition, defaultFlag, encodeGroupRows, encodeMatches, filterByMatchId, final, getGroupRows, getGroupState, getScore, getScoreFor3rdPlace, groupA, groupB, groupC, groupD, groupE, groupF, groupRows, isPlayoffMatch, matches, playOffMatches, quarterFinals, roundOf16, semiFinals, thirdPlacesGroup, updateTeams)
 import Html exposing (Html)
 import Html.Attributes
 import Http
@@ -654,7 +654,7 @@ get3rdTeamTable groupRows =
                 |> get3rdPlaceTeam
     in
     [ thirdPlaceA, thirdPlaceB, thirdPlaceC, thirdPlaceD, thirdPlaceE, thirdPlaceF ]
-        |> List.sortBy getScore
+        |> List.sortBy getScoreFor3rdPlace
         |> List.reverse
 
 

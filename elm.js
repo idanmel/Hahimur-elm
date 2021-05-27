@@ -6158,9 +6158,9 @@ var $author$project$Euro2020$filterByGroup = F2(
 			},
 			grs);
 	});
-var $author$project$Euro2020$getScoreFor3rdPlace = function (gr) {
+var $author$project$Euro2020$getScore = function (gr) {
 	return _List_fromArray(
-		[gr.aH, gr.aF, gr.aG, gr.aN]);
+		[gr.aH, gr.ba, gr.a8, gr.a9, gr.aF, gr.aG, gr.aN]);
 };
 var $elm$core$List$sortBy = _List_sortBy;
 var $author$project$Euro2020$getGroupRows = F2(
@@ -6168,12 +6168,12 @@ var $author$project$Euro2020$getGroupRows = F2(
 		return $elm$core$List$reverse(
 			A2(
 				$elm$core$List$sortBy,
-				$author$project$Euro2020$getScoreFor3rdPlace,
+				$author$project$Euro2020$getScore,
 				A2($author$project$Euro2020$filterByGroup, groupName, grs)));
 	});
-var $author$project$Euro2020$getScore = function (gr) {
+var $author$project$Euro2020$getScoreFor3rdPlace = function (gr) {
 	return _List_fromArray(
-		[gr.aH, gr.ba, gr.a8, gr.a9, gr.aF, gr.aG, gr.aN]);
+		[gr.aH, gr.aF, gr.aG, gr.aN]);
 };
 var $author$project$Main$get3rdTeamTable = function (groupRows) {
 	var thirdPlaceF = $author$project$Main$get3rdPlaceTeam(
@@ -6191,7 +6191,7 @@ var $author$project$Main$get3rdTeamTable = function (groupRows) {
 	return $elm$core$List$reverse(
 		A2(
 			$elm$core$List$sortBy,
-			$author$project$Euro2020$getScore,
+			$author$project$Euro2020$getScoreFor3rdPlace,
 			_List_fromArray(
 				[thirdPlaceA, thirdPlaceB, thirdPlaceC, thirdPlaceD, thirdPlaceE, thirdPlaceF])));
 };

@@ -1,4 +1,4 @@
-module Euro2020 exposing (Group, GroupRow, GroupState(..), HomeOrAway(..), Match, Team, TeamPosition, defaultFlag, encodeGroupRows, encodeMatches, filterByMatchId, final, getGroupRows, getGroupState, getScore, groupA, groupB, groupC, groupD, groupE, groupF, groupRows, isPlayoffMatch, matches, maybeOrDefaultTeam, playOffMatches, quarterFinals, roundOf16, semiFinals, thirdPlacesGroup, updateTeams)
+module Euro2020 exposing (Group, GroupRow, GroupState(..), HomeOrAway(..), Match, Team, TeamPosition, defaultFlag, encodeGroupRows, encodeMatches, filterByMatchId, final, getGroupRows, getGroupState, getScore, getScoreFor3rdPlace, groupA, groupB, groupC, groupD, groupE, groupF, groupRows, isPlayoffMatch, matches, maybeOrDefaultTeam, playOffMatches, quarterFinals, roundOf16, semiFinals, thirdPlacesGroup, updateTeams)
 
 import Array
 import Json.Encode as Encode
@@ -523,7 +523,7 @@ getGroupRows : Group -> List GroupRow -> List GroupRow
 getGroupRows groupName grs =
     grs
         |> filterByGroup groupName
-        |> List.sortBy getScoreFor3rdPlace
+        |> List.sortBy getScore
         |> List.reverse
 
 
